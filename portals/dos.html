@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>DOS Portal – Five Star Model School</title>
+<link rel="stylesheet" href="../assets/sms.css"/>
+<style>
+/* ── Local helpers ── */
+.search-wrap{position:relative}
+.search-wrap input{padding-left:30px}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--sub);pointer-events:none}
+
+/* Matrix table */
+.matrix-table{width:100%;border-collapse:collapse;font-size:.72rem}
+.matrix-table th,.matrix-table td{padding:8px 10px;border:1px solid var(--border);text-align:center;white-space:nowrap}
+.matrix-table th{background:var(--bg);font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--sub)}
+.matrix-table td:first-child{text-align:left;font-weight:600;color:var(--text)}
+.matrix-table .chk-cell input[type=checkbox]{width:14px;height:14px;cursor:pointer;accent-color:var(--teal)}
+
+/* Timetable grid */
+.tt-grid{width:100%;border-collapse:collapse;font-size:.7rem}
+.tt-grid th,.tt-grid td{border:1px solid var(--border);padding:7px 8px;text-align:center;min-width:90px}
+.tt-grid th{background:var(--navy);color:#fff;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.tt-grid td:first-child{background:var(--bg);font-weight:700;font-size:.65rem;color:var(--navy);min-width:70px}
+.tt-slot{font-size:.65rem;line-height:1.4}
+.tt-slot .ts-subj{font-weight:700;color:var(--navy)}
+.tt-slot .ts-tchr{color:var(--sub)}
+.tt-empty{color:var(--border);font-size:.7rem}
+
+/* Progress bar for syllabus */
+.cov-bar{height:7px;background:#e8eef6;border-radius:4px;overflow:hidden;min-width:70px}
+.cov-fill{height:100%;border-radius:4px;transition:.4s ease}
+.cov-high{background:var(--green)}
+.cov-mid{background:var(--amber)}
+.cov-low{background:var(--red)}
+
+/* Report card print layout */
+.rc-wrap{background:#fff;width:100%;max-width:760px;margin:0 auto;padding:24px 28px;font-size:.78rem;color:#111;border:1px solid var(--border);border-radius:8px}
+.rc-header{display:flex;align-items:center;gap:14px;border-bottom:2.5px solid #173B63;padding-bottom:12px;margin-bottom:14px}
+.rc-logo{width:64px;height:64px;object-fit:contain}
+.rc-school-info{flex:1;text-align:center}
+.rc-school-name{font-size:1.1rem;font-weight:900;color:#173B63;letter-spacing:.3px}
+.rc-school-motto{font-size:.72rem;color:#18A999;font-weight:600;margin-top:2px}
+.rc-school-addr{font-size:.66rem;color:#667085;margin-top:2px}
+.rc-term-banner{background:#173B63;color:#fff;text-align:center;padding:5px 0;font-size:.74rem;font-weight:700;letter-spacing:.4px;margin-bottom:12px;border-radius:4px}
+.rc-pupil-info{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-bottom:12px;padding:10px 12px;background:#f7f9fc;border-radius:6px;border:1px solid #e4e9f0}
+.rc-pi-row{display:flex;gap:6px;font-size:.72rem}
+.rc-pi-lbl{color:#667085;font-weight:600;min-width:110px}
+.rc-pi-val{font-weight:700;color:#173B63}
+.rc-marks-table{width:100%;border-collapse:collapse;font-size:.72rem;margin-bottom:10px}
+.rc-marks-table th{background:#173B63;color:#fff;padding:7px 10px;text-align:left;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.rc-marks-table td{padding:7px 10px;border-bottom:1px solid #e8eef6}
+.rc-marks-table tr:last-child td{border-bottom:none}
+.rc-marks-table tbody tr:hover td{background:#f5f7fa}
+.rc-totals-row td{font-weight:700;background:#e8eef6;border-top:2px solid #c5d4e8}
+.rc-grade-d1{color:#1a9e5c;font-weight:700}
+.rc-grade-d2{color:#1a9e5c;font-weight:700}
+.rc-grade-c3{color:#18A999;font-weight:700}
+.rc-grade-c4{color:#18A999;font-weight:700}
+.rc-grade-c5{color:#F4B740;font-weight:700}
+.rc-grade-c6{color:#F4B740;font-weight:700}
+.rc-grade-p7{color:#e07b10;font-weight:700}
+.rc-grade-p8{color:#e07b10;font-weight:700}
+.rc-grade-f9{color:#D9534F;font-weight:700}
+.rc-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.rc-attend{padding:10px 12px;background:#f7f9fc;border-radius:6px;border:1px solid #e4e9f0;font-size:.72rem}
+.rc-attend-title{font-weight:700;color:#173B63;margin-bottom:6px;font-size:.73rem}
+.rc-attend-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e4e9f0}
+.rc-attend-row:last-child{border-bottom:none}
+.rc-comments{padding:10px 12px;background:#f7f9fc;border-radius:6px;border:1px solid #e4e9f0;font-size:.72rem}
+.rc-comments-title{font-weight:700;color:#173B63;margin-bottom:6px;font-size:.73rem}
+.rc-comment-row{margin-bottom:6px}
+.rc-comment-lbl{font-size:.65rem;color:#667085;font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+.rc-comment-val{border:1px solid #e4e9f0;border-radius:4px;padding:5px 8px;min-height:32px;background:#fff;color:#24313D}
+.rc-promo{margin-bottom:12px;padding:10px 14px;border-radius:6px;font-size:.76rem;font-weight:700;text-align:center;border:2px solid}
+.rc-promo-promoted{background:#d8f5e8;color:var(--green);border-color:var(--green)}
+.rc-promo-repeated{background:#fde8e7;color:var(--red);border-color:var(--red)}
+.rc-promo-pending{background:#fef3d8;color:#b37b10;border-color:var(--amber)}
+.rc-sigs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px;padding-top:12px;border-top:1px solid #e4e9f0}
+.rc-sig-box{text-align:center}
+.rc-sig-line{border-bottom:1.5px solid #173B63;margin-bottom:5px;height:36px}
+.rc-sig-lbl{font-size:.62rem;color:#667085;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.rc-next-term{margin-top:10px;padding:7px 12px;background:#e8eef6;border-radius:6px;font-size:.72rem;text-align:center;color:#173B63;font-weight:600}
+
+/* Activity items */
+.act-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.act-item:last-child{border-bottom:none}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+
+/* Calendar event badges */
+.ev-exam{background:#e8eef6;color:var(--navy)}
+.ev-holiday{background:#d8f5e8;color:var(--green)}
+.ev-meeting{background:#f0eafc;color:#6d28d9}
+.ev-visiting{background:#fef3d8;color:#b37b10}
+.ev-opening{background:#d1f5f2;color:var(--teal2)}
+.ev-closing{background:#fde8e7;color:var(--red)}
+.ev-other{background:#f0f4f9;color:var(--sub)}
+
+/* Class selector tabs */
+.cls-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.cls-tab{padding:5px 12px;border-radius:20px;font-size:.7rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--sub);transition:.15s}
+.cls-tab:hover{border-color:var(--teal);color:var(--teal)}
+.cls-tab.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* Pupil list in report cards */
+.pupil-rc-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.pupil-rc-row:last-child{border-bottom:none}
+
+/* No-print class */
+.no-print{display:block}
+
+@media print {
+  .sidebar,.topbar,.no-print,.toast-stack{display:none!important}
+  .main-area{margin-left:0!important}
+  .page-content{padding:0!important}
+  body{background:#fff}
+  .rc-wrap{border:none;box-shadow:none;padding:12px}
+  .rc-print-only{display:block!important}
+  @page{size:A4;margin:12mm}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
+    <div>
+      <div class="sb-school-name">Five Star School</div>
+      <div class="sb-portal-name">DOS Portal</div>
+    </div>
+  </div>
+  <nav class="sb-body">
+    <div class="sb-group"><div class="sb-group-label">Overview</div></div>
+    <div class="sb-link active" onclick="nav('dashboard',this)"><span class="sb-icon">🏠</span><span>Dashboard</span></div>
+    <div class="sb-group"><div class="sb-group-label">Curriculum</div></div>
+    <div class="sb-link" onclick="nav('subjects',this)"><span class="sb-icon">📖</span><span>Subjects</span></div>
+    <div class="sb-link" onclick="nav('allocation',this)"><span class="sb-icon">👩‍🏫</span><span>Teacher Allocation</span></div>
+    <div class="sb-link" onclick="nav('timetable',this)"><span class="sb-icon">🗓️</span><span>Timetable</span></div>
+    <div class="sb-group"><div class="sb-group-label">Examinations</div></div>
+    <div class="sb-link" onclick="nav('exams',this)"><span class="sb-icon">📝</span><span>Exam Management</span><span class="sb-badge" id="exam-badge">0</span></div>
+    <div class="sb-link" onclick="nav('approval',this)"><span class="sb-icon">✅</span><span>Results Approval</span><span class="sb-badge" id="approval-badge">0</span></div>
+    <div class="sb-link" onclick="nav('reportcards',this)"><span class="sb-icon">📄</span><span>Report Cards</span></div>
+    <div class="sb-group"><div class="sb-group-label">Analysis</div></div>
+    <div class="sb-link" onclick="nav('performance',this)"><span class="sb-icon">📊</span><span>Performance</span></div>
+    <div class="sb-link" onclick="nav('calendar',this)"><span class="sb-icon">📅</span><span>Academic Calendar</span></div>
+    <div class="sb-link" onclick="nav('syllabus',this)"><span class="sb-icon">📋</span><span>Syllabus Coverage</span></div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-av" id="sb-av-init">D</div>
+      <div><div class="sb-uname" id="sb-uname">DOS User</div><div class="sb-urole">Director of Studies</div></div>
+      <button class="sb-signout" onclick="signOut()" title="Sign Out">⏻</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main-area">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-left">
+      <div>
+        <div class="tb-title" id="pg-title">Dashboard</div>
+        <div class="tb-crumb" id="pg-crumb">DOS › Dashboard</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-meta" id="tb-term">Academic Year &amp; Term</span>
+      <div class="tb-user-chip">
+        <div class="tb-user-av" id="tb-av">D</div>
+        <span id="tb-uname">DOS User</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <div class="page-content">
+
+    <!-- ══════════════════════ DASHBOARD ══════════════════════ -->
+    <div id="pg-dashboard" class="page active">
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-icon ic-amber">⏳</div>
+          <div><div class="kpi-val" id="k-pending">0</div><div class="kpi-label">Pending Approvals</div></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-icon ic-red">⚠️</div>
+          <div><div class="kpi-val" id="k-missing">0</div><div class="kpi-label">Missing Marks</div></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-icon ic-navy">📖</div>
+          <div><div class="kpi-val" id="k-subjects">0</div><div class="kpi-label">Total Subjects</div></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-icon ic-teal">👩‍🏫</div>
+          <div><div class="kpi-val" id="k-teachers">0</div><div class="kpi-label">Teachers Allocated</div></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-icon ic-green">✅</div>
+          <div><div class="kpi-val" id="k-complete">0</div><div class="kpi-label">Classes with Complete Marks</div></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Exam submissions by class -->
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title"><span class="card-title-icon">📊</span>Exam Submissions by Class</div>
+          </div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Class</th><th>Submitted</th><th>Missing</th><th>Approved</th><th>Status</th></tr></thead>
+              <tbody id="submission-tbody">
+                <tr><td colspan="5"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No exam data yet</div><div class="empty-desc">Submissions will appear here once teachers submit marks.</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recent approvals -->
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title"><span class="card-title-icon">🕐</span>Recent Approvals Activity</div>
+          </div>
+          <div class="card-body" id="recent-approvals-list">
+            <div class="empty"><div class="empty-icon">📭</div><div class="empty-title">No recent activity</div><div class="empty-desc">Approval actions will be logged here.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ SUBJECTS ══════════════════════ -->
+    <div id="pg-subjects" class="page hidden">
+      <div class="card no-print">
+        <div class="card-hd">
+          <div class="card-title"><span class="card-title-icon">📖</span>Subject–Class Matrix</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm" onclick="saveMatrix()">💾 Save Allocation</button>
+            <button class="btn btn-teal btn-sm" onclick="openModal('modal-subject')">＋ Add Subject</button>
+          </div>
+        </div>
+        <div class="tbl-wrap card-flush">
+          <table class="matrix-table" id="subj-matrix">
+            <thead>
+              <tr>
+                <th style="text-align:left;min-width:140px">Subject</th>
+                <th>Baby</th><th>Middle</th><th>Upper</th>
+                <th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th><th>P7</th>
+              </tr>
+            </thead>
+            <tbody id="subj-matrix-body">
+              <tr>
+                <td>English Language</td>
+                <td class="chk-cell"><input type="checkbox"></td>
+                <td class="chk-cell"><input type="checkbox"></td>
+                <td class="chk-cell"><input type="checkbox"></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+              </tr>
+              <tr>
+                <td>Mathematics</td>
+                <td class="chk-cell"><input type="checkbox"></td>
+                <td class="chk-cell"><input type="checkbox"></td>
+                <td class="chk-cell"><input type="checkbox"></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+                <td class="chk-cell"><input type="checkbox" checked></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:10px 14px"><span class="badge b-amber">Demo rows — edit or add real subjects</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ TEACHER ALLOCATION ══════════════════════ -->
+    <div id="pg-allocation" class="page hidden">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><span class="card-title-icon">👩‍🏫</span>Teacher Allocations</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <select class="fg select" id="alloc-filter-class" onchange="filterAllocations()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.73rem">
+              <option value="">All Classes</option>
+              <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+              <option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option>
+            </select>
+            <select id="alloc-filter-subj" onchange="filterAllocations()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.73rem">
+              <option value="">All Subjects</option>
+            </select>
+            <button class="btn btn-teal btn-sm" onclick="openModal('modal-allocation')">＋ Add Allocation</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Teacher Name</th><th>Class</th><th>Subject</th><th>Academic Year</th><th>Term</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="alloc-tbody">
+              <tr><td colspan="7"><div class="empty"><div class="empty-icon">👩‍🏫</div><div class="empty-title">No allocations yet</div><div class="empty-desc">Add teacher-class-subject allocations to get started.</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ TIMETABLE ══════════════════════ -->
+    <div id="pg-timetable" class="page hidden">
+      <div class="tabs no-print">
+        <div class="tab active" onclick="switchTab('tt','view',this)">📅 View Timetable</div>
+        <div class="tab" onclick="switchTab('tt','edit',this)">✏️ Create / Edit</div>
+      </div>
+
+      <!-- View -->
+      <div id="tt-view" class="tab-pane active">
+        <div class="card no-print" style="margin-bottom:12px">
+          <div class="card-body" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <label style="font-size:.74rem;font-weight:600">Select Class:</label>
+            <select id="tt-class-sel" onchange="renderTimetable()" style="padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem">
+              <option value="">-- Choose Class --</option>
+              <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+              <option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option>
+            </select>
+            <button class="btn btn-outline btn-sm" onclick="printTimetable()">🖨️ Print Timetable</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title"><span class="card-title-icon">🗓️</span>Weekly Timetable — <span id="tt-class-label">No class selected</span></div>
+          </div>
+          <div class="tbl-wrap">
+            <table class="tt-grid" id="tt-display">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th>
+                </tr>
+              </thead>
+              <tbody id="tt-body">
+                <tr><td colspan="6"><div class="empty"><div class="empty-icon">🗓️</div><div class="empty-title">Select a class to view timetable</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit -->
+      <div id="tt-edit" class="tab-pane">
+        <div class="card">
+          <div class="card-hd"><div class="card-title"><span class="card-title-icon">✏️</span>Add Lesson Slot</div></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="fg"><label>Class</label>
+                <select id="tt-edit-class">
+                  <option value="">Select class</option>
+                  <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+                  <option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option>
+                </select>
+              </div>
+              <div class="fg"><label>Day</label>
+                <select id="tt-edit-day">
+                  <option value="">Select day</option>
+                  <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="fg"><label>Period</label>
+                <select id="tt-edit-period">
+                  <option value="">Select period</option>
+                  <option>Period 1</option><option>Period 2</option><option>Period 3</option><option>Period 4</option>
+                  <option>Period 5</option><option>Period 6</option><option>Period 7</option><option>Period 8</option>
+                </select>
+              </div>
+              <div class="fg"><label>Start Time</label><input type="time" id="tt-edit-start"/></div>
+              <div class="fg"><label>End Time</label><input type="time" id="tt-edit-end"/></div>
+            </div>
+            <div class="form-row">
+              <div class="fg"><label>Subject</label><input type="text" id="tt-edit-subj" placeholder="e.g. Mathematics"/></div>
+              <div class="fg"><label>Teacher</label><input type="text" id="tt-edit-teacher" placeholder="e.g. Mr. Mugisha"/></div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+              <button class="btn btn-outline btn-sm" onclick="clearTTForm()">Clear</button>
+              <button class="btn btn-teal btn-sm" onclick="saveTTSlot()">Save Slot</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Saved slots list -->
+        <div class="card">
+          <div class="card-hd"><div class="card-title"><span class="card-title-icon">📋</span>Saved Lesson Slots</div></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Class</th><th>Day</th><th>Period</th><th>Time</th><th>Subject</th><th>Teacher</th><th></th></tr></thead>
+              <tbody id="tt-slots-tbody">
+                <tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No slots saved yet</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ EXAM MANAGEMENT ══════════════════════ -->
+    <div id="pg-exams" class="page hidden">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><span class="card-title-icon">📝</span>Exam Management</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <select id="exam-filter-class" onchange="filterExams()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.73rem">
+              <option value="">All Classes</option>
+              <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+              <option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option>
+            </select>
+            <select id="exam-filter-term" onchange="filterExams()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.73rem">
+              <option value="">All Terms</option>
+              <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+            </select>
+            <select id="exam-filter-year" onchange="filterExams()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.73rem">
+              <option value="">All Years</option>
+              <option>2024</option><option>2025</option><option>2026</option>
+            </select>
+            <button class="btn btn-teal btn-sm" onclick="openModal('modal-exam')">＋ Add Exam</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Name</th><th>Type</th><th>Class</th><th>Subject</th><th>Max Marks</th><th>Date</th><th>Term</th><th>Year</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="exam-tbody">
+              <tr><td colspan="10"><div class="empty"><div class="empty-icon">📝</div><div class="empty-title">No exams created yet</div><div class="empty-desc">Click Add Exam to create examination records.</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ RESULTS APPROVAL ══════════════════════ -->
+    <div id="pg-approval" class="page hidden">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><span class="card-title-icon">✅</span>Results Approval</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" id="appr-filter-all" onclick="filterApproval('all',this)">All</button>
+            <button class="btn btn-outline btn-sm" id="appr-filter-pending" onclick="filterApproval('pending',this)">⏳ Pending</button>
+            <button class="btn btn-outline btn-sm" id="appr-filter-approved" onclick="filterApproval('approved',this)">✅ Approved</button>
+            <button class="btn btn-outline btn-sm" id="appr-filter-returned" onclick="filterApproval('returned',this)">↩️ Returned</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Teacher</th><th>Class</th><th>Subject</th><th>Exam</th><th>Submitted</th><th>Pupils</th><th>Missing</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="approval-tbody">
+              <tr><td colspan="9"><div class="empty"><div class="empty-icon">✅</div><div class="empty-title">No submissions to review</div><div class="empty-desc">Teacher submissions will appear here for approval.</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ REPORT CARDS ══════════════════════ -->
+    <div id="pg-reportcards" class="page hidden">
+
+      <!-- Step 1: selector (no-print) -->
+      <div class="card no-print" id="rc-step1">
+        <div class="card-hd"><div class="card-title"><span class="card-title-icon">📄</span>Generate Report Cards</div></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="fg"><label>Class</label>
+              <select id="rc-class">
+                <option value="">Select class</option>
+                <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+                <option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option>
+              </select>
+            </div>
+            <div class="fg"><label>Term</label>
+              <select id="rc-term">
+                <option value="">Select term</option>
+                <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+              </select>
+            </div>
+            <div class="fg"><label>Academic Year</label>
+              <select id="rc-year">
+                <option value="">Select year</option>
+                <option>2024</option><option>2025</option><option>2026</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px">
+            <button class="btn btn-teal" onclick="loadPupilsForRC()">Load Pupils →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: pupil list (no-print) -->
+      <div class="card no-print hidden" id="rc-step2">
+        <div class="card-hd">
+          <div class="card-title"><span class="card-title-icon">👤</span>Pupils — <span id="rc-list-label"></span></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm" onclick="backToRCStep1()">← Change Selection</button>
+            <button class="btn btn-teal btn-sm" onclick="generateAllRC()">📄 Generate All Report Cards</button>
+          </div>
+        </div>
+        <div class="card-body" id="rc-pupil-list">
+          <div class="empty"><div class="empty-icon">👤</div><div class="empty-title">No pupils found</div></div>
+        </div>
+      </div>
+
+      <!-- Print area -->
+      <div id="rc-print-area"></div>
+    </div>
+
+    <!-- ══════════════════════ PERFORMANCE ══════════════════════ -->
+    <div id="pg-performance" class="page hidden">
+      <div class="tabs no-print">
+        <div class="tab active" onclick="switchTab('perf','class',this)">🏫 By Class</div>
+        <div class="tab" onclick="switchTab('perf','subject',this)">📖 By Subject</div>
+        <div class="tab" onclick="switchTab('perf','pupil',this)">👤 By Pupil</div>
+      </div>
+
+      <!-- By Class -->
+      <div id="perf-class" class="tab-pane active">
+        <div class="card">
+          <div class="card-hd"><div class="card-title"><span class="card-title-icon">🏫</span>Performance by Class</div></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Class</th><th>Total Pupils</th><th>Average Score</th><th>Highest</th><th>Lowest</th><th>Pass Rate</th></tr></thead>
+              <tbody id="perf-class-tbody">
+                <tr><td colspan="6"><div class="empty"><div class="empty-icon">📊</div><div class="empty-title">No performance data</div><div class="empty-desc">Performance reports generate once exam results are approved.</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- By Subject -->
+      <div id="perf-subject" class="tab-pane">
+        <div class="card">
+          <div class="card-hd"><div class="card-title"><span class="card-title-icon">📖</span>Performance by Subject</div></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Subject</th><th>Class</th><th>Average</th><th>Highest</th><th>Lowest</th><th>Fail Count</th></tr></thead>
+              <tbody id="perf-subj-tbody">
+                <tr><td colspan="6"><div class="empty"><div class="empty-icon">📊</div><div class="empty-title">No subject data yet</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- By Pupil -->
+      <div id="perf-pupil" class="tab-pane">
+        <div class="card">
+          <div class="card-hd"><div class="card-title"><span class="card-title-icon">👤</span>Search Pupil Performance</div></div>
+          <div class="card-body">
+            <div class="search-wrap" style="max-width:380px">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="pupil-search-input" placeholder="Enter pupil name or admission number…" oninput="searchPupil(this.value)" style="width:100%;padding:8px 11px 8px 30px;border:1.5px solid var(--border);border-radius:8px;font-size:.76rem"/>
+            </div>
+          </div>
+          <div class="tbl-wrap" id="pupil-perf-results">
+            <div class="empty" style="padding:24px"><div class="empty-icon">🔍</div><div class="empty-title">Search for a pupil</div><div class="empty-desc">Enter a name or admission number above.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ ACADEMIC CALENDAR ══════════════════════ -->
+    <div id="pg-calendar" class="page hidden">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><span class="card-title-icon">📅</span>Academic Calendar</div>
+          <button class="btn btn-teal btn-sm" onclick="openModal('modal-event')">＋ Add Event</button>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Event Name</th><th>Type</th><th>Date</th><th>Audience</th><th>Description</th><th>Actions</th></tr></thead>
+            <tbody id="calendar-tbody">
+              <tr><td colspan="6"><div class="empty"><div class="empty-icon">📅</div><div class="empty-title">No events added</div><div class="empty-desc">Add school events, holidays, exams and meeting dates.</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ SYLLABUS COVERAGE ══════════════════════ -->
+    <div id="pg-syllabus" class="page hidden">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><span class="card-title-icon">📋</span>Syllabus Coverage</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <select id="syl-filter-class" onchange="filterSyllabus()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.73rem">
+              <option value="">All Classes</option>
+              <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+              <option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option>
+            </select>
+            <select id="syl-filter-subj" onchange="filterSyllabus()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.73rem">
+              <option value="">All Subjects</option>
+            </select>
+            <select id="syl-filter-teacher" onchange="filterSyllabus()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.73rem">
+              <option value="">All Teachers</option>
+            </select>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Teacher</th><th>Class</th><th>Subject</th><th>Term</th><th>Total Topics</th><th>Covered</th><th>Remaining</th><th>% Coverage</th></tr></thead>
+            <tbody id="syllabus-tbody">
+              <tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No syllabus records</div><div class="empty-desc">Coverage records appear once teachers log lesson progress.</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end page-content -->
+</div><!-- end main-area -->
+</div><!-- end layout -->
+
+<!-- ═══════════════════════════════════════
+     MODALS
+═══════════════════════════════════════ -->
+
+<!-- Add Subject -->
+<div class="overlay" id="modal-subject">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">📖 Add Subject</div><button class="modal-close" onclick="closeModal('modal-subject')">✕</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Subject Name *</label><input type="text" id="subj-name" placeholder="e.g. Social Studies"/></div>
+      <div class="fg"><label>Subject Code</label><input type="text" id="subj-code" placeholder="e.g. SST"/></div>
+      <div class="fg"><label>Applicable Levels</label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px" id="subj-levels">
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="Baby"> Baby Class</label>
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="Middle"> Middle Class</label>
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="Upper"> Upper Class</label>
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="P1"> P1</label>
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="P2"> P2</label>
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="P3"> P3</label>
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="P4"> P4</label>
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="P5"> P5</label>
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="P6"> P6</label>
+          <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" value="P7"> P7</label>
+        </div>
+      </div>
+      <div class="fg"><label>Notes</label><textarea id="subj-notes" placeholder="Optional notes…"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-subject')">Cancel</button>
+      <button class="btn btn-teal btn-sm" onclick="saveSubject()">Save Subject</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Allocation -->
+<div class="overlay" id="modal-allocation">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">👩‍🏫 Add Teacher Allocation</div><button class="modal-close" onclick="closeModal('modal-allocation')">✕</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Teacher Name *</label><input type="text" id="alloc-teacher" placeholder="Enter teacher name"/></div>
+      <div class="form-row">
+        <div class="fg"><label>Class *</label>
+          <select id="alloc-class">
+            <option value="">Select class</option>
+            <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+            <option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option>
+          </select>
+        </div>
+        <div class="fg"><label>Subject *</label><input type="text" id="alloc-subject" placeholder="e.g. Mathematics"/></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Academic Year *</label>
+          <select id="alloc-year">
+            <option value="">Select year</option>
+            <option>2024</option><option>2025</option><option>2026</option>
+          </select>
+        </div>
+        <div class="fg"><label>Term *</label>
+          <select id="alloc-term">
+            <option value="">Select term</option>
+            <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-allocation')">Cancel</button>
+      <button class="btn btn-teal btn-sm" onclick="saveAllocation()">Save Allocation</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Exam -->
+<div class="overlay" id="modal-exam">
+  <div class="modal modal-lg">
+    <div class="modal-hd"><div class="modal-title">📝 Add Exam</div><button class="modal-close" onclick="closeModal('modal-exam')">✕</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Exam Name *</label><input type="text" id="ex-name" placeholder="e.g. End of Term Examination"/></div>
+      <div class="form-row">
+        <div class="fg"><label>Type *</label>
+          <select id="ex-type">
+            <option value="">Select type</option>
+            <option>Beginning of Term</option><option>Midterm</option><option>End of Term</option><option>Test</option>
+          </select>
+        </div>
+        <div class="fg"><label>Class *</label>
+          <select id="ex-class">
+            <option value="">Select class</option>
+            <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+            <option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>P7</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Subject *</label><input type="text" id="ex-subject" placeholder="e.g. Mathematics"/></div>
+        <div class="fg"><label>Max Marks *</label><input type="number" id="ex-max" placeholder="e.g. 100" min="1" max="100"/></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Date</label><input type="date" id="ex-date"/></div>
+        <div class="fg"><label>Term *</label>
+          <select id="ex-term">
+            <option value="">Select term</option>
+            <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+          </select>
+        </div>
+        <div class="fg"><label>Year *</label>
+          <select id="ex-year">
+            <option value="">Select year</option>
+            <option>2024</option><option>2025</option><option>2026</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-exam')">Cancel</button>
+      <button class="btn btn-teal btn-sm" onclick="saveExam()">Save Exam</button>
+    </div>
+  </div>
+</div>
+
+<!-- Return Reason -->
+<div class="overlay" id="modal-return">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">↩️ Return Submission</div><button class="modal-close" onclick="closeModal('modal-return')">✕</button></div>
+    <div class="modal-bd">
+      <div class="alert alert-amber">⚠️ The teacher will be notified and will need to correct and resubmit the marks.</div>
+      <div class="fg"><label>Return Reason *</label><textarea id="return-reason" placeholder="Explain what the teacher needs to correct…" style="min-height:90px"></textarea></div>
+      <input type="hidden" id="return-idx"/>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-return')">Cancel</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmReturn()">↩️ Return</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Calendar Event -->
+<div class="overlay" id="modal-event">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">📅 Add Calendar Event</div><button class="modal-close" onclick="closeModal('modal-event')">✕</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Event Name *</label><input type="text" id="ev-name" placeholder="e.g. Term 1 Examinations"/></div>
+      <div class="form-row">
+        <div class="fg"><label>Type *</label>
+          <select id="ev-type">
+            <option value="">Select type</option>
+            <option>Exam</option><option>Holiday</option><option>Meeting</option><option>Visiting Day</option>
+            <option>Opening</option><option>Closing</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Date *</label><input type="date" id="ev-date"/></div>
+      </div>
+      <div class="fg"><label>Audience</label>
+        <select id="ev-audience">
+          <option value="">Select audience</option>
+          <option>All</option><option>Teachers</option><option>Parents</option><option>Pupils</option><option>Staff</option>
+        </select>
+      </div>
+      <div class="fg"><label>Description</label><textarea id="ev-desc" placeholder="Additional details…"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-event')">Cancel</button>
+      <button class="btn btn-teal btn-sm" onclick="saveEvent()">Save Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast stack -->
+<div class="toast-stack" id="toast-stack"></div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+/* ── Session ── */
+const sess = JSON.parse(sessionStorage.getItem('sms_user') || '{}');
+if (!sess.loggedIn) location.href = '../index.html';
+function signOut() { sessionStorage.clear(); location.href = '../index.html'; }
+
+/* ── Populate user info ── */
+(function() {
+  const name = sess.name || 'DOS User';
+  const initials = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2) || 'D';
+  document.getElementById('sb-uname').textContent = name;
+  document.getElementById('sb-av-init').textContent = initials;
+  document.getElementById('tb-uname').textContent = name;
+  document.getElementById('tb-av').textContent = initials;
+  const now = new Date();
+  document.getElementById('tb-term').textContent = 'Year ' + now.getFullYear();
+})();
+
+/* ── Page navigation ── */
+const PAGE_TITLES = {
+  dashboard:   ['Dashboard',       'DOS › Dashboard'],
+  subjects:    ['Subjects',        'DOS › Subjects'],
+  allocation:  ['Teacher Allocation','DOS › Teacher Allocation'],
+  timetable:   ['Timetable',       'DOS › Timetable'],
+  exams:       ['Exam Management', 'DOS › Exam Management'],
+  approval:    ['Results Approval','DOS › Results Approval'],
+  reportcards: ['Report Cards',    'DOS › Report Cards'],
+  performance: ['Performance',     'DOS › Performance'],
+  calendar:    ['Academic Calendar','DOS › Academic Calendar'],
+  syllabus:    ['Syllabus Coverage','DOS › Syllabus Coverage'],
+};
+function nav(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById('pg-' + page).classList.remove('hidden');
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const t = PAGE_TITLES[page] || [page, 'DOS › ' + page];
+  document.getElementById('pg-title').textContent = t[0];
+  document.getElementById('pg-crumb').textContent = t[1];
+}
+
+/* ── Tab switching ── */
+function switchTab(group, id, el) {
+  document.querySelectorAll('#pg-'+currentPage(group)+' .tab-pane').forEach(p => {
+    p.classList.remove('active');
+  });
+  document.querySelectorAll('#pg-'+currentPage(group)+' .tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(group + '-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+}
+function currentPage(group) {
+  const map = {tt:'timetable', perf:'performance'};
+  return map[group] || group;
+}
+
+/* ── Modal helpers ── */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(ov => {
+  ov.addEventListener('click', function(e) { if (e.target === ov) ov.classList.remove('open'); });
+});
+
+/* ── Toast ── */
+function toast(msg, type='success') {
+  const stack = document.getElementById('toast-stack');
+  const t = document.createElement('div');
+  t.className = 'toast t-' + type;
+  const icons = {success:'✅', error:'❌', warn:'⚠️', info:'ℹ️'};
+  t.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  stack.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+/* ── Uganda grading scale ── */
+function getGrade(marks) {
+  if (marks === null || marks === undefined || marks === '') return {grade:'—', cls:'', points:0};
+  const m = parseFloat(marks);
+  if (isNaN(m)) return {grade:'—', cls:'', points:0};
+  if (m >= 90) return {grade:'D1', cls:'rc-grade-d1', points:1};
+  if (m >= 80) return {grade:'D2', cls:'rc-grade-d2', points:2};
+  if (m >= 70) return {grade:'C3', cls:'rc-grade-c3', points:3};
+  if (m >= 65) return {grade:'C4', cls:'rc-grade-c4', points:4};
+  if (m >= 60) return {grade:'C5', cls:'rc-grade-c5', points:5};
+  if (m >= 55) return {grade:'C6', cls:'rc-grade-c6', points:6};
+  if (m >= 50) return {grade:'P7', cls:'rc-grade-p7', points:7};
+  if (m >= 45) return {grade:'P8', cls:'rc-grade-p8', points:8};
+  return {grade:'F9', cls:'rc-grade-f9', points:9};
+}
+function getGradeRemark(g) {
+  const r = {D1:'Distinction',D2:'Distinction',C3:'Credit',C4:'Credit',C5:'Credit',C6:'Credit',P7:'Pass',P8:'Pass',F9:'Fail'};
+  return r[g] || '—';
+}
+
+/* ═══════════════════════════════
+   SUBJECTS
+═══════════════════════════════ */
+let subjects = [
+  {name:'English Language', code:'ENG', levels:['P1','P2','P3','P4','P5','P6','P7'], notes:''},
+  {name:'Mathematics',      code:'MTH', levels:['P1','P2','P3','P4','P5','P6','P7'], notes:''}
+];
+const ALL_CLASSES = ['Baby','Middle','Upper','P1','P2','P3','P4','P5','P6','P7'];
+const CLASS_MAP   = {'Baby':'Baby Class','Middle':'Middle Class','Upper':'Upper Class'};
+
+function saveSubject() {
+  const name = document.getElementById('subj-name').value.trim();
+  const code = document.getElementById('subj-code').value.trim();
+  const notes= document.getElementById('subj-notes').value.trim();
+  const levels = [...document.querySelectorAll('#subj-levels input:checked')].map(c=>c.value);
+  if (!name) { toast('Subject name is required','error'); return; }
+  subjects.push({name, code, levels, notes});
+  closeModal('modal-subject');
+  document.getElementById('subj-name').value='';
+  document.getElementById('subj-code').value='';
+  document.getElementById('subj-notes').value='';
+  document.querySelectorAll('#subj-levels input').forEach(c=>c.checked=false);
+  renderSubjectMatrix();
+  toast('Subject added');
+}
+function saveMatrix() {
+  toast('Subject allocation saved');
+}
+function renderSubjectMatrix() {
+  const tbody = document.getElementById('subj-matrix-body');
+  tbody.innerHTML = subjects.map(s=>`
+    <tr>
+      <td>${s.name}${s.code?` <span class="badge b-gray">${s.code}</span>`:''}</td>
+      ${ALL_CLASSES.map(c=>`<td class="chk-cell"><input type="checkbox" ${s.levels.includes(c)?'checked':''}></td>`).join('')}
+    </tr>`).join('');
+}
+
+/* ═══════════════════════════════
+   TEACHER ALLOCATION
+═══════════════════════════════ */
+let allocations = [];
+function saveAllocation() {
+  const teacher = document.getElementById('alloc-teacher').value.trim();
+  const cls     = document.getElementById('alloc-class').value;
+  const subject = document.getElementById('alloc-subject').value.trim();
+  const year    = document.getElementById('alloc-year').value;
+  const term    = document.getElementById('alloc-term').value;
+  if (!teacher||!cls||!subject||!year||!term) { toast('All required fields must be filled','error'); return; }
+  allocations.push({teacher, cls, subject, year, term, status:'Active'});
+  closeModal('modal-allocation');
+  document.getElementById('alloc-teacher').value='';
+  document.getElementById('alloc-class').value='';
+  document.getElementById('alloc-subject').value='';
+  document.getElementById('alloc-year').value='';
+  document.getElementById('alloc-term').value='';
+  renderAllocations();
+  toast('Allocation saved');
+}
+function renderAllocations(filter_class='', filter_subj='') {
+  const tbody = document.getElementById('alloc-tbody');
+  let list = allocations;
+  if (filter_class) list = list.filter(a=>a.cls===filter_class);
+  if (filter_subj)  list = list.filter(a=>a.subject===filter_subj);
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">👩‍🏫</div><div class="empty-title">No allocations found</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map((a,i)=>`
+    <tr>
+      <td>${a.teacher}</td>
+      <td>${a.cls}</td>
+      <td>${a.subject}</td>
+      <td>${a.year}</td>
+      <td>${a.term}</td>
+      <td><span class="badge b-green">${a.status}</span></td>
+      <td><button class="btn btn-danger btn-xs" onclick="removeAllocation(${allocations.indexOf(a)})">Remove</button></td>
+    </tr>`).join('');
+}
+function removeAllocation(i) { allocations.splice(i,1); renderAllocations(); toast('Allocation removed','warn'); }
+function filterAllocations() {
+  renderAllocations(
+    document.getElementById('alloc-filter-class').value,
+    document.getElementById('alloc-filter-subj').value
+  );
+}
+
+/* ═══════════════════════════════
+   TIMETABLE
+═══════════════════════════════ */
+let ttSlots = [];
+const DAYS    = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+const PERIODS = ['Period 1','Period 2','Period 3','Period 4','Period 5','Period 6','Period 7','Period 8'];
+
+function saveTTSlot() {
+  const cls     = document.getElementById('tt-edit-class').value;
+  const day     = document.getElementById('tt-edit-day').value;
+  const period  = document.getElementById('tt-edit-period').value;
+  const start   = document.getElementById('tt-edit-start').value;
+  const end     = document.getElementById('tt-edit-end').value;
+  const subject = document.getElementById('tt-edit-subj').value.trim();
+  const teacher = document.getElementById('tt-edit-teacher').value.trim();
+  if (!cls||!day||!period||!subject) { toast('Class, day, period and subject are required','error'); return; }
+  // Replace existing slot
+  const idx = ttSlots.findIndex(s=>s.cls===cls&&s.day===day&&s.period===period);
+  if (idx>-1) ttSlots[idx]={cls,day,period,start,end,subject,teacher};
+  else ttSlots.push({cls,day,period,start,end,subject,teacher});
+  renderTTSlotsList();
+  toast('Lesson slot saved');
+}
+function clearTTForm() {
+  ['tt-edit-class','tt-edit-day','tt-edit-period','tt-edit-start','tt-edit-end','tt-edit-subj','tt-edit-teacher']
+    .forEach(id=>{ const el=document.getElementById(id); el.value=''; });
+}
+function renderTTSlotsList() {
+  const tbody = document.getElementById('tt-slots-tbody');
+  if (!ttSlots.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No slots saved</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = ttSlots.map((s,i)=>`
+    <tr>
+      <td>${s.cls}</td><td>${s.day}</td><td>${s.period}</td>
+      <td>${s.start||'—'}–${s.end||'—'}</td>
+      <td>${s.subject}</td><td>${s.teacher||'—'}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="removeTTSlot(${i})">✕</button></td>
+    </tr>`).join('');
+}
+function removeTTSlot(i) { ttSlots.splice(i,1); renderTTSlotsList(); toast('Slot removed','warn'); }
+function renderTimetable() {
+  const cls = document.getElementById('tt-class-sel').value;
+  document.getElementById('tt-class-label').textContent = cls || 'No class selected';
+  const tbody = document.getElementById('tt-body');
+  if (!cls) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🗓️</div><div class="empty-title">Select a class</div></div></td></tr>`; return; }
+  const relevant = ttSlots.filter(s=>s.cls===cls);
+  tbody.innerHTML = PERIODS.map(p=>`
+    <tr>
+      <td>${p}</td>
+      ${DAYS.map(d=>{
+        const s = relevant.find(x=>x.day===d&&x.period===p);
+        if (s) return `<td><div class="tt-slot"><div class="ts-subj">${s.subject}</div><div class="ts-tchr">${s.teacher||''}</div>${s.start?`<div style="font-size:.6rem;color:var(--sub)">${s.start}–${s.end}</div>`:''}</div></td>`;
+        return `<td><span class="tt-empty">—</span></td>`;
+      }).join('')}
+    </tr>`).join('');
+}
+function printTimetable() { window.print(); }
+
+/* ═══════════════════════════════
+   EXAM MANAGEMENT
+═══════════════════════════════ */
+let exams = [];
+function saveExam() {
+  const name    = document.getElementById('ex-name').value.trim();
+  const type    = document.getElementById('ex-type').value;
+  const cls     = document.getElementById('ex-class').value;
+  const subject = document.getElementById('ex-subject').value.trim();
+  const max     = document.getElementById('ex-max').value;
+  const date    = document.getElementById('ex-date').value;
+  const term    = document.getElementById('ex-term').value;
+  const year    = document.getElementById('ex-year').value;
+  if (!name||!type||!cls||!subject||!max||!term||!year) { toast('Please fill all required fields','error'); return; }
+  exams.push({name,type,cls,subject,max,date,term,year,status:'Scheduled'});
+  closeModal('modal-exam');
+  ['ex-name','ex-class','ex-subject','ex-max','ex-date'].forEach(id=>document.getElementById(id).value='');
+  ['ex-type','ex-term','ex-year'].forEach(id=>document.getElementById(id).value='');
+  renderExams();
+  updateBadges();
+  toast('Exam added');
+}
+function renderExams(filter_cls='', filter_term='', filter_year='') {
+  const tbody = document.getElementById('exam-tbody');
+  let list = exams;
+  if (filter_cls)  list = list.filter(e=>e.cls===filter_cls);
+  if (filter_term) list = list.filter(e=>e.term===filter_term);
+  if (filter_year) list = list.filter(e=>e.year===filter_year);
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty"><div class="empty-icon">📝</div><div class="empty-title">No exams found</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map((e,i)=>{
+    const statusCls = e.status==='Scheduled'?'b-amber':e.status==='Active'?'b-teal':'b-green';
+    return `<tr>
+      <td>${e.name}</td>
+      <td><span class="badge b-navy">${e.type}</span></td>
+      <td>${e.cls}</td><td>${e.subject}</td><td>${e.max}</td>
+      <td>${e.date||'—'}</td><td>${e.term}</td><td>${e.year}</td>
+      <td><span class="badge ${statusCls}">${e.status}</span></td>
+      <td><button class="btn btn-danger btn-xs" onclick="removeExam(${exams.indexOf(e)})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+function removeExam(i) { exams.splice(i,1); renderExams(); updateBadges(); toast('Exam removed','warn'); }
+function filterExams() {
+  renderExams(
+    document.getElementById('exam-filter-class').value,
+    document.getElementById('exam-filter-term').value,
+    document.getElementById('exam-filter-year').value
+  );
+}
+
+/* ═══════════════════════════════
+   RESULTS APPROVAL
+═══════════════════════════════ */
+let submissions = [];
+let approvalActivities = [];
+function renderApproval(filter='all') {
+  const tbody = document.getElementById('approval-tbody');
+  let list = submissions;
+  if (filter!=='all') list = list.filter(s=>s.status.toLowerCase()===filter);
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty"><div class="empty-icon">✅</div><div class="empty-title">No submissions</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map((s,i)=>{
+    const globalIdx = submissions.indexOf(s);
+    const scls = s.status==='Pending'?'b-amber':s.status==='Approved'?'b-green':'b-red';
+    const canApprove = s.status==='Pending';
+    const canReturn  = s.status==='Pending';
+    return `<tr>
+      <td>${s.teacher}</td><td>${s.cls}</td><td>${s.subject}</td><td>${s.exam}</td>
+      <td>${s.submitted}</td><td>${s.pupils}</td>
+      <td>${s.missing>0?`<span class="badge b-red">${s.missing}</span>`:`<span class="badge b-green">0</span>`}</td>
+      <td><span class="badge ${scls}">${s.status}</span></td>
+      <td style="display:flex;gap:5px">
+        ${canApprove?`<button class="btn btn-green btn-xs" onclick="approveSubmission(${globalIdx})">✅ Approve</button>`:''}
+        ${canReturn?`<button class="btn btn-danger btn-xs" onclick="openReturnModal(${globalIdx})">↩️ Return</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+function approveSubmission(i) {
+  submissions[i].status = 'Approved';
+  approvalActivities.unshift({type:'approve', teacher:submissions[i].teacher, cls:submissions[i].cls, subject:submissions[i].subject, time: new Date().toLocaleTimeString()});
+  renderApproval(); renderDashboard(); toast('Submission approved');
+}
+function openReturnModal(i) {
+  document.getElementById('return-idx').value = i;
+  document.getElementById('return-reason').value = '';
+  openModal('modal-return');
+}
+function confirmReturn() {
+  const i = parseInt(document.getElementById('return-idx').value);
+  const reason = document.getElementById('return-reason').value.trim();
+  if (!reason) { toast('Return reason is required','error'); return; }
+  submissions[i].status = 'Returned';
+  submissions[i].returnReason = reason;
+  approvalActivities.unshift({type:'return', teacher:submissions[i].teacher, cls:submissions[i].cls, subject:submissions[i].subject, time: new Date().toLocaleTimeString(), reason});
+  closeModal('modal-return');
+  renderApproval(); renderDashboard(); toast('Submission returned to teacher','warn');
+}
+function filterApproval(filter, el) {
+  document.querySelectorAll('[id^=appr-filter-]').forEach(b=>b.classList.remove('btn-primary'));
+  if (el) { el.classList.add('btn-primary'); el.classList.remove('btn-outline'); }
+  renderApproval(filter);
+}
+
+/* ═══════════════════════════════
+   REPORT CARDS
+═══════════════════════════════ */
+// Demo pupil list (empty by default, one demo entry to show layout)
+const DEMO_PUPILS = [];
+function loadPupilsForRC() {
+  const cls  = document.getElementById('rc-class').value;
+  const term = document.getElementById('rc-term').value;
+  const year = document.getElementById('rc-year').value;
+  if (!cls||!term||!year) { toast('Select class, term and year','error'); return; }
+  document.getElementById('rc-list-label').textContent = `${cls} · ${term} · ${year}`;
+  document.getElementById('rc-step1').classList.add('hidden');
+  document.getElementById('rc-step2').classList.remove('hidden');
+  renderPupilRCList(cls, term, year);
+}
+function backToRCStep1() {
+  document.getElementById('rc-step2').classList.add('hidden');
+  document.getElementById('rc-step1').classList.remove('hidden');
+  document.getElementById('rc-print-area').innerHTML = '';
+}
+function renderPupilRCList(cls, term, year) {
+  const cont = document.getElementById('rc-pupil-list');
+  // Use demo if no real data
+  const pupils = DEMO_PUPILS.length ? DEMO_PUPILS : [];
+  if (!pupils.length) {
+    cont.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div class="empty-title">No pupil records found</div><div class="empty-desc">Pupil data for <strong>${cls}</strong> will appear here once registered.</div></div>`;
+    return;
+  }
+  cont.innerHTML = pupils.map((p,i)=>`
+    <div class="pupil-rc-row">
+      <div>
+        <div style="font-weight:600;font-size:.78rem">${p.name}</div>
+        <div style="font-size:.68rem;color:var(--sub)">${p.admNo} · ${p.gender}</div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="generateRC(${i})">📄 Generate</button>
+    </div>`).join('');
+}
+function generateAllRC() {
+  if (!DEMO_PUPILS.length) { toast('No pupils to generate report cards for','warn'); return; }
+  DEMO_PUPILS.forEach((_,i) => generateRC(i, true));
+  toast('All report cards generated — use browser print');
+}
+function generateRC(i, silent=false) {
+  const p = DEMO_PUPILS[i];
+  const cls  = document.getElementById('rc-list-label').textContent.split(' · ')[0];
+  const term = document.getElementById('rc-list-label').textContent.split(' · ')[1];
+  const year = document.getElementById('rc-list-label').textContent.split(' · ')[2];
+  const marks = p.marks || [];
+  let total=0, maxTotal=0, points=0, subjCount=0;
+  const rows = marks.map(m=>{
+    const g = getGrade(m.marks);
+    total += m.marks; maxTotal += (m.max||100); points += g.points; subjCount++;
+    return `<tr>
+      <td>${m.subject}</td>
+      <td style="text-align:center">${m.marks}</td>
+      <td style="text-align:center">${m.max||100}</td>
+      <td style="text-align:center"><span class="${g.cls}">${g.grade}</span></td>
+      <td style="text-align:center">${g.points}</td>
+      <td>${getGradeRemark(g.grade)}</td>
+    </tr>`;
+  }).join('');
+  const avg = subjCount ? (total/subjCount).toFixed(1) : '—';
+  const rc = buildRCHTML(p, cls, term, year, rows, total, maxTotal, avg, points);
+  document.getElementById('rc-print-area').innerHTML += rc;
+  if (!silent) toast('Report card generated — use Ctrl+P to print');
+}
+function buildRCHTML(p, cls, term, year, rows, total, maxTotal, avg, points) {
+  return `
+  <div class="rc-wrap" style="margin-bottom:24px;page-break-after:always">
+    <div class="rc-header">
+      <img src="../star logo.png" alt="Logo" class="rc-logo"/>
+      <div class="rc-school-info">
+        <div class="rc-school-name">Five Star Model School</div>
+        <div class="rc-school-motto">Nature for Excellence</div>
+        <div class="rc-school-addr">Kasese District, Uganda</div>
+      </div>
+    </div>
+    <div class="rc-term-banner">ACADEMIC REPORT CARD · ${term} · ${year}</div>
+    <div class="rc-pupil-info">
+      <div class="rc-pi-row"><span class="rc-pi-lbl">Pupil Name:</span><span class="rc-pi-val">${p.name}</span></div>
+      <div class="rc-pi-row"><span class="rc-pi-lbl">Admission No.:</span><span class="rc-pi-val">${p.admNo}</span></div>
+      <div class="rc-pi-row"><span class="rc-pi-lbl">Class:</span><span class="rc-pi-val">${cls}</span></div>
+      <div class="rc-pi-row"><span class="rc-pi-lbl">Gender:</span><span class="rc-pi-val">${p.gender||'—'}</span></div>
+    </div>
+    <table class="rc-marks-table">
+      <thead><tr><th>Subject</th><th>Marks</th><th>Max</th><th>Grade</th><th>Points</th><th>Remarks</th></tr></thead>
+      <tbody>
+        ${rows || '<tr><td colspan="6" style="text-align:center;color:#999">No marks recorded</td></tr>'}
+        <tr class="rc-totals-row">
+          <td><strong>Total / Average</strong></td>
+          <td style="text-align:center"><strong>${total}</strong></td>
+          <td style="text-align:center"><strong>${maxTotal}</strong></td>
+          <td style="text-align:center">—</td>
+          <td style="text-align:center"><strong>${points}</strong></td>
+          <td>Avg: <strong>${avg}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rc-summary">
+      <div class="rc-attend">
+        <div class="rc-attend-title">📅 Attendance Summary</div>
+        <div class="rc-attend-row"><span>Days Present</span><span>${p.present||'—'}</span></div>
+        <div class="rc-attend-row"><span>Days Absent</span><span>${p.absent||'—'}</span></div>
+        <div class="rc-attend-row"><span>Days Late</span><span>${p.late||'—'}</span></div>
+        <div class="rc-attend-row"><span>Total School Days</span><span>${p.totalDays||'—'}</span></div>
+      </div>
+      <div class="rc-comments">
+        <div class="rc-comments-title">💬 Comments</div>
+        <div class="rc-comment-row"><div class="rc-comment-lbl">Class Teacher</div><div class="rc-comment-val">${p.classTeacherComment||'—'}</div></div>
+        <div class="rc-comment-row" style="margin-top:6px"><div class="rc-comment-lbl">Head Teacher</div><div class="rc-comment-val">${p.headTeacherComment||'—'}</div></div>
+      </div>
+    </div>
+    <div class="rc-promo rc-promo-${(p.promotion||'pending').toLowerCase()}">
+      Promotion Decision: ${p.promotion||'PENDING'}
+    </div>
+    <div class="rc-sigs">
+      <div class="rc-sig-box"><div class="rc-sig-line"></div><div class="rc-sig-lbl">Class Teacher</div></div>
+      <div class="rc-sig-box"><div class="rc-sig-line"></div><div class="rc-sig-lbl">Head Teacher</div></div>
+      <div class="rc-sig-box"><div class="rc-sig-line"></div><div class="rc-sig-lbl">School Stamp</div></div>
+    </div>
+    <div class="rc-next-term">📅 Next Term Opening Date: ${p.nextTermDate||'To be announced'}</div>
+  </div>`;
+}
+
+/* ═══════════════════════════════
+   PERFORMANCE
+═══════════════════════════════ */
+function searchPupil(val) {
+  const cont = document.getElementById('pupil-perf-results');
+  if (!val.trim()) {
+    cont.innerHTML = `<div class="empty" style="padding:24px"><div class="empty-icon">🔍</div><div class="empty-title">Search for a pupil</div><div class="empty-desc">Enter a name or admission number above.</div></div>`;
+    return;
+  }
+  // No real data — show informative empty state
+  cont.innerHTML = `<div class="empty" style="padding:24px"><div class="empty-icon">📭</div><div class="empty-title">No results for "${val}"</div><div class="empty-desc">No pupil records match this search. Results appear once marks are approved.</div></div>`;
+}
+
+/* ═══════════════════════════════
+   ACADEMIC CALENDAR
+═══════════════════════════════ */
+let events = [];
+const EV_COLORS = {
+  Exam:'ev-exam', Holiday:'ev-holiday', Meeting:'ev-meeting',
+  'Visiting Day':'ev-visiting', Opening:'ev-opening', Closing:'ev-closing', Other:'ev-other'
+};
+function saveEvent() {
+  const name     = document.getElementById('ev-name').value.trim();
+  const type     = document.getElementById('ev-type').value;
+  const date     = document.getElementById('ev-date').value;
+  const audience = document.getElementById('ev-audience').value;
+  const desc     = document.getElementById('ev-desc').value.trim();
+  if (!name||!type||!date) { toast('Name, type and date are required','error'); return; }
+  events.push({name,type,date,audience,desc});
+  events.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  closeModal('modal-event');
+  ['ev-name','ev-date','ev-desc'].forEach(id=>document.getElementById(id).value='');
+  ['ev-type','ev-audience'].forEach(id=>document.getElementById(id).value='');
+  renderCalendar(); toast('Event added');
+}
+function renderCalendar() {
+  const tbody = document.getElementById('calendar-tbody');
+  if (!events.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">📅</div><div class="empty-title">No events</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = events.map((e,i)=>`
+    <tr>
+      <td><strong>${e.name}</strong></td>
+      <td><span class="badge ${EV_COLORS[e.type]||'b-gray'}">${e.type}</span></td>
+      <td>${formatDate(e.date)}</td>
+      <td>${e.audience||'All'}</td>
+      <td>${e.desc||'—'}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="removeEvent(${i})">✕</button></td>
+    </tr>`).join('');
+}
+function removeEvent(i) { events.splice(i,1); renderCalendar(); toast('Event removed','warn'); }
+function formatDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+/* ═══════════════════════════════
+   SYLLABUS COVERAGE
+═══════════════════════════════ */
+let syllabus = [];
+function renderSyllabus(filter_cls='', filter_subj='', filter_teacher='') {
+  const tbody = document.getElementById('syllabus-tbody');
+  let list = syllabus;
+  if (filter_cls)     list = list.filter(s=>s.cls===filter_cls);
+  if (filter_subj)    list = list.filter(s=>s.subject===filter_subj);
+  if (filter_teacher) list = list.filter(s=>s.teacher===filter_teacher);
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No coverage records</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(s=>{
+    const pct = s.total ? Math.round((s.covered/s.total)*100) : 0;
+    const cls = pct>=80 ? 'cov-high' : pct>=50 ? 'cov-mid' : 'cov-low';
+    return `<tr>
+      <td>${s.teacher}</td><td>${s.cls}</td><td>${s.subject}</td><td>${s.term}</td>
+      <td style="text-align:center">${s.total}</td>
+      <td style="text-align:center">${s.covered}</td>
+      <td style="text-align:center">${s.total-s.covered}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="cov-bar" style="flex:1"><div class="cov-fill ${cls}" style="width:${pct}%"></div></div>
+          <span style="font-size:.7rem;font-weight:700;min-width:32px">${pct}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function filterSyllabus() {
+  renderSyllabus(
+    document.getElementById('syl-filter-class').value,
+    document.getElementById('syl-filter-subj').value,
+    document.getElementById('syl-filter-teacher').value
+  );
+}
+
+/* ═══════════════════════════════
+   DASHBOARD
+═══════════════════════════════ */
+function renderDashboard() {
+  const pending  = submissions.filter(s=>s.status==='Pending').length;
+  const missing  = submissions.reduce((a,s)=>a+s.missing,0);
+  const approved = submissions.filter(s=>s.status==='Approved').length;
+  document.getElementById('k-pending').textContent  = pending;
+  document.getElementById('k-missing').textContent  = missing;
+  document.getElementById('k-subjects').textContent = subjects.length;
+  document.getElementById('k-teachers').textContent = allocations.length;
+  document.getElementById('k-complete').textContent = approved;
+  // Badges
+  document.getElementById('exam-badge').textContent     = exams.length;
+  document.getElementById('approval-badge').textContent = pending;
+  // Recent activity
+  const actCont = document.getElementById('recent-approvals-list');
+  if (!approvalActivities.length) {
+    actCont.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">No recent activity</div></div>`;
+  } else {
+    actCont.innerHTML = approvalActivities.slice(0,8).map(a=>`
+      <div class="act-item">
+        <div class="act-dot" style="background:${a.type==='approve'?'var(--green)':'var(--red)'}"></div>
+        <div>
+          <div style="font-size:.75rem;font-weight:600">${a.type==='approve'?'✅ Approved':'↩️ Returned'}: ${a.teacher} · ${a.cls} · ${a.subject}</div>
+          ${a.reason?`<div style="font-size:.68rem;color:var(--red)">Reason: ${a.reason}</div>`:''}
+          <div style="font-size:.66rem;color:var(--sub)">${a.time}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+function updateBadges() { renderDashboard(); }
+
+/* ── Init ── */
+renderDashboard();
+renderSubjectMatrix();
+</script>
+</body>
+</html>
