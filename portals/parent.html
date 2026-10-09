@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Parent Portal – Five Star Model School</title>
+<link rel="stylesheet" href="../assets/sms.css"/>
+<style>
+/* ══════════════════════════════════════════
+   PARENT PORTAL – TOP NAV + BOTTOM NAV LAYOUT
+══════════════════════════════════════════ */
+body { overflow-x:hidden; }
+
+/* Override default layout – no sidebar */
+.parent-topnav {
+  background:var(--navy);
+  color:#fff;
+  padding:0 24px;
+  height:62px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+  gap:12px;
+}
+.ptnav-brand {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+.ptnav-logo {
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:2px solid var(--teal);
+  overflow:hidden;
+  background:rgba(255,255,255,.1);
+  flex-shrink:0;
+}
+.ptnav-logo img { width:100%; height:100%; object-fit:cover; }
+.ptnav-school { font-size:.78rem; font-weight:700; color:#fff; line-height:1.2; }
+.ptnav-portal { font-size:.62rem; color:var(--teal); font-weight:600; text-transform:uppercase; letter-spacing:.4px; }
+.parent-topnav-links {
+  display:flex;
+  gap:4px;
+  flex:1;
+  justify-content:center;
+  overflow-x:auto;
+}
+.parent-topnav-links::-webkit-scrollbar { height:0; }
+.pnav-link {
+  padding:7px 12px;
+  border-radius:6px;
+  font-size:.76rem;
+  font-weight:500;
+  color:rgba(255,255,255,.75);
+  cursor:pointer;
+  transition:.15s;
+  white-space:nowrap;
+}
+.pnav-link:hover, .pnav-link.active {
+  background:rgba(24,169,153,.25);
+  color:#fff;
+}
+.ptnav-user {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-shrink:0;
+}
+.ptnav-name {
+  font-size:.75rem;
+  font-weight:600;
+  color:rgba(255,255,255,.85);
+  white-space:nowrap;
+  max-width:120px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ptnav-av {
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:var(--teal);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.68rem;
+  font-weight:700;
+  flex-shrink:0;
+}
+.ptnav-signout {
+  background:none;
+  border:none;
+  color:rgba(255,255,255,.5);
+  font-size:.85rem;
+  padding:5px;
+  border-radius:4px;
+  cursor:pointer;
+  transition:.15s;
+}
+.ptnav-signout:hover { color:#fff; background:rgba(255,255,255,.1); }
+
+/* Mobile bottom nav */
+.parent-bottomnav {
+  display:none;
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:var(--navy);
+  z-index:200;
+  border-top:1px solid rgba(255,255,255,.1);
+}
+.pbnav-item {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  padding:4px 8px;
+  cursor:pointer;
+  color:rgba(255,255,255,.55);
+  font-size:.58rem;
+  font-weight:600;
+  min-width:48px;
+  position:relative;
+}
+.pbnav-item.active, .pbnav-item:hover { color:#fff; }
+.pbnav-item.active .pbnav-icon { color:var(--teal); }
+.pbnav-icon { font-size:1.2rem; line-height:1; }
+.pbnav-dot {
+  position:absolute;
+  top:4px;
+  right:8px;
+  width:6px;
+  height:6px;
+  background:var(--red);
+  border-radius:50%;
+  border:1.5px solid var(--navy);
+}
+
+/* Main content */
+.parent-main {
+  max-width:1100px;
+  margin:0 auto;
+  padding:24px 20px 80px;
+}
+
+/* Child selector chips */
+.child-chip {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 14px;
+  border-radius:20px;
+  border:2px solid var(--border);
+  background:var(--white);
+  cursor:pointer;
+  font-size:.76rem;
+  font-weight:600;
+  transition:.15s;
+  margin:4px;
+}
+.child-chip:hover { border-color:var(--teal); }
+.child-chip.selected { border-color:var(--teal); background:var(--teal); color:#fff; }
+.child-chip-avatar {
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:rgba(255,255,255,.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.72rem;
+}
+.child-chip.selected .child-chip-avatar { background:rgba(255,255,255,.25); }
+
+/* Child card (My Children section) */
+.child-card {
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  box-shadow:var(--shadow);
+  transition:.15s;
+}
+.child-card:hover { box-shadow:var(--shadow-md); }
+.child-avatar {
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:var(--teal3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.6rem;
+  flex-shrink:0;
+  border:2px solid var(--teal);
+}
+.child-info { flex:1; }
+.child-name { font-size:.9rem; font-weight:700; color:var(--text); margin-bottom:3px; }
+.child-meta { font-size:.72rem; color:var(--sub); margin-bottom:8px; }
+.child-tags { display:flex; flex-wrap:wrap; gap:4px; }
+
+/* Attendance day cells */
+.att-day {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:32px;
+  height:32px;
+  border-radius:6px;
+  font-size:.68rem;
+  font-weight:700;
+  margin:2px;
+  cursor:default;
+}
+.att-P { background:#d8f5e8; color:var(--green); }
+.att-A { background:#fde8e7; color:var(--red); }
+.att-L { background:#fef3d8; color:#b37b10; }
+.att-E { background:#d1f5f2; color:var(--teal2); }
+.att-x { background:var(--bg); color:var(--sub); }
+.att-hdr { background:transparent; color:var(--sub); font-size:.62rem; font-weight:700; }
+.att-wkd { background:#f0f4f9; color:var(--sub); opacity:.5; }
+
+/* Fee rows */
+.fee-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+  font-size:.78rem;
+}
+.fee-row:last-child { border-bottom:none; }
+.fee-label { color:var(--sub); }
+.fee-value { font-weight:600; color:var(--text); }
+.fee-value.owed { color:var(--red); }
+.fee-value.paid { color:var(--green); }
+
+/* Summary balances */
+.bal-card {
+  border-radius:10px;
+  padding:14px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+  font-size:.8rem;
+}
+.bal-charged  { background:#e8eef6; }
+.bal-paid     { background:#d8f5e8; }
+.bal-discount { background:#fef3d8; }
+.bal-owed     { background:#fde8e7; }
+
+/* Announcement card */
+.ann-card {
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px 16px;
+  margin-bottom:10px;
+  transition:.15s;
+  border-left:4px solid var(--border);
+}
+.ann-card.unread { border-left-color:var(--teal); }
+.ann-card:hover { box-shadow:var(--shadow-md); }
+.ann-title { font-size:.84rem; font-weight:700; margin-bottom:3px; display:flex; gap:8px; align-items:center; }
+.ann-meta  { font-size:.68rem; color:var(--sub); margin-bottom:6px; }
+.ann-body  { font-size:.76rem; color:var(--text); line-height:1.6; }
+
+/* Calendar event */
+.cal-event {
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.cal-event:last-child { border-bottom:none; }
+.cal-event.past { opacity:.5; }
+.cal-date-box {
+  min-width:46px;
+  height:46px;
+  border-radius:8px;
+  background:var(--teal3);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.cal-date-box .dd { font-size:1rem; font-weight:800; color:var(--teal2); line-height:1; }
+.cal-date-box .mm { font-size:.58rem; font-weight:700; color:var(--teal2); text-transform:uppercase; }
+.cal-ev-title { font-size:.8rem; font-weight:700; margin-bottom:2px; }
+.cal-ev-desc  { font-size:.71rem; color:var(--sub); }
+.cal-ev-exam   .cal-date-box { background:#fde8e7; }
+.cal-ev-exam   .dd, .cal-ev-exam .mm { color:var(--red); }
+.cal-ev-holiday .cal-date-box { background:#d8f5e8; }
+.cal-ev-holiday .dd, .cal-ev-holiday .mm { color:var(--green); }
+.cal-ev-meeting .cal-date-box { background:#fef3d8; }
+.cal-ev-meeting .dd, .cal-ev-meeting .mm { color:#b37b10; }
+
+/* Welcome hero banner */
+.hero-banner {
+  background:linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, var(--teal2) 100%);
+  border-radius:14px;
+  padding:22px 24px;
+  color:#fff;
+  margin-bottom:20px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-banner::before {
+  content:'🎓';
+  position:absolute;
+  right:20px;
+  top:10px;
+  font-size:4rem;
+  opacity:.12;
+}
+.hero-welcome { font-size:.78rem; color:rgba(255,255,255,.7); font-weight:500; margin-bottom:3px; }
+.hero-name    { font-size:1.3rem; font-weight:800; margin-bottom:4px; }
+.hero-school  { font-size:.72rem; color:rgba(255,255,255,.6); font-weight:500; }
+
+/* Page sections */
+.page-section { display:none; }
+.page-section.active { display:block; }
+.section-hd {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.section-title {
+  font-size:1rem;
+  font-weight:800;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* Print receipt */
+.receipt-print {
+  font-family:'Inter',sans-serif;
+  max-width:380px;
+  margin:0 auto;
+  padding:20px;
+  font-size:.78rem;
+}
+.receipt-header {
+  text-align:center;
+  border-bottom:2px solid var(--navy);
+  padding-bottom:12px;
+  margin-bottom:12px;
+}
+.receipt-logo {
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  margin:0 auto 6px;
+  border:2px solid var(--teal);
+  overflow:hidden;
+  background:var(--bg);
+}
+.receipt-logo img { width:100%; height:100%; object-fit:cover; }
+.receipt-school   { font-size:.9rem; font-weight:800; color:var(--navy); }
+.receipt-motto    { font-size:.62rem; color:var(--sub); font-style:italic; margin:2px 0; }
+.receipt-location { font-size:.62rem; color:var(--sub); }
+.receipt-title {
+  text-align:center;
+  font-size:.78rem;
+  font-weight:700;
+  color:var(--white);
+  background:var(--navy);
+  padding:6px;
+  border-radius:4px;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.receipt-row {
+  display:flex;
+  justify-content:space-between;
+  padding:4px 0;
+  border-bottom:1px dashed var(--border);
+}
+.receipt-row:last-child { border-bottom:none; }
+.receipt-key { color:var(--sub); }
+.receipt-val { font-weight:600; text-align:right; }
+.receipt-total {
+  margin-top:10px;
+  padding:8px 10px;
+  background:var(--teal3);
+  border-radius:6px;
+  display:flex;
+  justify-content:space-between;
+  font-weight:800;
+  font-size:.84rem;
+}
+.receipt-footer {
+  margin-top:12px;
+  text-align:center;
+  font-size:.62rem;
+  color:var(--sub);
+  border-top:1px solid var(--border);
+  padding-top:8px;
+}
+
+/* Complaint request status */
+.req-row {
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  font-size:.76rem;
+}
+.req-row:last-child { border-bottom:none; }
+.req-body { flex:1; }
+.req-subject { font-weight:700; margin-bottom:2px; }
+.req-meta    { color:var(--sub); font-size:.68rem; margin-bottom:4px; }
+.req-response { background:var(--bg); border-radius:6px; padding:6px 8px; font-size:.7rem; color:var(--text); margin-top:4px; border-left:3px solid var(--teal); }
+
+/* Section selector bar (child tabs) */
+.selector-bar {
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px 16px;
+  margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.selector-label { font-size:.7rem; font-weight:700; color:var(--sub); white-space:nowrap; }
+
+/* Month nav */
+.month-nav {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.month-nav button {
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:4px 10px;
+  font-size:.8rem;
+  cursor:pointer;
+  transition:.15s;
+}
+.month-nav button:hover { background:var(--teal3); border-color:var(--teal); }
+.month-nav .month-label { font-size:.84rem; font-weight:700; min-width:110px; text-align:center; }
+
+/* Attendance calendar grid */
+.att-calendar {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:3px;
+  margin-bottom:14px;
+}
+
+/* No child selected notice */
+.no-child-notice {
+  text-align:center;
+  padding:40px 20px;
+  background:var(--white);
+  border-radius:12px;
+  border:1px dashed var(--border);
+}
+
+/* Quick link buttons */
+.qlink-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;
+  margin-bottom:20px;
+}
+.qlink-btn {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  padding:14px 10px;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:10px;
+  cursor:pointer;
+  transition:.15s;
+  font-size:.72rem;
+  font-weight:600;
+  color:var(--text);
+  text-align:center;
+}
+.qlink-btn:hover { border-color:var(--teal); background:var(--teal3); color:var(--teal2); }
+.qlink-icon { font-size:1.4rem; }
+
+/* Pending requests table indicator */
+.pending-badge {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:18px;
+  height:18px;
+  background:var(--amber);
+  color:var(--navy);
+  font-size:.6rem;
+  font-weight:700;
+  border-radius:9px;
+  padding:0 4px;
+}
+
+/* Urgency indicator */
+.urgency-H { color:var(--red);   font-weight:700; }
+.urgency-M { color:#b37b10;      font-weight:700; }
+.urgency-L { color:var(--green); font-weight:700; }
+
+@media (max-width:768px) {
+  .parent-topnav-links { display:none; }
+  .parent-bottomnav { display:flex; justify-content:space-around; padding:8px 0 calc(8px + env(safe-area-inset-bottom)); }
+  .parent-main { padding:16px 12px 90px; }
+  .ptnav-name { display:none; }
+  .ptnav-school { font-size:.7rem; }
+  .hero-name { font-size:1.1rem; }
+  .form-row { grid-template-columns:1fr; }
+  .child-card { flex-direction:column; }
+}
+@media (max-width:480px) {
+  .qlink-grid { grid-template-columns:1fr 1fr; }
+  .att-day { width:28px; height:28px; font-size:.6rem; }
+}
+
+@media print {
+  .parent-topnav, .parent-bottomnav, .no-print { display:none !important; }
+  .parent-main { padding:0 !important; max-width:100% !important; }
+  body { background:#fff; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     TOP NAV BAR (desktop)
+═══════════════════════════════════════ -->
+<header class="parent-topnav">
+  <div class="ptnav-brand">
+    <div class="ptnav-logo"><img src="../star logo.png" alt="Logo"/></div>
+    <div>
+      <div class="ptnav-school">Five Star Model School</div>
+      <div class="ptnav-portal">Parent Portal</div>
+    </div>
+  </div>
+
+  <nav class="parent-topnav-links" role="navigation" aria-label="Main navigation">
+    <span class="pnav-link active" onclick="nav('home')" data-sec="home">🏠 Home</span>
+    <span class="pnav-link" onclick="nav('children')" data-sec="children">👨‍👩‍👧 My Children</span>
+    <span class="pnav-link" onclick="nav('fees')" data-sec="fees">💳 Fees</span>
+    <span class="pnav-link" onclick="nav('attendance')" data-sec="attendance">📋 Attendance</span>
+    <span class="pnav-link" onclick="nav('announcements')" data-sec="announcements" id="ann-topnav">📢 Announcements</span>
+    <span class="pnav-link" onclick="nav('calendar')" data-sec="calendar">📅 Calendar</span>
+    <span class="pnav-link" onclick="nav('complaints')" data-sec="complaints">📝 Complaints</span>
+  </nav>
+
+  <div class="ptnav-user">
+    <div class="ptnav-av" id="ptnav-av">P</div>
+    <div class="ptnav-name" id="ptnav-name">Parent</div>
+    <button class="ptnav-signout" onclick="signOut()" title="Sign Out" aria-label="Sign out">⏻</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════
+     MOBILE BOTTOM NAV
+═══════════════════════════════════════ -->
+<nav class="parent-bottomnav" role="navigation" aria-label="Mobile navigation">
+  <div class="pbnav-item active" onclick="nav('home')" data-sec="home">
+    <span class="pbnav-icon">🏠</span><span>Home</span>
+  </div>
+  <div class="pbnav-item" onclick="nav('children')" data-sec="children">
+    <span class="pbnav-icon">👧</span><span>Children</span>
+  </div>
+  <div class="pbnav-item" onclick="nav('fees')" data-sec="fees">
+    <span class="pbnav-icon">💳</span><span>Fees</span>
+  </div>
+  <div class="pbnav-item" onclick="nav('attendance')" data-sec="attendance">
+    <span class="pbnav-icon">📋</span><span>Attendance</span>
+  </div>
+  <div class="pbnav-item" onclick="nav('announcements')" data-sec="announcements" id="ann-bottomnav">
+    <span class="pbnav-icon">📢</span><span>Notices</span>
+    <span class="pbnav-dot" id="ann-dot" style="display:none"></span>
+  </div>
+  <div class="pbnav-item" onclick="nav('complaints')" data-sec="complaints">
+    <span class="pbnav-icon">📝</span><span>Requests</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════ -->
+<main class="parent-main" id="parent-main">
+
+  <!-- ─── SECTION: HOME / DASHBOARD ─── -->
+  <section class="page-section active" id="sec-home">
+    <!-- Welcome banner -->
+    <div class="hero-banner">
+      <div class="hero-welcome">Welcome back,</div>
+      <div class="hero-name" id="home-parent-name">Parent</div>
+      <div class="hero-school">Five Star Model School · Parent Portal</div>
+    </div>
+
+    <!-- No children alert -->
+    <div id="no-children-alert" class="alert alert-amber" style="display:none">
+      <span>⚠️</span>
+      <div>
+        <strong>No children linked to your account.</strong>
+        Submit a link request below and the Registrar will verify and approve your request.
+        <div style="margin-top:6px">
+          <button class="btn btn-amber btn-sm" onclick="nav('children')">Submit Link Request →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Child selector -->
+    <div class="selector-bar" id="home-child-selector">
+      <span class="selector-label">Viewing:</span>
+      <div id="home-child-chips"><!-- chips injected by JS --></div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="kpi-grid" id="home-kpi-grid">
+      <div class="kpi">
+        <div class="kpi-icon ic-red">💳</div>
+        <div>
+          <div class="kpi-val" id="kpi-balance">UGX 0</div>
+          <div class="kpi-label">Outstanding Balance</div>
+          <div class="kpi-note" id="kpi-balance-note"></div>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon ic-green">📋</div>
+        <div>
+          <div class="kpi-val" id="kpi-att">—</div>
+          <div class="kpi-label">Attendance Rate</div>
+          <div class="kpi-note" id="kpi-att-note"></div>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon ic-amber">📢</div>
+        <div>
+          <div class="kpi-val" id="kpi-ann">0</div>
+          <div class="kpi-label">Unread Announcements</div>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon ic-teal">📅</div>
+        <div>
+          <div class="kpi-val" style="font-size:.9rem;" id="kpi-next-event">—</div>
+          <div class="kpi-label">Next Upcoming Event</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick links -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="card-title-icon">⚡</span> Quick Actions</div></div>
+      <div class="card-body">
+        <div class="qlink-grid">
+          <button class="qlink-btn" onclick="nav('fees')"><span class="qlink-icon">💳</span>View Fees</button>
+          <button class="qlink-btn" onclick="nav('attendance')"><span class="qlink-icon">📋</span>Attendance</button>
+          <button class="qlink-btn" onclick="nav('announcements')"><span class="qlink-icon">📢</span>Announcements</button>
+          <button class="qlink-btn" onclick="nav('complaints')"><span class="qlink-icon">📝</span>Submit Complaint</button>
+          <button class="qlink-btn" onclick="nav('children')"><span class="qlink-icon">👧</span>My Children</button>
+          <button class="qlink-btn" onclick="nav('calendar')"><span class="qlink-icon">📅</span>School Calendar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION: MY CHILDREN ─── -->
+  <section class="page-section" id="sec-children">
+    <div class="section-hd">
+      <div class="section-title">👨‍👩‍👧 My Children</div>
+      <button class="btn btn-teal btn-sm" onclick="openLinkModal()">➕ Link a Child</button>
+    </div>
+
+    <!-- Children grid -->
+    <div id="children-grid"><!-- injected by JS --></div>
+
+    <!-- Pending link requests -->
+    <div class="card" id="pending-links-card">
+      <div class="card-hd">
+        <div class="card-title"><span class="card-title-icon">🕐</span> Pending Link Requests</div>
+      </div>
+      <div class="card-body" id="pending-links-body">
+        <div class="empty">
+          <div class="empty-icon">🕐</div>
+          <div class="empty-title">No pending requests</div>
+          <div class="empty-desc">Any link requests you submit will appear here with their approval status.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION: FEES ─── -->
+  <section class="page-section" id="sec-fees">
+    <div class="section-hd">
+      <div class="section-title">💳 Fees & Payments</div>
+    </div>
+
+    <!-- Child selector -->
+    <div class="selector-bar">
+      <span class="selector-label">Child:</span>
+      <div id="fees-child-chips"><!-- injected --></div>
+    </div>
+
+    <div id="fees-content"><!-- injected by JS --></div>
+  </section>
+
+  <!-- ─── SECTION: ATTENDANCE ─── -->
+  <section class="page-section" id="sec-attendance">
+    <div class="section-hd">
+      <div class="section-title">📋 Attendance</div>
+    </div>
+
+    <!-- Child selector -->
+    <div class="selector-bar">
+      <span class="selector-label">Child:</span>
+      <div id="att-child-chips"><!-- injected --></div>
+    </div>
+
+    <div id="att-content"><!-- injected by JS --></div>
+  </section>
+
+  <!-- ─── SECTION: ANNOUNCEMENTS ─── -->
+  <section class="page-section" id="sec-announcements">
+    <div class="section-hd">
+      <div class="section-title">📢 Announcements</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="ann-filters">
+        <button class="btn btn-outline btn-sm active-filter" onclick="filterAnn('All', this)">All</button>
+        <button class="btn btn-outline btn-sm" onclick="filterAnn('General', this)">General</button>
+        <button class="btn btn-outline btn-sm" onclick="filterAnn('Academic', this)">Academic</button>
+        <button class="btn btn-outline btn-sm" onclick="filterAnn('Fees', this)">Fees</button>
+        <button class="btn btn-outline btn-sm" onclick="filterAnn('Urgent', this)">Urgent</button>
+      </div>
+    </div>
+    <div id="ann-list"><!-- injected --></div>
+  </section>
+
+  <!-- ─── SECTION: CALENDAR ─── -->
+  <section class="page-section" id="sec-calendar">
+    <div class="section-hd">
+      <div class="section-title">📅 School Calendar</div>
+    </div>
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title"><span class="card-title-icon">📅</span> Upcoming Events</div>
+      </div>
+      <div class="card-body" id="cal-content"><!-- injected --></div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION: COMPLAINTS & REQUESTS ─── -->
+  <section class="page-section" id="sec-complaints">
+    <div class="section-hd">
+      <div class="section-title">📝 Complaints &amp; Requests</div>
+    </div>
+
+    <!-- Submit form -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title"><span class="card-title-icon">✏️</span> Submit a Request</div>
+      </div>
+      <div class="card-body">
+        <form id="complaint-form" onsubmit="submitComplaint(event)">
+          <div class="form-row">
+            <div class="fg">
+              <label for="cmp-type">Request Type</label>
+              <select id="cmp-type" required>
+                <option value="">— Select type —</option>
+                <option value="Complaint">Complaint</option>
+                <option value="Inquiry">Inquiry</option>
+                <option value="Appointment Request">Appointment Request</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label for="cmp-urgency">Urgency</label>
+              <select id="cmp-urgency" required>
+                <option value="">— Select urgency —</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg">
+            <label for="cmp-subject">Subject</label>
+            <input type="text" id="cmp-subject" placeholder="Brief subject of your request" required/>
+          </div>
+          <div class="fg">
+            <label for="cmp-msg">Message</label>
+            <textarea id="cmp-msg" rows="4" placeholder="Describe your request in detail…" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-teal">📤 Submit Request</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- My requests -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title"><span class="card-title-icon">🗂️</span> My Requests</div>
+      </div>
+      <div class="card-body" id="requests-list">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </section>
+
+</main><!-- /parent-main -->
+
+<!-- ═══════════════════════════════════════
+     MODAL: LINK A CHILD
+═══════════════════════════════════════ -->
+<div class="overlay" id="link-modal" role="dialog" aria-modal="true" aria-labelledby="link-modal-title">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="link-modal-title">🔗 Link a Child to Your Account</div>
+      <button class="modal-close" onclick="closeModal('link-modal')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="alert alert-navy" style="margin-bottom:14px">
+        <span>ℹ️</span>
+        <div>
+          <strong>Security Notice:</strong> Your request will be sent to the Registrar for identity verification.
+          You will be notified once approved. You <strong>cannot view any child data</strong> until approved.
+        </div>
+      </div>
+      <form id="link-form" onsubmit="submitLinkRequest(event)">
+        <div class="fg">
+          <label for="lf-admno">Pupil Admission Number</label>
+          <input type="text" id="lf-admno" placeholder="e.g. BF-2024-035" required/>
+          <span class="hint">As shown on the pupil's admission letter or previous report card.</span>
+        </div>
+        <div class="fg">
+          <label for="lf-name">Child's Full Name</label>
+          <input type="text" id="lf-name" placeholder="As registered by the school" required/>
+        </div>
+        <div class="fg">
+          <label for="lf-rel">Your Relationship to Child</label>
+          <select id="lf-rel" required>
+            <option value="">— Select relationship —</option>
+            <option value="Father">Father</option>
+            <option value="Mother">Mother</option>
+            <option value="Guardian">Guardian</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeModal('link-modal')">Cancel</button>
+      <button class="btn btn-teal" onclick="document.getElementById('link-form').requestSubmit()">📤 Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MODAL: PRINT RECEIPT
+═══════════════════════════════════════ -->
+<div class="overlay" id="receipt-modal" role="dialog" aria-modal="true" aria-labelledby="receipt-modal-title">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="receipt-modal-title">🧾 Payment Receipt</div>
+      <button class="modal-close" onclick="closeModal('receipt-modal')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-bd" id="receipt-content"><!-- injected --></div>
+    <div class="modal-ft no-print">
+      <button class="btn btn-outline" onclick="closeModal('receipt-modal')">Close</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print Receipt</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOAST STACK
+═══════════════════════════════════════ -->
+<div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+/* ── SESSION CHECK ── */
+const sess = JSON.parse(sessionStorage.getItem('sms_user') || '{}');
+if (!sess.loggedIn) location.href = '../index.html';
+function signOut() { sessionStorage.clear(); location.href = '../index.html'; }
+
+/* ── PARENT INFO ── */
+const parentName = sess.name || 'Parent';
+const parentInitials = parentName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || 'P';
+
+document.getElementById('ptnav-av').textContent   = parentInitials;
+document.getElementById('ptnav-name').textContent = parentName;
+document.getElementById('home-parent-name').textContent = parentName;
+
+/* ── DEMO DATA ── */
+// Demo children linked to this parent
+const CHILDREN = [
+  {
+    id: 'c1',
+    name: 'Amelia Byaruhanga',
+    admNo: 'BF-2026-001',
+    class: 'Baby Class',
+    stream: '',
+    gender: 'Female',
+    avatar: '👧',
+    dob: '2022-03-14',
+    status: 'Active'
+  },
+  {
+    id: 'c2',
+    name: 'Emmanuel Byaruhanga',
+    admNo: 'BF-2024-035',
+    class: 'P3',
+    stream: 'P3 East',
+    gender: 'Male',
+    avatar: '👦',
+    dob: '2017-07-20',
+    status: 'Active'
+  },
+  {
+    id: 'c3',
+    name: 'Christine Byaruhanga',
+    admNo: 'BF-2022-018',
+    class: 'P6',
+    stream: 'P6 West',
+    gender: 'Female',
+    avatar: '👩‍🎓',
+    dob: '2012-11-05',
+    status: 'Active'
+  }
+];
+
+// Demo fees data per child
+const FEES_DATA = {
+  c1: {
+    term: 'Term 2', year: '2025',
+    charges: [
+      { category: 'Tuition Fee',       term: 'Term 2', amount: 280000 },
+      { category: 'Development Levy',  term: 'Term 2', amount:  40000 },
+      { category: 'Lunch Contribution',term: 'Term 2', amount:  60000 }
+    ],
+    payments: [
+      { date: '2025-05-02', amount: 200000, method: 'Mobile Money', receipt: 'RCP-2025-0141' }
+    ],
+    discount: 0
+  },
+  c2: {
+    term: 'Term 2', year: '2025',
+    charges: [
+      { category: 'Tuition Fee',       term: 'Term 2', amount: 350000 },
+      { category: 'Development Levy',  term: 'Term 2', amount:  50000 },
+      { category: 'Lunch Contribution',term: 'Term 2', amount:  60000 },
+      { category: 'Examination Fee',   term: 'Term 2', amount:  20000 }
+    ],
+    payments: [
+      { date: '2025-04-28', amount: 300000, method: 'Bank Deposit', receipt: 'RCP-2025-0138' },
+      { date: '2025-05-10', amount: 100000, method: 'Mobile Money', receipt: 'RCP-2025-0155' }
+    ],
+    discount: 10000
+  },
+  c3: {
+    term: 'Term 2', year: '2025',
+    charges: [
+      { category: 'Tuition Fee',       term: 'Term 2', amount: 420000 },
+      { category: 'Development Levy',  term: 'Term 2', amount:  50000 },
+      { category: 'Lunch Contribution',term: 'Term 2', amount:  60000 },
+      { category: 'Examination Fee',   term: 'Term 2', amount:  25000 },
+      { category: 'Library Fee',       term: 'Term 2', amount:  15000 }
+    ],
+    payments: [
+      { date: '2025-04-25', amount: 570000, method: 'Bank Deposit', receipt: 'RCP-2025-0130' }
+    ],
+    discount: 20000
+  }
+};
+
+// Demo attendance per child (current month sample)
+const ATT_DATA = {
+  c1: { 2025: { 5: { 1:'P',2:'P',5:'A',6:'P',7:'L',8:'P',9:'P',12:'P',13:'P',14:'P',15:'P',16:'P',19:'P',20:'P',21:'A',22:'P',23:'E' } } },
+  c2: { 2025: { 5: { 1:'P',2:'P',5:'P',6:'P',7:'P',8:'P',9:'P',12:'L',13:'P',14:'P',15:'P',16:'P',19:'P',20:'A',21:'P',22:'P',23:'P' } } },
+  c3: { 2025: { 5: { 1:'P',2:'P',5:'P',6:'P',7:'P',8:'P',9:'P',12:'P',13:'P',14:'P',15:'P',16:'P',19:'P',20:'P',21:'P',22:'P',23:'P' } } }
+};
+
+// Demo announcements
+let ANNOUNCEMENTS = [
+  { id:'a1', title:'End of Term 2 Examinations Schedule', type:'Academic', date:'2025-05-20', body:'End-of-term examinations will commence on 9th June 2025. Kindly ensure all pupils are present and prepared. Detailed subject timetables will be distributed in class.', read:false },
+  { id:'a2', title:'Term 2 Fee Payment Deadline', type:'Fees', date:'2025-05-15', body:'All outstanding Term 2 fees must be cleared by 30th May 2025. Pupils with unsettled balances may not sit examinations. Please contact the Accounts Office for payment arrangements.', read:false },
+  { id:'a3', title:'Parents\' Visiting Day – Term 2', type:'General', date:'2025-05-10', body:'The school will host a Parents\' Visiting Day on Saturday, 24th May 2025, from 9:00 AM to 4:00 PM. Parents and guardians are warmly invited to visit their children and meet class teachers.', read:true },
+  { id:'a4', title:'⚠️ Urgent: School Closure – Public Holiday', type:'Urgent', date:'2025-05-08', body:'The school will be closed on Monday, 26th May 2025, in observance of Africa Liberation Day. Normal classes resume on Tuesday, 27th May 2025.', read:true },
+  { id:'a5', title:'Library Books Return Reminder', type:'General', date:'2025-05-06', body:'All library books borrowed during Term 1 must be returned to the school library by end of Term 2. Lost or damaged books will attract a replacement fee.', read:true }
+];
+
+// Demo calendar events
+const CAL_EVENTS = [
+  { date:'2025-05-24', title:'Parents\' Visiting Day', type:'Visiting Day', desc:'Term 2 open day. Parents welcome 9 AM – 4 PM.' },
+  { date:'2025-05-30', title:'Fee Payment Deadline', type:'Fees', desc:'Last day to settle outstanding Term 2 fees.' },
+  { date:'2025-06-09', title:'End of Term 2 Examinations Begin', type:'Exam', desc:'Examinations run from 9th June to 20th June 2025.' },
+  { date:'2025-06-27', title:'Term 2 Closing Day', type:'Closing', desc:'School closes for Term 2 holidays.' },
+  { date:'2025-07-28', title:'Term 3 Opening Day', type:'Opening', desc:'Term 3 begins. All pupils report by 8:00 AM.' },
+  { date:'2025-04-18', title:'Good Friday', type:'Holiday', desc:'Public holiday – school closed.' },
+  { date:'2025-04-21', title:'Easter Monday', type:'Holiday', desc:'Public holiday – school closed.' }
+];
+
+// Demo pending link requests
+let PENDING_LINKS = [];
+
+// Demo my requests
+let MY_REQUESTS = [
+  {
+    id:'req-001',
+    date:'2025-05-12',
+    type:'Inquiry',
+    subject:'P3 East Midterm Results',
+    urgency:'Low',
+    status:'Resolved',
+    response:'Emmanuel\'s midterm results have been uploaded to the portal. Please check the Fees section for the updated report.'
+  }
+];
+
+/* ── STATE ── */
+let selectedChild = CHILDREN.length > 0 ? CHILDREN[0].id : null;
+let currentSection = 'home';
+let attViewYear  = new Date().getFullYear();
+let attViewMonth = new Date().getMonth() + 1; // 1-based
+let annFilter = 'All';
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+function nav(sec) {
+  // Hide all sections
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('sec-' + sec);
+  if (target) target.classList.add('active');
+  currentSection = sec;
+
+  // Update top nav links
+  document.querySelectorAll('.pnav-link').forEach(l => {
+    l.classList.toggle('active', l.dataset.sec === sec);
+  });
+
+  // Update bottom nav items
+  document.querySelectorAll('.pbnav-item').forEach(l => {
+    l.classList.toggle('active', l.dataset.sec === sec);
+  });
+
+  // Render section content
+  switch (sec) {
+    case 'home':        renderHome();        break;
+    case 'children':    renderChildren();    break;
+    case 'fees':        renderFees();        break;
+    case 'attendance':  renderAttendance();  break;
+    case 'announcements': renderAnnouncements(); break;
+    case 'calendar':    renderCalendar();    break;
+    case 'complaints':  renderComplaints();  break;
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════════
+   UTILITY FUNCTIONS
+══════════════════════════════════════════ */
+function ugx(n) {
+  return 'UGX ' + Number(n).toLocaleString('en-UG');
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-UG', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function daysInMonth(y, m) {
+  return new Date(y, m, 0).getDate();
+}
+
+function firstDayOfMonth(y, m) {
+  // 0=Sun, adjust so Mon=0
+  const d = new Date(y, m - 1, 1).getDay();
+  return (d === 0) ? 6 : d - 1;
+}
+
+function monthName(m) {
+  return ['January','February','March','April','May','June','July','August','September','October','November','December'][m - 1];
+}
+
+function unreadCount() {
+  return ANNOUNCEMENTS.filter(a => !a.read).length;
+}
+
+function updateAnnBadge() {
+  const count = unreadCount();
+  const dot   = document.getElementById('ann-dot');
+  if (dot) dot.style.display = count > 0 ? 'block' : 'none';
+}
+
+function annTypeBadge(type) {
+  const map = { General:'b-navy', Academic:'b-teal', Fees:'b-amber', Urgent:'b-red' };
+  return `<span class="badge ${map[type] || 'b-gray'}">${type}</span>`;
+}
+
+function annTypeCal(type) {
+  const map = { Exam:'b-red', Holiday:'b-green', Meeting:'b-navy', 'Visiting Day':'b-teal', Opening:'b-teal', Closing:'b-amber', Fees:'b-amber', Other:'b-gray' };
+  return `<span class="badge ${map[type] || 'b-gray'}">${type}</span>`;
+}
+
+function statusBadge(s) {
+  const map = { Submitted:'b-navy', 'Under Review':'b-amber', Resolved:'b-green', Closed:'b-gray' };
+  return `<span class="badge ${map[s] || 'b-gray'}">${s}</span>`;
+}
+
+/* ══════════════════════════════════════════
+   CHILD CHIPS BUILDER
+══════════════════════════════════════════ */
+function buildChips(containerId, section) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  if (CHILDREN.length === 0) {
+    c.innerHTML = '<span class="text-muted">No children linked</span>';
+    return;
+  }
+  c.innerHTML = CHILDREN.map(ch => `
+    <span class="child-chip ${selectedChild === ch.id ? 'selected' : ''}"
+          onclick="selectChild('${ch.id}','${section}')">
+      <span class="child-chip-avatar">${ch.avatar}</span>
+      ${ch.name.split(' ')[0]} · ${ch.class}
+    </span>`).join('');
+}
+
+function selectChild(id, section) {
+  selectedChild = id;
+  switch (section) {
+    case 'home':       renderHome();       break;
+    case 'fees':       renderFees();       break;
+    case 'attendance': renderAttendance(); break;
+  }
+}
+
+/* ══════════════════════════════════════════
+   RENDER: HOME
+══════════════════════════════════════════ */
+function renderHome() {
+  const noKids = CHILDREN.length === 0;
+  document.getElementById('no-children-alert').style.display = noKids ? 'flex' : 'none';
+
+  buildChips('home-child-chips', 'home');
+
+  if (!selectedChild || noKids) {
+    document.getElementById('kpi-balance').textContent = '—';
+    document.getElementById('kpi-att').textContent     = '—';
+    return;
+  }
+
+  const ch  = CHILDREN.find(c => c.id === selectedChild);
+  const fd  = FEES_DATA[selectedChild];
+
+  // Balance KPI
+  if (fd) {
+    const charged  = fd.charges.reduce((s, r) => s + r.amount, 0);
+    const paid     = fd.payments.reduce((s, r) => s + r.amount, 0);
+    const disc     = fd.discount || 0;
+    const balance  = charged - paid - disc;
+    document.getElementById('kpi-balance').textContent      = balance > 0 ? ugx(balance) : 'Cleared';
+    document.getElementById('kpi-balance-note').textContent = balance > 0 ? `${fd.term} ${fd.year}` : '✅ Fully paid';
+    document.getElementById('kpi-balance-note').className   = balance > 0 ? 'kpi-note dn' : 'kpi-note up';
+  }
+
+  // Attendance KPI
+  const attDays = ATT_DATA[selectedChild];
+  if (attDays) {
+    const monthData = (attDays[attViewYear] || {})[attViewMonth] || {};
+    const days = Object.values(monthData);
+    const present = days.filter(v => v === 'P').length;
+    const late    = days.filter(v => v === 'L').length;
+    const total   = days.length;
+    const rate    = total > 0 ? Math.round(((present + late) / total) * 100) : 0;
+    document.getElementById('kpi-att').textContent      = total > 0 ? rate + '%' : '—';
+    document.getElementById('kpi-att-note').textContent = total > 0 ? `${present} present of ${total} days` : '';
+  }
+
+  // Unread announcements
+  document.getElementById('kpi-ann').textContent = unreadCount();
+
+  // Next event
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const upcoming = CAL_EVENTS
+    .filter(e => new Date(e.date) >= today)
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  if (upcoming.length > 0) {
+    const e = upcoming[0];
+    document.getElementById('kpi-next-event').textContent = e.title;
+  } else {
+    document.getElementById('kpi-next-event').textContent = 'No upcoming events';
+  }
+
+  updateAnnBadge();
+}
+
+/* ══════════════════════════════════════════
+   RENDER: CHILDREN
+══════════════════════════════════════════ */
+function renderChildren() {
+  const grid = document.getElementById('children-grid');
+  if (CHILDREN.length === 0) {
+    grid.innerHTML = `
+      <div class="no-child-notice">
+        <div style="font-size:2.5rem;margin-bottom:10px">👨‍👩‍👧</div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:6px">No children linked yet</div>
+        <div class="text-muted" style="margin-bottom:14px">Link your children to start viewing their records.</div>
+        <button class="btn btn-teal" onclick="openLinkModal()">➕ Link a Child</button>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px">` +
+    CHILDREN.map(ch => `
+      <div class="child-card">
+        <div class="child-avatar">${ch.avatar}</div>
+        <div class="child-info">
+          <div class="child-name">${ch.name}</div>
+          <div class="child-meta">Adm No: <strong>${ch.admNo}</strong> &nbsp;·&nbsp; DOB: ${fmtDate(ch.dob)}</div>
+          <div class="child-tags">
+            <span class="badge b-teal">${ch.class}</span>
+            ${ch.stream ? `<span class="badge b-navy">${ch.stream}</span>` : ''}
+            <span class="badge b-gray">${ch.gender}</span>
+            <span class="badge b-green">${ch.status}</span>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn btn-outline btn-xs" onclick="selectedChild='${ch.id}';nav('fees')">💳 Fees</button>
+            <button class="btn btn-outline btn-xs" onclick="selectedChild='${ch.id}';nav('attendance')">📋 Attendance</button>
+          </div>
+        </div>
+      </div>`).join('') + `</div>`;
+
+  // Pending links
+  const body = document.getElementById('pending-links-body');
+  if (PENDING_LINKS.length === 0) {
+    body.innerHTML = `<div class="empty"><div class="empty-icon">🕐</div><div class="empty-title">No pending requests</div><div class="empty-desc">Any link requests you submit will appear here with their approval status.</div></div>`;
+  } else {
+    body.innerHTML = `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Adm No</th><th>Child Name</th><th>Relationship</th><th>Status</th></tr></thead><tbody>` +
+      PENDING_LINKS.map(r => `<tr>
+        <td>${fmtDate(r.date)}</td>
+        <td class="mono">${r.admNo}</td>
+        <td>${r.name}</td>
+        <td>${r.rel}</td>
+        <td><span class="badge b-amber">Pending Verification</span></td>
+      </tr>`).join('') +
+    `</tbody></table></div>`;
+  }
+}
+
+/* ══════════════════════════════════════════
+   RENDER: FEES
+══════════════════════════════════════════ */
+function renderFees() {
+  buildChips('fees-child-chips', 'fees');
+  const container = document.getElementById('fees-content');
+
+  if (!selectedChild) {
+    container.innerHTML = `<div class="no-child-notice"><div style="font-size:2rem;margin-bottom:8px">💳</div><div style="font-weight:700">Select a child above to view fee details.</div></div>`;
+    return;
+  }
+
+  const ch = CHILDREN.find(c => c.id === selectedChild);
+  const fd = FEES_DATA[selectedChild];
+
+  if (!fd) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">💳</div><div class="empty-title">No fee data available</div></div>`;
+    return;
+  }
+
+  const charged  = fd.charges.reduce((s, r) => s + r.amount, 0);
+  const paid     = fd.payments.reduce((s, r) => s + r.amount, 0);
+  const disc     = fd.discount || 0;
+  const balance  = charged - paid - disc;
+
+  container.innerHTML = `
+    <!-- Parent cannot edit notice -->
+    <div class="alert alert-amber no-print">
+      <span>🔒</span>
+      <div><strong>View Only.</strong> Fee records are managed by the school's Accounts Office. Parents cannot edit fees or payments. For queries, contact the school directly or submit a request below.</div>
+    </div>
+
+    <!-- Fee statement header -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title"><span class="card-title-icon">🧾</span> Fee Statement</div>
+        <div style="font-size:.72rem;color:var(--sub)">${fd.term} &nbsp;·&nbsp; ${fd.year}</div>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+          <div><span class="text-muted">Pupil:</span> <strong>${ch.name}</strong></div>
+          <div><span class="text-muted">Adm No:</span> <strong class="mono">${ch.admNo}</strong></div>
+          <div><span class="text-muted">Class:</span> <strong>${ch.class}${ch.stream ? ' / ' + ch.stream : ''}</strong></div>
+        </div>
+
+        <div class="form-section">Charges</div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Category</th><th>Term</th><th style="text-align:right">Amount (UGX)</th></tr></thead>
+            <tbody>
+              ${fd.charges.map(r => `<tr>
+                <td>${r.category}</td>
+                <td>${r.term}</td>
+                <td style="text-align:right;font-weight:600">${ugx(r.amount)}</td>
+              </tr>`).join('')}
+              <tr style="background:var(--bg);">
+                <td colspan="2" style="font-weight:700">Total Charged</td>
+                <td style="text-align:right;font-weight:800">${ugx(charged)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-section" style="margin-top:16px">Payments Received</div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Amount (UGX)</th><th>Method</th><th>Receipt No</th><th class="no-print">Receipt</th></tr></thead>
+            <tbody>
+              ${fd.payments.length === 0
+                ? `<tr><td colspan="5" style="text-align:center;color:var(--sub);padding:18px">No payments recorded</td></tr>`
+                : fd.payments.map(p => `<tr>
+                    <td>${fmtDate(p.date)}</td>
+                    <td style="font-weight:600;color:var(--green)">${ugx(p.amount)}</td>
+                    <td>${p.method}</td>
+                    <td class="mono">${p.receipt}</td>
+                    <td class="no-print"><button class="btn btn-outline btn-xs" onclick="printReceipt('${selectedChild}','${p.receipt}')">🖨️ Print</button></td>
+                  </tr>`).join('')
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-section" style="margin-top:16px">Balance Summary</div>
+        <div style="max-width:420px">
+          <div class="bal-card bal-charged"><span>Total Charged</span><strong>${ugx(charged)}</strong></div>
+          <div class="bal-card bal-paid"><span>Total Paid</span><strong style="color:var(--green)">${ugx(paid)}</strong></div>
+          ${disc > 0 ? `<div class="bal-card bal-discount"><span>Discount / Bursary</span><strong style="color:#b37b10">(${ugx(disc)})</strong></div>` : ''}
+          <div class="bal-card bal-owed"><span style="font-weight:700">Outstanding Balance</span><strong style="color:${balance > 0 ? 'var(--red)' : 'var(--green)'};font-size:1rem">${balance > 0 ? ugx(balance) : '✅ Cleared'}</strong></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════
+   PRINT RECEIPT
+══════════════════════════════════════════ */
+function printReceipt(childId, receiptNo) {
+  const ch = CHILDREN.find(c => c.id === childId);
+  const fd = FEES_DATA[childId];
+  if (!ch || !fd) return;
+  const pmt = fd.payments.find(p => p.receipt === receiptNo);
+  if (!pmt) return;
+
+  document.getElementById('receipt-content').innerHTML = `
+    <div class="receipt-print">
+      <div class="receipt-header">
+        <div class="receipt-logo"><img src="../star logo.png" alt="Logo" onerror="this.style.display='none'"/></div>
+        <div class="receipt-school">FIVE STAR MODEL SCHOOL</div>
+        <div class="receipt-motto">Nature for Excellence</div>
+        <div class="receipt-location">Kasese District · Uganda</div>
+      </div>
+
+      <div class="receipt-title">Official Payment Receipt</div>
+
+      <div class="receipt-row"><span class="receipt-key">Receipt No.</span><span class="receipt-val mono">${pmt.receipt}</span></div>
+      <div class="receipt-row"><span class="receipt-key">Date</span><span class="receipt-val">${fmtDate(pmt.date)}</span></div>
+      <div class="receipt-row"><span class="receipt-key">Pupil Name</span><span class="receipt-val">${ch.name}</span></div>
+      <div class="receipt-row"><span class="receipt-key">Admission No.</span><span class="receipt-val mono">${ch.admNo}</span></div>
+      <div class="receipt-row"><span class="receipt-key">Class</span><span class="receipt-val">${ch.stream || ch.class}</span></div>
+      <div class="receipt-row"><span class="receipt-key">Term / Year</span><span class="receipt-val">${fd.term} · ${fd.year}</span></div>
+      <div class="receipt-row"><span class="receipt-key">Payment Method</span><span class="receipt-val">${pmt.method}</span></div>
+      <div class="receipt-total"><span>Amount Paid</span><span>${ugx(pmt.amount)}</span></div>
+
+      <div class="receipt-footer">
+        This is a computer-generated receipt. For verification, contact the Accounts Office.<br/>
+        Printed: ${new Date().toLocaleString('en-UG')}
+      </div>
+    </div>`;
+
+  openModal('receipt-modal');
+}
+
+/* ══════════════════════════════════════════
+   RENDER: ATTENDANCE
+══════════════════════════════════════════ */
+function renderAttendance() {
+  buildChips('att-child-chips', 'attendance');
+  const container = document.getElementById('att-content');
+
+  if (!selectedChild) {
+    container.innerHTML = `<div class="no-child-notice"><div style="font-size:2rem;margin-bottom:8px">📋</div><div style="font-weight:700">Select a child above to view attendance.</div></div>`;
+    return;
+  }
+
+  const monthData = ((ATT_DATA[selectedChild] || {})[attViewYear] || {})[attViewMonth] || {};
+
+  const totalDays = Object.keys(monthData).length;
+  const present   = Object.values(monthData).filter(v => v === 'P').length;
+  const absent    = Object.values(monthData).filter(v => v === 'A').length;
+  const late      = Object.values(monthData).filter(v => v === 'L').length;
+  const excused   = Object.values(monthData).filter(v => v === 'E').length;
+  const rate      = totalDays > 0 ? Math.round(((present + late) / totalDays) * 100) : 0;
+
+  // Build calendar
+  const days   = daysInMonth(attViewYear, attViewMonth);
+  const start  = firstDayOfMonth(attViewYear, attViewMonth); // 0=Mon
+  const dayAbbr = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  let calCells = dayAbbr.map(d => `<div class="att-day att-hdr">${d}</div>`).join('');
+  // leading blanks
+  for (let i = 0; i < start; i++) calCells += `<div class="att-day"></div>`;
+  for (let d = 1; d <= days; d++) {
+    const dow  = (start + d - 1) % 7; // 0=Mon … 6=Sun
+    const isWe = dow >= 5;
+    const stat = monthData[d];
+    if (isWe) {
+      calCells += `<div class="att-day att-wkd" title="Weekend">${d}</div>`;
+    } else if (stat) {
+      const labels = { P:'P', A:'A', L:'L', E:'E' };
+      calCells += `<div class="att-day att-${stat}" title="${{P:'Present',A:'Absent',L:'Late',E:'Excused'}[stat]}">${d}</div>`;
+    } else {
+      calCells += `<div class="att-day att-x">${d}</div>`;
+    }
+  }
+
+  // Table view
+  const tableRows = Object.entries(monthData)
+    .sort((a, b) => Number(a[0]) - Number(b[0]))
+    .map(([day, status]) => {
+      const date = new Date(attViewYear, attViewMonth - 1, Number(day));
+      const dayName = date.toLocaleDateString('en-UG', { weekday:'long' });
+      const lbl = { P:'Present', A:'Absent', L:'Late', E:'Excused' }[status] || status;
+      const badge = { P:'b-green', A:'b-red', L:'b-amber', E:'b-teal' }[status] || 'b-gray';
+      return `<tr>
+        <td>${String(day).padStart(2,'0')} ${monthName(attViewMonth)} ${attViewYear}</td>
+        <td>${dayName}</td>
+        <td><span class="badge ${badge}">${lbl}</span></td>
+      </tr>`;
+    }).join('');
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title"><span class="card-title-icon">📋</span> Monthly Attendance</div>
+        <div class="month-nav">
+          <button onclick="changeMonth(-1)">‹</button>
+          <span class="month-label">${monthName(attViewMonth)} ${attViewYear}</span>
+          <button onclick="changeMonth(1)">›</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Legend -->
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;font-size:.7rem;align-items:center;">
+          <strong style="color:var(--sub)">Legend:</strong>
+          <span class="att-day att-P" style="width:auto;padding:0 8px">P = Present</span>
+          <span class="att-day att-A" style="width:auto;padding:0 8px">A = Absent</span>
+          <span class="att-day att-L" style="width:auto;padding:0 8px">L = Late</span>
+          <span class="att-day att-E" style="width:auto;padding:0 8px">E = Excused</span>
+        </div>
+
+        <!-- Calendar grid -->
+        <div class="att-calendar">${calCells}</div>
+
+        <!-- Monthly summary -->
+        <div class="kpi-grid" style="margin-top:14px">
+          <div class="kpi"><div class="kpi-icon ic-green">✅</div><div><div class="kpi-val">${present}</div><div class="kpi-label">Days Present</div></div></div>
+          <div class="kpi"><div class="kpi-icon ic-red">❌</div><div><div class="kpi-val">${absent}</div><div class="kpi-label">Days Absent</div></div></div>
+          <div class="kpi"><div class="kpi-icon ic-amber">⏰</div><div><div class="kpi-val">${late}</div><div class="kpi-label">Late Arrivals</div></div></div>
+          <div class="kpi"><div class="kpi-icon ic-teal">📝</div><div><div class="kpi-val">${excused}</div><div class="kpi-label">Excused</div></div></div>
+          <div class="kpi"><div class="kpi-icon ic-navy">📊</div><div><div class="kpi-val">${rate}%</div><div class="kpi-label">Attendance Rate</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table view -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="card-title-icon">📅</span> Day-by-Day Record</div></div>
+      <div class="card-flush">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Day</th><th>Status</th></tr></thead>
+            <tbody>${tableRows || `<tr><td colspan="3" style="text-align:center;color:var(--sub);padding:18px">No attendance records for this month</td></tr>`}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
+}
+
+function changeMonth(dir) {
+  attViewMonth += dir;
+  if (attViewMonth < 1) { attViewMonth = 12; attViewYear--; }
+  if (attViewMonth > 12) { attViewMonth = 1;  attViewYear++; }
+  renderAttendance();
+}
+
+/* ══════════════════════════════════════════
+   RENDER: ANNOUNCEMENTS
+══════════════════════════════════════════ */
+function renderAnnouncements() {
+  const list = document.getElementById('ann-list');
+  let filtered = annFilter === 'All' ? ANNOUNCEMENTS : ANNOUNCEMENTS.filter(a => a.type === annFilter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📢</div><div class="empty-title">No announcements</div><div class="empty-desc">${annFilter !== 'All' ? 'No ' + annFilter + ' announcements found.' : 'No announcements at this time.'}</div></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(a => `
+    <div class="ann-card ${a.read ? '' : 'unread'}" id="ann-card-${a.id}">
+      <div class="ann-title">
+        ${a.title}
+        ${!a.read ? '<span class="badge b-teal" style="font-size:.58rem">NEW</span>' : ''}
+        ${annTypeBadge(a.type)}
+      </div>
+      <div class="ann-meta">Posted: ${fmtDate(a.date)}</div>
+      <div class="ann-body">${a.body}</div>
+      ${!a.read ? `<div style="margin-top:8px"><button class="btn btn-outline btn-xs no-print" onclick="markRead('${a.id}')">✓ Mark as Read</button></div>` : ''}
+    </div>`).join('');
+
+  updateAnnBadge();
+}
+
+function filterAnn(type, btn) {
+  annFilter = type;
+  document.querySelectorAll('#ann-filters button').forEach(b => b.classList.remove('active-filter'));
+  if (btn) btn.classList.add('active-filter');
+  renderAnnouncements();
+}
+
+function markRead(id) {
+  const ann = ANNOUNCEMENTS.find(a => a.id === id);
+  if (ann) {
+    ann.read = true;
+    renderAnnouncements();
+    updateAnnBadge();
+    renderHome();
+    toast('Marked as read', 'success');
+  }
+}
+
+/* ══════════════════════════════════════════
+   RENDER: CALENDAR
+══════════════════════════════════════════ */
+function renderCalendar() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const sorted = [...CAL_EVENTS].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  const typeColorClass = {
+    Exam: 'cal-ev-exam',
+    Holiday: 'cal-ev-holiday',
+    Meeting: 'cal-ev-meeting',
+    'Visiting Day': '',
+    Opening: 'cal-ev-holiday',
+    Closing: 'cal-ev-meeting',
+    Fees: 'cal-ev-meeting',
+    Other: ''
+  };
+
+  document.getElementById('cal-content').innerHTML = sorted.map(ev => {
+    const evDate = new Date(ev.date);
+    evDate.setHours(0, 0, 0, 0);
+    const isPast = evDate < today;
+    const dd = evDate.getDate().toString().padStart(2, '0');
+    const mm = evDate.toLocaleString('en-UG', { month: 'short' });
+    const cls = typeColorClass[ev.type] || '';
+    return `
+      <div class="cal-event ${isPast ? 'past' : ''} ${cls}">
+        <div class="cal-date-box"><div class="dd">${dd}</div><div class="mm">${mm}</div></div>
+        <div style="flex:1">
+          <div class="cal-ev-title">${ev.title} ${isPast ? '<span style="font-size:.65rem;color:var(--sub);font-weight:400">(past)</span>' : ''}</div>
+          <div class="cal-ev-desc">${ev.desc} &nbsp; ${annTypeCal(ev.type)}</div>
+        </div>
+      </div>`;
+  }).join('') || `<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">No events</div></div>`;
+}
+
+/* ══════════════════════════════════════════
+   RENDER: COMPLAINTS
+══════════════════════════════════════════ */
+function renderComplaints() {
+  const list = document.getElementById('requests-list');
+  if (MY_REQUESTS.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🗂️</div><div class="empty-title">No requests submitted</div><div class="empty-desc">Submitted requests will appear here with their status and any school responses.</div></div>`;
+    return;
+  }
+  list.innerHTML = MY_REQUESTS.map(r => `
+    <div class="req-row">
+      <div style="flex-shrink:0;text-align:center;min-width:46px">
+        <div style="font-size:.7rem;font-weight:700;color:var(--sub)">${fmtDate(r.date)}</div>
+      </div>
+      <div class="req-body">
+        <div class="req-subject">${r.subject}</div>
+        <div class="req-meta">
+          <span class="badge b-navy">${r.type}</span>&nbsp;
+          <span class="urgency-${r.urgency.charAt(0)}">${r.urgency} Urgency</span>
+        </div>
+        ${statusBadge(r.status)}
+        ${r.response ? `<div class="req-response"><strong>Response:</strong> ${r.response}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function submitComplaint(e) {
+  e.preventDefault();
+  const type    = document.getElementById('cmp-type').value;
+  const urgency = document.getElementById('cmp-urgency').value;
+  const subject = document.getElementById('cmp-subject').value.trim();
+  const msg     = document.getElementById('cmp-msg').value.trim();
+
+  if (!type || !urgency || !subject || !msg) {
+    toast('Please fill in all fields.', 'error');
+    return;
+  }
+
+  MY_REQUESTS.unshift({
+    id: 'req-' + Date.now(),
+    date: new Date().toISOString().slice(0, 10),
+    type, urgency, subject,
+    status: 'Submitted',
+    response: ''
+  });
+
+  document.getElementById('complaint-form').reset();
+  renderComplaints();
+  toast('Request submitted successfully.', 'success');
+}
+
+/* ══════════════════════════════════════════
+   LINK CHILD MODAL
+══════════════════════════════════════════ */
+function openLinkModal() { openModal('link-modal'); }
+
+function submitLinkRequest(e) {
+  e.preventDefault();
+  const admNo = document.getElementById('lf-admno').value.trim();
+  const name  = document.getElementById('lf-name').value.trim();
+  const rel   = document.getElementById('lf-rel').value;
+
+  if (!admNo || !name || !rel) {
+    toast('Please fill in all fields.', 'error');
+    return;
+  }
+
+  PENDING_LINKS.push({
+    date: new Date().toISOString().slice(0, 10),
+    admNo, name, rel
+  });
+
+  document.getElementById('link-form').reset();
+  closeModal('link-modal');
+  renderChildren();
+  toast('Link request submitted. Awaiting Registrar verification.', 'success');
+}
+
+/* ══════════════════════════════════════════
+   MODAL HELPERS
+══════════════════════════════════════════ */
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+// Close modal on overlay click
+document.querySelectorAll('.overlay').forEach(ov => {
+  ov.addEventListener('click', function(e) {
+    if (e.target === ov) ov.classList.remove('open');
+  });
+});
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+function toast(msg, type) {
+  type = type || 'info';
+  const stack = document.getElementById('toast-stack');
+  const t = document.createElement('div');
+  t.className = 'toast t-' + type;
+  const icons = { success:'✅', error:'❌', warn:'⚠️', info:'ℹ️' };
+  t.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${msg}</span>`;
+  stack.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+(function init() {
+  renderHome();
+  updateAnnBadge();
+})();
+</script>
+</body>
+</html>
