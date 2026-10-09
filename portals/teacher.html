@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Teacher Portal – Five Star Model School</title>
+<link rel="stylesheet" href="../assets/sms.css"/>
+<style>
+/* ── Teacher-specific styles ── */
+.att-btn {
+  width:34px; height:34px; border:2px solid var(--border);
+  border-radius:6px; background:var(--white); font-size:.7rem;
+  font-weight:700; cursor:pointer; transition:.15s;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.att-btn:hover { opacity:.85; }
+.att-btn.sel-P { background:var(--green); border-color:var(--green); color:#fff; }
+.att-btn.sel-A { background:var(--red); border-color:var(--red); color:#fff; }
+.att-btn.sel-L { background:var(--amber); border-color:var(--amber); color:var(--navy); }
+.att-btn.sel-E { background:var(--teal); border-color:var(--teal); color:#fff; }
+.att-summary-pill {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 12px; border-radius:20px; font-size:.72rem; font-weight:700;
+}
+.att-summ-P { background:#d8f5e8; color:var(--green); }
+.att-summ-A { background:#fde8e7; color:var(--red); }
+.att-summ-L { background:#fef3d8; color:#b37b10; }
+.att-summ-E { background:#d1f5f2; color:var(--teal2); }
+.att-summ-T { background:#e8eef6; color:var(--navy); }
+.marks-input {
+  width:70px; padding:6px 8px;
+  border:1.5px solid var(--border); border-radius:6px;
+  font-size:.76rem; text-align:center; outline:none; transition:.15s;
+}
+.marks-input:focus { border-color:var(--teal); }
+.marks-input.invalid { border-color:var(--red); background:#fde8e7; }
+.marks-input.missing { background:#fffbeb; border-color:var(--amber); }
+.grade-pill {
+  display:inline-block; padding:2px 9px; border-radius:20px;
+  font-size:.68rem; font-weight:700;
+}
+.gD1,.gD2 { background:#d8f5e8; color:var(--green); }
+.gC3,.gC4 { background:#d1f5f2; color:var(--teal2); }
+.gC5,.gC6 { background:#e8eef6; color:var(--navy); }
+.gP7,.gP8 { background:#fef3d8; color:#b37b10; }
+.gF9 { background:#fde8e7; color:var(--red); }
+.class-card {
+  background:var(--white); border:1px solid var(--border);
+  border-radius:var(--r12); padding:18px; cursor:pointer;
+  transition: var(--transition); box-shadow:var(--shadow);
+}
+.class-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); border-color:var(--teal); }
+.class-card-name { font-size:.92rem; font-weight:800; color:var(--navy); }
+.class-card-stream { font-size:.7rem; color:var(--sub); margin-top:2px; }
+.timetable-grid { width:100%; border-collapse:collapse; font-size:.72rem; }
+.timetable-grid th { background:var(--navy); color:#fff; padding:8px 10px; text-align:center; font-size:.68rem; font-weight:600; }
+.timetable-grid td { border:1px solid var(--border); padding:8px 10px; text-align:center; vertical-align:middle; min-height:48px; }
+.timetable-grid .period-col { background:var(--bg); font-weight:600; color:var(--sub); font-size:.65rem; }
+.tt-cell { background:#e8f4f3; border-radius:4px; padding:4px 6px; font-size:.68rem; line-height:1.3; }
+.tt-cell-subj { font-weight:700; color:var(--navy); }
+.tt-cell-cls { color:var(--sub); font-size:.62rem; }
+.tt-free { color:var(--border); font-style:italic; font-size:.66rem; }
+.progress-info { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+.sow-row-covered td { background:#f0faf5 !important; }
+.resource-dropzone {
+  border:2px dashed var(--border); border-radius:var(--r12);
+  padding:28px; text-align:center; cursor:pointer;
+  transition:.15s; margin-bottom:16px;
+}
+.resource-dropzone:hover { border-color:var(--teal); background:#f0faf8; }
+.pupil-photo {
+  width:52px; height:52px; border-radius:50%;
+  background:var(--navy); color:#fff; display:inline-flex;
+  align-items:center; justify-content:center;
+  font-size:1.2rem; font-weight:700;
+}
+.task-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 0; border-bottom:1px solid var(--border);
+}
+.task-item:last-child { border-bottom:none; }
+.task-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.ann-item { padding:12px 0; border-bottom:1px solid var(--border); }
+.ann-item:last-child { border-bottom:none; }
+.ann-from { font-size:.65rem; color:var(--sub); margin-top:3px; }
+.char-count { font-size:.62rem; color:var(--sub); text-align:right; }
+.search-wrap { position:relative; }
+.search-wrap input { padding-left:30px; }
+.search-icon { position:absolute; left:9px; top:50%; transform:translateY(-50%); font-size:.75rem; color:var(--sub); pointer-events:none; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
+    <div>
+      <div class="sb-school-name">Five Star School</div>
+      <div class="sb-portal-name">Teacher Portal</div>
+    </div>
+  </div>
+  <nav class="sb-body">
+    <div class="sb-group"><div class="sb-group-label">Overview</div></div>
+    <div class="sb-link active" id="lnk-dashboard" onclick="nav('dashboard',this)"><span class="sb-icon">🏠</span><span>Dashboard</span></div>
+
+    <div class="sb-group"><div class="sb-group-label">Classroom</div></div>
+    <div class="sb-link" id="lnk-classes" onclick="nav('classes',this)"><span class="sb-icon">🏫</span><span>My Classes</span></div>
+    <div class="sb-link" id="lnk-attendance" onclick="nav('attendance',this)"><span class="sb-icon">✅</span><span>Attendance</span><span class="sb-badge" id="sb-att-badge" style="display:none">!</span></div>
+    <div class="sb-link" id="lnk-marks" onclick="nav('marks',this)"><span class="sb-icon">📝</span><span>Marks Entry</span><span class="sb-badge" id="sb-marks-badge" style="display:none">!</span></div>
+    <div class="sb-link" id="lnk-progress" onclick="nav('progress',this)"><span class="sb-icon">📈</span><span>Pupil Progress</span></div>
+    <div class="sb-link" id="lnk-comments" onclick="nav('comments',this)"><span class="sb-icon">💬</span><span>Comments</span></div>
+
+    <div class="sb-group"><div class="sb-group-label">Planning</div></div>
+    <div class="sb-link" id="lnk-lessons" onclick="nav('lessons',this)"><span class="sb-icon">📋</span><span>Lesson Plans</span></div>
+    <div class="sb-link" id="lnk-scheme" onclick="nav('scheme',this)"><span class="sb-icon">📓</span><span>Scheme of Work</span></div>
+    <div class="sb-link" id="lnk-timetable" onclick="nav('timetable',this)"><span class="sb-icon">🗓️</span><span>Timetable</span></div>
+
+    <div class="sb-group"><div class="sb-group-label">Communication</div></div>
+    <div class="sb-link" id="lnk-announcements" onclick="nav('announcements',this)"><span class="sb-icon">📢</span><span>Announcements</span><span class="sb-badge" id="sb-ann-badge">0</span></div>
+    <div class="sb-link" id="lnk-resources" onclick="nav('resources',this)"><span class="sb-icon">📁</span><span>Resources</span></div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-av" id="sb-av-init">T</div>
+      <div><div class="sb-uname" id="sb-uname">Teacher</div><div class="sb-urole">Class Teacher</div></div>
+      <button class="sb-signout" onclick="signOut()" title="Sign Out">⏻</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════
+     MAIN AREA
+═══════════════════════════════════ -->
+<div class="main-area">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-left">
+      <div>
+        <div class="tb-title" id="pg-title">Dashboard</div>
+        <div class="tb-crumb" id="pg-crumb">Teacher › Dashboard</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-meta" id="tb-term">Academic Year &amp; Term</span>
+      <button class="tb-notif-btn" onclick="nav('announcements',null)" title="Announcements">
+        🔔<span class="tb-notif-dot" id="notif-dot" style="display:none"></span>
+      </button>
+      <div class="tb-user-chip">
+        <div class="tb-user-av" id="tb-av">T</div>
+        <span id="tb-uname">Teacher</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-content">
+
+<!-- ════════════════════════════════════════════════
+     PAGE: DASHBOARD
+════════════════════════════════════════════════ -->
+<div id="pg-dashboard">
+
+  <!-- Welcome bar -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:1.05rem;font-weight:800;color:var(--navy)" id="welcome-msg">Good morning, Teacher 👋</div>
+      <div style="font-size:.74rem;color:var(--sub);margin-top:2px" id="today-date"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-teal btn-sm" onclick="nav('attendance',null)">✅ Mark Attendance</button>
+      <button class="btn btn-outline btn-sm" onclick="nav('marks',null)">📝 Enter Marks</button>
+    </div>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-icon ic-navy">🏫</div><div><div class="kpi-val" id="kpi-classes">0</div><div class="kpi-label">My Classes</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-amber">✅</div><div><div class="kpi-val" id="kpi-att-pending">0</div><div class="kpi-label">Pending Attendance</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-red">📝</div><div><div class="kpi-val" id="kpi-marks-pending">0</div><div class="kpi-label">Pending Mark Entry</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-teal">📢</div><div><div class="kpi-val" id="kpi-announcements">0</div><div class="kpi-label">Announcements</div></div></div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Today's timetable -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🗓️</span>Today's Timetable</span><button class="btn btn-ghost btn-sm" onclick="nav('timetable',null)">View Full →</button></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Period</th><th>Time</th><th>Subject</th><th>Class</th><th>Room</th></tr></thead>
+          <tbody id="today-tt-tb">
+            <tr><td colspan="5"><div class="empty"><div class="empty-icon">🗓️</div><div class="empty-desc">No lessons scheduled. Timetable is assigned by the Admin.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pending tasks -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">⚡</span>Pending Tasks</span></div>
+      <div class="card-body" style="padding:0 18px" id="pending-tasks-list">
+        <div class="task-item">
+          <div class="task-dot" style="background:var(--teal)"></div>
+          <div style="font-size:.76rem;color:var(--sub)">No pending tasks right now.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent announcements -->
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📢</span>Recent Announcements</span><button class="btn btn-ghost btn-sm" onclick="nav('announcements',null)">View All →</button></div>
+    <div class="card-body" style="padding:0 18px" id="dash-ann-list">
+      <div class="empty"><div class="empty-icon">📢</div><div class="empty-desc">No announcements from the school yet.</div></div>
+    </div>
+  </div>
+
+</div><!-- /dashboard -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: MY CLASSES
+════════════════════════════════════════════════ -->
+<div id="pg-classes" class="hidden">
+  <div id="classes-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
+    <!-- Empty state shown by JS -->
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: ATTENDANCE
+════════════════════════════════════════════════ -->
+<div id="pg-attendance" class="hidden">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(this,'tab-att-take')">Mark Attendance</div>
+    <div class="tab" onclick="switchTab(this,'tab-att-history')">Attendance History</div>
+  </div>
+
+  <!-- Mark attendance tab -->
+  <div id="tab-att-take" class="tab-pane active">
+    <!-- Step 1: select class + date -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">✅</span>Mark Attendance</span></div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="fg">
+            <label>Select Class *</label>
+            <select id="att-class" onchange="loadAttendancePupils()">
+              <option value="">— Choose a class —</option>
+              <option value="P3 East">P3 East</option>
+              <option value="P5 West">P5 West</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Date *</label>
+            <input type="date" id="att-date" onchange="loadAttendancePupils()"/>
+          </div>
+        </div>
+        <div id="att-duplicate-alert" class="alert alert-amber hidden">
+          ⚠️ Attendance for this class on this date has already been submitted. You cannot re-submit unless corrections are approved.
+        </div>
+      </div>
+    </div>
+
+    <!-- Pupil attendance table (hidden until class+date selected) -->
+    <div id="att-table-card" class="card hidden">
+      <div class="card-hd">
+        <span class="card-title"><span class="card-title-icon">👥</span>Pupil List — <span id="att-class-label"></span></span>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-outline btn-sm" onclick="markAll('P')">✔ All Present</button>
+          <button class="btn btn-outline btn-sm" onclick="markAll('A')">✗ All Absent</button>
+        </div>
+      </div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Admission No</th><th>Pupil Name</th><th>Present</th><th>Absent</th><th>Late</th><th>Excused</th></tr></thead>
+          <tbody id="att-pupil-tb"></tbody>
+        </table>
+      </div>
+      <!-- Summary -->
+      <div style="padding:14px 18px;border-top:1px solid var(--border);display:flex;align-items:center;flex-wrap:wrap;gap:8px">
+        <span class="att-summary-pill att-summ-P">Present: <span id="summ-P">0</span></span>
+        <span class="att-summary-pill att-summ-A">Absent: <span id="summ-A">0</span></span>
+        <span class="att-summary-pill att-summ-L">Late: <span id="summ-L">0</span></span>
+        <span class="att-summary-pill att-summ-E">Excused: <span id="summ-E">0</span></span>
+        <span class="att-summary-pill att-summ-T">Total: <span id="summ-T">0</span></span>
+        <div style="margin-left:auto">
+          <button class="btn btn-teal" id="save-att-btn" onclick="saveAttendance()">💾 Save Attendance</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /tab-att-take -->
+
+  <!-- Attendance history tab -->
+  <div id="tab-att-history" class="tab-pane">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📋</span>Attendance History</span></div>
+      <div class="card-body" style="padding-bottom:6px">
+        <div class="fg" style="max-width:260px">
+          <label>Select Class</label>
+          <select id="hist-class" onchange="loadAttHistory()">
+            <option value="">— Choose a class —</option>
+            <option value="P3 East">P3 East</option>
+            <option value="P5 West">P5 West</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Date</th><th>Class</th><th>Present</th><th>Absent</th><th>Late</th><th>Excused</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody id="hist-att-tb">
+            <tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">Select a class to view attendance history.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div><!-- /attendance -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: MARKS ENTRY
+════════════════════════════════════════════════ -->
+<div id="pg-marks" class="hidden">
+
+  <!-- Step 1: selectors -->
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📝</span>Marks Entry Setup</span></div>
+    <div class="card-body">
+      <div class="form-row-3">
+        <div class="fg">
+          <label>Class *</label>
+          <select id="mk-class" onchange="updateMarkSubjects()">
+            <option value="">— Select Class —</option>
+            <option value="P3 East">P3 East</option>
+            <option value="P5 West">P5 West</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Subject *</label>
+          <select id="mk-subject" onchange="loadMarksPupils()">
+            <option value="">— Select Subject —</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Examination *</label>
+          <select id="mk-exam" onchange="loadMarksPupils()">
+            <option value="">— Select Exam —</option>
+            <option value="BOT|40">Beginning of Term (Max 40)</option>
+            <option value="MID|30">Midterm (Max 30)</option>
+            <option value="EOT|100">End of Term (Max 100)</option>
+          </select>
+        </div>
+      </div>
+      <div id="mk-info-bar" class="alert alert-navy hidden">
+        📋 Class: <strong id="mk-info-class">—</strong> &nbsp;|&nbsp;
+        Subject: <strong id="mk-info-subject">—</strong> &nbsp;|&nbsp;
+        Exam: <strong id="mk-info-exam">—</strong> &nbsp;|&nbsp;
+        Max Marks: <strong id="mk-info-max">—</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: marks table (shown when all 3 selected) -->
+  <div id="marks-table-card" class="card hidden">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">🎓</span>Enter Marks</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-outline btn-sm" id="save-draft-btn" onclick="saveMarksDraft()">💾 Save Draft</button>
+        <button class="btn btn-teal" id="submit-marks-btn" onclick="openSubmitConfirm()">📤 Submit to DOS</button>
+      </div>
+    </div>
+    <div id="mk-missing-alert" class="alert alert-amber hidden" style="margin:0 18px 0">
+      ⚠️ Some pupils have missing or invalid marks (highlighted in amber/red). Please review before submitting.
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>#</th><th>Admission No</th><th>Pupil Name</th><th>Marks (<span id="mk-max-hd">—</span> max)</th><th>Grade</th><th>Comment</th></tr></thead>
+        <tbody id="marks-pupil-tb"></tbody>
+      </table>
+    </div>
+    <div style="padding:12px 18px;border-top:1px solid var(--border);font-size:.72rem;color:var(--sub)">
+      Grades follow Uganda Primary School scale: D1(90-100), D2(80-89), C3(70-79), C4(65-69), C5(60-64), C6(55-59), P7(50-54), P8(45-49), F9(0-44)
+    </div>
+  </div>
+</div><!-- /marks -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: PUPIL PROGRESS
+════════════════════════════════════════════════ -->
+<div id="pg-progress" class="hidden">
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">🔍</span>Search Pupil</span></div>
+    <div class="card-body">
+      <div class="search-wrap" style="max-width:380px">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="prog-search" placeholder="Search by name or admission number…"
+          style="width:100%;padding:8px 10px 8px 30px;border:1.5px solid var(--border);border-radius:8px;font-size:.76rem;outline:none"
+          oninput="searchPupil(this.value)"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected pupil profile -->
+  <div id="prog-pupil-card" class="hidden">
+    <div class="card">
+      <div class="card-body" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+        <div class="pupil-photo" id="prog-photo">?</div>
+        <div>
+          <div style="font-size:.92rem;font-weight:800;color:var(--navy)" id="prog-name">—</div>
+          <div style="font-size:.74rem;color:var(--sub);margin-top:2px">
+            Class: <strong id="prog-class">—</strong> &nbsp;|&nbsp; Admission No: <strong id="prog-adm">—</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs" style="margin-top:0">
+      <div class="tab active" onclick="switchTab(this,'tab-prog-results')">Results History</div>
+      <div class="tab" onclick="switchTab(this,'tab-prog-comments')">Comments History</div>
+    </div>
+
+    <div id="tab-prog-results" class="tab-pane active">
+      <div class="card">
+        <div class="card-hd"><span class="card-title"><span class="card-title-icon">📊</span>Academic Results</span></div>
+        <div class="card-flush tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Year</th><th>Term</th><th>Subject</th><th>Examination</th><th>Marks</th><th>Max</th><th>Grade</th></tr></thead>
+            <tbody id="prog-results-tb">
+              <tr><td colspan="7"><div class="empty"><div class="empty-icon">📊</div><div class="empty-desc">No results on record for this pupil yet.</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-prog-comments" class="tab-pane">
+      <div class="card">
+        <div class="card-hd"><span class="card-title"><span class="card-title-icon">💬</span>Comments History</span></div>
+        <div class="card-body" id="prog-comments-list">
+          <div class="empty"><div class="empty-icon">💬</div><div class="empty-desc">No comments on record for this pupil yet.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="prog-empty-state">
+    <div class="empty" style="margin-top:30px"><div class="empty-icon">🔍</div><div class="empty-title">Search for a Pupil</div><div class="empty-desc">Enter a pupil's name or admission number above to view their progress.</div></div>
+  </div>
+</div><!-- /progress -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: COMMENTS
+════════════════════════════════════════════════ -->
+<div id="pg-comments" class="hidden">
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">💬</span>Pupil Comments</span></div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="fg">
+          <label>Class *</label>
+          <select id="comm-class" onchange="loadCommentPupils()">
+            <option value="">— Select Class —</option>
+            <option value="P3 East">P3 East</option>
+            <option value="P5 West">P5 West</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Term *</label>
+          <select id="comm-term" onchange="loadCommentPupils()">
+            <option value="">— Select Term —</option>
+            <option>Term 1 – 2025</option>
+            <option>Term 2 – 2025</option>
+            <option>Term 3 – 2025</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="comments-pupils-card" class="hidden">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+      <button class="btn btn-teal" onclick="saveAllComments()">💾 Save All Comments</button>
+    </div>
+    <div id="comments-pupils-list"></div>
+  </div>
+
+  <div id="comments-empty-state">
+    <div class="empty"><div class="empty-icon">💬</div><div class="empty-desc">Select a class and term to enter pupil comments.</div></div>
+  </div>
+</div><!-- /comments -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: LESSON PLANS
+════════════════════════════════════════════════ -->
+<div id="pg-lessons" class="hidden">
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">📋</span>Lesson Plans</span>
+      <button class="btn btn-primary" onclick="openM('mLessonPlan')">+ Create Lesson Plan</button>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Week</th><th>Subject</th><th>Class</th><th>Topic</th><th>Date Created</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="lessons-tb">
+          <tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">No lesson plans yet. Create your first one.</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /lessons -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: SCHEME OF WORK
+════════════════════════════════════════════════ -->
+<div id="pg-scheme" class="hidden">
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📓</span>Scheme of Work Setup</span></div>
+    <div class="card-body">
+      <div class="form-row-3">
+        <div class="fg">
+          <label>Subject *</label>
+          <select id="sow-subject" onchange="loadSoW()">
+            <option value="">— Select Subject —</option>
+            <option>English</option><option>Mathematics</option><option>Science</option>
+            <option>Social Studies</option><option>Religious Education</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Class *</label>
+          <select id="sow-class" onchange="loadSoW()">
+            <option value="">— Select Class —</option>
+            <option value="P3 East">P3 East</option>
+            <option value="P5 West">P5 West</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Term *</label>
+          <select id="sow-term" onchange="loadSoW()">
+            <option value="">— Select Term —</option>
+            <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sow-content-card" class="hidden">
+    <!-- Progress -->
+    <div class="card">
+      <div class="card-body" style="padding:14px 18px">
+        <div class="progress-info">
+          <span style="font-size:.76rem;font-weight:600">Syllabus Completion</span>
+          <span style="font-size:.76rem;color:var(--teal);font-weight:700" id="sow-pct">0%</span>
+        </div>
+        <div class="prog"><div class="prog-fill" id="sow-prog-fill" style="width:0%"></div></div>
+        <div style="font-size:.66rem;color:var(--sub);margin-top:5px" id="sow-prog-note">0 of 0 topics covered</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📓</span>Weekly Scheme</span><button class="btn btn-primary btn-sm" onclick="addSoWRow()">+ Add Week</button></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Week</th><th>Topic</th><th>Sub-Topics</th><th>Learning Outcomes</th><th>Methods</th><th>Resources</th><th>Covered</th><th>Date Covered</th></tr></thead>
+          <tbody id="sow-tb"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div id="sow-empty-state">
+    <div class="empty"><div class="empty-icon">📓</div><div class="empty-desc">Select subject, class and term to load the scheme of work.</div></div>
+  </div>
+</div><!-- /scheme -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: TIMETABLE
+════════════════════════════════════════════════ -->
+<div id="pg-timetable" class="hidden">
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">🗓️</span>My Weekly Timetable</span>
+      <button class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨️ Print</button>
+    </div>
+    <div class="card-body" style="overflow-x:auto">
+      <table class="timetable-grid" id="tt-table">
+        <thead>
+          <tr>
+            <th style="width:80px">Period / Time</th>
+            <th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th>
+          </tr>
+        </thead>
+        <tbody id="tt-body"></tbody>
+      </table>
+    </div>
+    <div style="padding:10px 18px;font-size:.68rem;color:var(--sub)">
+      Timetable is assigned by the school administration. Contact Admin to make changes.
+    </div>
+  </div>
+</div><!-- /timetable -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: ANNOUNCEMENTS
+════════════════════════════════════════════════ -->
+<div id="pg-announcements" class="hidden">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(this,'tab-ann-school')">School Announcements <span class="badge b-teal" id="school-ann-count">0</span></div>
+    <div class="tab" onclick="switchTab(this,'tab-ann-mine')">My Announcements <span class="badge b-gray" id="my-ann-count">0</span></div>
+  </div>
+
+  <!-- School announcements (read-only) -->
+  <div id="tab-ann-school" class="tab-pane active">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📢</span>From Admin &amp; DOS</span></div>
+      <div class="card-body" style="padding:0 18px" id="school-ann-list">
+        <div class="empty"><div class="empty-icon">📢</div><div class="empty-desc">No school announcements yet.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My class announcements -->
+  <div id="tab-ann-mine" class="tab-pane">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">✏️</span>Post Class Announcement</span></div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="fg">
+            <label>Title *</label>
+            <input type="text" id="ann-title" placeholder="Announcement title"/>
+          </div>
+          <div class="fg">
+            <label>Target Class *</label>
+            <select id="ann-target">
+              <option value="">— All My Classes —</option>
+              <option>P3 East</option>
+              <option>P5 West</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Message *</label>
+          <textarea id="ann-message" rows="3" placeholder="Write your announcement here…" maxlength="500" oninput="updateCharCount(this,'ann-cc',500)"></textarea>
+          <div style="display:flex;justify-content:space-between">
+            <span class="hint">Visible to parents and pupils in the selected class.</span>
+            <span class="char-count"><span id="ann-cc">0</span>/500</span>
+          </div>
+        </div>
+        <button class="btn btn-teal" onclick="postMyAnnouncement()">📤 Post Announcement</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📋</span>My Posted Announcements</span></div>
+      <div class="card-body" style="padding:0 18px" id="my-ann-list">
+        <div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">You have not posted any class announcements yet.</div></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /announcements -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: RESOURCES
+════════════════════════════════════════════════ -->
+<div id="pg-resources" class="hidden">
+  <!-- Dropzone -->
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📁</span>Resources Library</span><button class="btn btn-primary" onclick="openM('mUpload')">⬆️ Upload Resource</button></div>
+    <div class="card-body">
+      <div class="resource-dropzone" onclick="openM('mUpload')" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+        <div style="font-size:1.8rem;margin-bottom:8px">📂</div>
+        <div style="font-weight:600;color:var(--navy)">Drag &amp; drop files here or click to upload</div>
+        <div style="font-size:.72rem;color:var(--sub);margin-top:4px">Supported: PDF, DOC, DOCX, XLSX, PPT, JPG, PNG</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resources table -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">📋</span>Uploaded Resources</span>
+      <div style="display:flex;gap:6px">
+        <select id="res-filter-subj" onchange="filterResources()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.73rem;outline:none">
+          <option value="">All Subjects</option>
+          <option>English</option><option>Mathematics</option><option>Science</option><option>Social Studies</option>
+        </select>
+        <select id="res-filter-class" onchange="filterResources()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.73rem;outline:none">
+          <option value="">All Classes</option>
+          <option>P3 East</option><option>P5 West</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>File Name</th><th>Subject</th><th>Class</th><th>Description</th><th>Type</th><th>Date Uploaded</th><th>Actions</th></tr></thead>
+        <tbody id="resources-tb">
+          <tr><td colspan="7"><div class="empty"><div class="empty-icon">📁</div><div class="empty-desc">No resources uploaded yet. Upload your first resource.</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /resources -->
+
+  </div><!-- /page-content -->
+</div><!-- /main-area -->
+</div><!-- /layout -->
+
+<!-- ═══════════════════════════════════════════════
+     TOAST STACK
+═══════════════════════════════════════════════ -->
+<div class="toast-stack" id="toast-stack"></div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: SUBMIT MARKS CONFIRMATION
+═══════════════════════════════════════════════ -->
+<div class="overlay" id="overlay-submitConfirm">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-hd">
+      <div class="modal-title">⚠️ Submit Marks to DOS</div>
+      <button class="modal-close" onclick="closeM('overlay-submitConfirm')">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="alert alert-amber" style="margin-bottom:12px">
+        Once submitted, marks cannot be edited without DOS approval.
+      </div>
+      <p style="font-size:.78rem;line-height:1.6">
+        You are about to submit the marks for <strong id="confirm-class">—</strong>, 
+        <strong id="confirm-subject">—</strong>, 
+        <strong id="confirm-exam">—</strong> to the Director of Studies for review.<br/><br/>
+        Please ensure all marks are correct before proceeding.
+      </p>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('overlay-submitConfirm')">Cancel</button>
+      <button class="btn btn-teal" onclick="submitMarksToDOS()">📤 Yes, Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: LESSON PLAN
+═══════════════════════════════════════════════ -->
+<div class="overlay" id="overlay-mLessonPlan">
+  <div class="modal modal-lg">
+    <div class="modal-hd">
+      <div class="modal-title">📋 Create Lesson Plan</div>
+      <button class="modal-close" onclick="closeM('overlay-mLessonPlan')">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="fg">
+          <label>Week Number *</label>
+          <input type="number" id="lp-week" placeholder="e.g. 1" min="1" max="14"/>
+        </div>
+        <div class="fg">
+          <label>Date *</label>
+          <input type="date" id="lp-date"/>
+        </div>
+        <div class="fg">
+          <label>Subject *</label>
+          <select id="lp-subject">
+            <option value="">— Select —</option>
+            <option>English</option><option>Mathematics</option><option>Science</option>
+            <option>Social Studies</option><option>Religious Education</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Class *</label>
+          <select id="lp-class">
+            <option value="">— Select —</option>
+            <option>P3 East</option><option>P5 West</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Topic *</label>
+        <input type="text" id="lp-topic" placeholder="Lesson topic"/>
+      </div>
+      <div class="fg">
+        <label>Learning Objectives *</label>
+        <textarea id="lp-objectives" rows="3" placeholder="By the end of this lesson, pupils should be able to…"></textarea>
+      </div>
+      <div class="fg">
+        <label>Teaching Activities</label>
+        <textarea id="lp-activities" rows="3" placeholder="Describe the teaching and learning activities…"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Resources Needed</label>
+          <input type="text" id="lp-resources" placeholder="e.g. textbooks, charts, flash cards"/>
+        </div>
+        <div class="fg">
+          <label>Teaching Aids</label>
+          <input type="text" id="lp-aids" placeholder="e.g. projector, blackboard"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="saveLessonPlan('Draft')">💾 Save Draft</button>
+      <button class="btn btn-teal" onclick="saveLessonPlan('Submitted')">📤 Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: UPLOAD RESOURCE
+═══════════════════════════════════════════════ -->
+<div class="overlay" id="overlay-mUpload">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">⬆️ Upload Resource</div>
+      <button class="modal-close" onclick="closeM('overlay-mUpload')">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="fg">
+        <label>File *</label>
+        <input type="file" id="res-file" accept=".pdf,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.jpg,.jpeg,.png"/>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Subject *</label>
+          <select id="res-subject">
+            <option value="">— Select —</option>
+            <option>English</option><option>Mathematics</option><option>Science</option>
+            <option>Social Studies</option><option>Religious Education</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Class *</label>
+          <select id="res-class">
+            <option value="">— All Classes —</option>
+            <option>P3 East</option><option>P5 West</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Description</label>
+        <textarea id="res-desc" rows="2" placeholder="Brief description of this resource…"></textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('overlay-mUpload')">Cancel</button>
+      <button class="btn btn-teal" onclick="uploadResource()">⬆️ Upload</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
+<script>
+/* ── Session ── */
+const sess = JSON.parse(sessionStorage.getItem('sms_user') || '{}');
+if (!sess.loggedIn) location.href = '../index.html';
+function signOut() { sessionStorage.clear(); location.href = '../index.html'; }
+
+/* ── Demo teacher data ── */
+const teacherName = sess.name || 'Ms. Nakato Sarah';
+const teacherInitials = teacherName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+/* ── Populate identity ── */
+document.getElementById('welcome-msg').textContent = 'Good morning, ' + teacherName + ' 👋';
+document.getElementById('sb-uname').textContent = teacherName;
+document.getElementById('sb-av-init').textContent = teacherInitials;
+document.getElementById('tb-av').textContent = teacherInitials;
+document.getElementById('tb-uname').textContent = teacherName.split(' ')[0];
+
+/* ── Date ── */
+const now = new Date();
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('today-date').textContent =
+  days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+document.getElementById('att-date').value = now.toISOString().split('T')[0];
+document.getElementById('tb-term').textContent = 'Term 1 – 2025';
+
+/* ── Page navigation ── */
+const pages = ['dashboard','classes','attendance','marks','progress','comments','lessons','scheme','timetable','announcements','resources'];
+const pageTitles = {
+  dashboard:'Dashboard', classes:'My Classes', attendance:'Attendance',
+  marks:'Marks Entry', progress:'Pupil Progress', comments:'Comments',
+  lessons:'Lesson Plans', scheme:'Scheme of Work', timetable:'Timetable',
+  announcements:'Announcements', resources:'Resources'
+};
+
+function nav(page, linkEl) {
+  pages.forEach(p => {
+    const el = document.getElementById('pg-' + p);
+    if (el) el.classList.add('hidden');
+    const lnk = document.getElementById('lnk-' + p);
+    if (lnk) lnk.classList.remove('active');
+  });
+  const target = document.getElementById('pg-' + page);
+  if (target) target.classList.remove('hidden');
+  const lnk = linkEl || document.getElementById('lnk-' + page);
+  if (lnk) lnk.classList.add('active');
+  document.getElementById('pg-title').textContent = pageTitles[page] || page;
+  document.getElementById('pg-crumb').textContent = 'Teacher › ' + (pageTitles[page] || page);
+
+  if (page === 'timetable') buildTimetable();
+  if (page === 'dashboard') updateDashboardKPIs();
+}
+
+/* ── Tab switching ── */
+function switchTab(tabEl, paneId) {
+  const container = tabEl.closest('.tabs');
+  if (!container) return;
+  container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+  const parentEl = container.parentElement;
+  parentEl.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  const pane = document.getElementById(paneId);
+  if (pane) pane.classList.add('active');
+}
+
+/* ── Modal helpers ── */
+function openM(id) {
+  const el = document.getElementById('overlay-' + id);
+  if (el) { el.classList.add('open'); }
+}
+function closeM(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+document.querySelectorAll('.overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+});
+
+/* ── Toast ── */
+function toast(msg, type = 'info') {
+  const stack = document.getElementById('toast-stack');
+  const icons = { success:'✅', error:'❌', warn:'⚠️', info:'ℹ️' };
+  const cls   = { success:'t-success', error:'t-error', warn:'t-warn', info:'' };
+  const t = document.createElement('div');
+  t.className = 'toast ' + (cls[type] || '');
+  t.innerHTML = '<span>' + (icons[type] || 'ℹ️') + '</span><span>' + msg + '</span>';
+  stack.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='.3s'; setTimeout(() => t.remove(), 300); }, 3200);
+}
+
+/* ── Uganda grading ── */
+function getGrade(marks, maxMarks) {
+  if (marks === '' || marks === null || isNaN(marks)) return '—';
+  const pct = (parseFloat(marks) / parseFloat(maxMarks)) * 100;
+  if (pct >= 90) return 'D1';
+  if (pct >= 80) return 'D2';
+  if (pct >= 70) return 'C3';
+  if (pct >= 65) return 'C4';
+  if (pct >= 60) return 'C5';
+  if (pct >= 55) return 'C6';
+  if (pct >= 50) return 'P7';
+  if (pct >= 45) return 'P8';
+  return 'F9';
+}
+function gradeClass(g) {
+  const map = { D1:'gD1',D2:'gD2',C3:'gC3',C4:'gC4',C5:'gC5',C6:'gC6',P7:'gP7',P8:'gP8',F9:'gF9' };
+  return map[g] || '';
+}
+
+/* ══════════════════════════════
+   DASHBOARD
+══════════════════════════════ */
+function updateDashboardKPIs() {
+  document.getElementById('kpi-classes').textContent = demoClasses.length;
+  document.getElementById('kpi-att-pending').textContent = '1';
+  document.getElementById('kpi-marks-pending').textContent = '2';
+  document.getElementById('kpi-announcements').textContent = demoSchoolAnn.length;
+}
+
+/* ══════════════════════════════
+   MY CLASSES
+══════════════════════════════ */
+const demoClasses = [
+  { name:'P3 East', subject:'English, Mathematics', pupils:38 },
+  { name:'P5 West', subject:'English', pupils:35 },
+];
+
+function buildClassesGrid() {
+  const grid = document.getElementById('classes-grid');
+  if (!demoClasses.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🏫</div><div class="empty-title">No Classes Assigned</div><div class="empty-desc">Your class assignments will appear here once the Admin configures them.</div></div>';
+    return;
+  }
+  grid.innerHTML = demoClasses.map((cls, i) => `
+    <div class="class-card" onclick="goToAttendanceFor('${cls.name}')">
+      <div class="class-card-name">${cls.name}</div>
+      <div class="class-card-stream">${cls.subject}</div>
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+        <span>${cls.subject.split(',').map(s => `<span class="badge b-teal" style="margin:1px">${s.trim()}</span>`).join('')}</span>
+        <span class="badge b-navy">👥 ${cls.pupils}</span>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn btn-teal btn-sm" onclick="event.stopPropagation();goToAttendanceFor('${cls.name}')">Mark Attendance</button>
+      </div>
+    </div>`).join('');
+}
+
+function goToAttendanceFor(className) {
+  nav('attendance', null);
+  document.getElementById('att-class').value = className;
+  loadAttendancePupils();
+}
+
+/* ══════════════════════════════
+   ATTENDANCE
+══════════════════════════════ */
+const demoPupils = {
+  'P3 East': [
+    { adm:'BFS-2023-001', name:'Amanya John' },
+    { adm:'BFS-2023-002', name:'Birungi Harriet' },
+    { adm:'BFS-2023-003', name:'Kato Emmanuel' },
+    { adm:'BFS-2023-004', name:'Namukasa Fatuma' },
+    { adm:'BFS-2023-005', name:'Tumusiime Brian' },
+  ],
+  'P5 West': [
+    { adm:'BFS-2021-011', name:'Atwine Peter' },
+    { adm:'BFS-2021-012', name:'Kyomugisha Grace' },
+    { adm:'BFS-2021-013', name:'Mwesigwa Daniel' },
+    { adm:'BFS-2021-014', name:'Nakato Josephine' },
+    { adm:'BFS-2021-015', name:'Ochen Samuel' },
+  ]
+};
+
+/* Track submitted attendance: key = "className|date" */
+const submittedAttendance = {};
+/* Current attendance state: key = admission no, value = status */
+let currentAttState = {};
+
+function loadAttendancePupils() {
+  const cls  = document.getElementById('att-class').value;
+  const date = document.getElementById('att-date').value;
+  const card = document.getElementById('att-table-card');
+  const dupAlert = document.getElementById('att-duplicate-alert');
+
+  if (!cls || !date) { card.classList.add('hidden'); return; }
+
+  const key = cls + '|' + date;
+  const isDup = !!submittedAttendance[key];
+
+  dupAlert.classList.toggle('hidden', !isDup);
+  card.classList.remove('hidden');
+  document.getElementById('att-class-label').textContent = cls + ' — ' + date;
+  document.getElementById('save-att-btn').disabled = isDup;
+
+  const pupils = demoPupils[cls] || [];
+  currentAttState = {};
+  pupils.forEach(p => { currentAttState[p.adm] = isDup ? (submittedAttendance[key][p.adm] || 'A') : null; });
+
+  renderAttendanceTable(pupils, isDup);
+  updateAttSummary();
+}
+
+function renderAttendanceTable(pupils, readOnly) {
+  const tb = document.getElementById('att-pupil-tb');
+  if (!pupils.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-desc">No pupils in this class.</div></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = pupils.map((p, i) => {
+    const statuses = ['P','A','L','E'];
+    const btns = statuses.map(s => {
+      const cur = currentAttState[p.adm];
+      const sel = cur === s ? 'sel-' + s : '';
+      return `<button class="att-btn ${sel}" id="btn-${p.adm}-${s}" ${readOnly ? 'disabled' : ''} onclick="setAtt('${p.adm}','${s}')">${s}</button>`;
+    }).join('');
+    return `<tr id="att-row-${p.adm}"><td>${i+1}</td><td class="mono">${p.adm}</td><td style="font-weight:600">${p.name}</td>${statuses.map((s,idx) => `<td style="text-align:center">${btns.split('</button>')[idx] + '</button>'}</td>`).join('')}</tr>`;
+  }).join('');
+
+  // Re-render properly (flat buttons per cell)
+  tb.innerHTML = pupils.map((p, i) => {
+    const statuses = [['P','Present'],['A','Absent'],['L','Late'],['E','Excused']];
+    const cur = currentAttState[p.adm];
+    const cells = statuses.map(([s, label]) => {
+      const sel = cur === s ? 'sel-' + s : '';
+      return `<td style="text-align:center"><button class="att-btn ${sel}" id="btn-${p.adm}-${s}" title="${label}" ${readOnly ? 'disabled' : ''} onclick="setAtt('${p.adm}','${s}')">${s}</button></td>`;
+    }).join('');
+    return `<tr id="att-row-${p.adm}"><td>${i+1}</td><td class="mono">${p.adm}</td><td style="font-weight:600">${p.name}</td>${cells}</tr>`;
+  }).join('');
+}
+
+function setAtt(adm, status) {
+  currentAttState[adm] = status;
+  ['P','A','L','E'].forEach(s => {
+    const btn = document.getElementById('btn-' + adm + '-' + s);
+    if (btn) { btn.className = 'att-btn' + (s === status ? ' sel-' + s : ''); }
+  });
+  updateAttSummary();
+}
+
+function markAll(status) {
+  Object.keys(currentAttState).forEach(adm => setAtt(adm, status));
+}
+
+function updateAttSummary() {
+  const counts = { P:0, A:0, L:0, E:0 };
+  Object.values(currentAttState).forEach(s => { if (s && counts[s] !== undefined) counts[s]++; });
+  const total = Object.keys(currentAttState).length;
+  document.getElementById('summ-P').textContent = counts.P;
+  document.getElementById('summ-A').textContent = counts.A;
+  document.getElementById('summ-L').textContent = counts.L;
+  document.getElementById('summ-E').textContent = counts.E;
+  document.getElementById('summ-T').textContent = total;
+}
+
+function saveAttendance() {
+  const cls  = document.getElementById('att-class').value;
+  const date = document.getElementById('att-date').value;
+  const unset = Object.values(currentAttState).filter(s => !s).length;
+  if (unset > 0) {
+    toast(unset + ' pupil(s) have no status set. Please mark all pupils.', 'warn');
+    return;
+  }
+  const key = cls + '|' + date;
+  submittedAttendance[key] = { ...currentAttState };
+  document.getElementById('att-duplicate-alert').classList.remove('hidden');
+  document.getElementById('save-att-btn').disabled = true;
+  // Disable all att buttons
+  document.querySelectorAll('.att-btn').forEach(b => b.disabled = true);
+  toast('Attendance saved successfully for ' + cls + ' on ' + date, 'success');
+}
+
+function loadAttHistory() {
+  const cls = document.getElementById('hist-class').value;
+  const tb  = document.getElementById('hist-att-tb');
+  if (!cls) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">Select a class to view history.</div></div></td></tr>';
+    return;
+  }
+  const records = Object.entries(submittedAttendance)
+    .filter(([k]) => k.startsWith(cls + '|'))
+    .map(([k, state]) => {
+      const date = k.split('|')[1];
+      const counts = { P:0, A:0, L:0, E:0 };
+      Object.values(state).forEach(s => { if (counts[s] !== undefined) counts[s]++; });
+      const total = Object.values(state).length;
+      return `<tr>
+        <td>${date}</td><td>${cls}</td>
+        <td><span class="badge b-green">${counts.P}</span></td>
+        <td><span class="badge b-red">${counts.A}</span></td>
+        <td><span class="badge b-amber">${counts.L}</span></td>
+        <td><span class="badge b-teal">${counts.E}</span></td>
+        <td>${total}</td>
+        <td><span class="badge b-green">Submitted</span></td>
+      </tr>`;
+    });
+  if (!records.length) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">No attendance records for ' + cls + ' yet.</div></div></td></tr>';
+  } else {
+    tb.innerHTML = records.join('');
+  }
+}
+
+/* ══════════════════════════════
+   MARKS ENTRY
+══════════════════════════════ */
+const classSubjects = {
+  'P3 East': ['English','Mathematics','Science','Social Studies','Religious Education'],
+  'P5 West': ['English','Mathematics']
+};
+
+/* Track submitted marks: key = "class|subject|exam" */
+const submittedMarks = {};
+let currentMarksState = {};
+let currentMaxMarks = 100;
+
+function updateMarkSubjects() {
+  const cls = document.getElementById('mk-class').value;
+  const sel = document.getElementById('mk-subject');
+  sel.innerHTML = '<option value="">— Select Subject —</option>';
+  (classSubjects[cls] || []).forEach(s => {
+    const opt = document.createElement('option');
+    opt.textContent = s; opt.value = s;
+    sel.appendChild(opt);
+  });
+  loadMarksPupils();
+}
+
+function loadMarksPupils() {
+  const cls   = document.getElementById('mk-class').value;
+  const subj  = document.getElementById('mk-subject').value;
+  const examV = document.getElementById('mk-exam').value;
+  const card  = document.getElementById('marks-table-card');
+  const infoBar = document.getElementById('mk-info-bar');
+
+  if (!cls || !subj || !examV) {
+    card.classList.add('hidden');
+    infoBar.classList.add('hidden');
+    return;
+  }
+
+  const [examName, maxStr] = examV.split('|');
+  currentMaxMarks = parseInt(maxStr, 10);
+
+  infoBar.classList.remove('hidden');
+  document.getElementById('mk-info-class').textContent   = cls;
+  document.getElementById('mk-info-subject').textContent = subj;
+  document.getElementById('mk-info-exam').textContent    = examName;
+  document.getElementById('mk-info-max').textContent     = currentMaxMarks;
+  document.getElementById('mk-max-hd').textContent       = currentMaxMarks;
+
+  const key = cls + '|' + subj + '|' + examName;
+  const alreadySubmitted = !!submittedMarks[key];
+
+  card.classList.remove('hidden');
+  document.getElementById('submit-marks-btn').disabled = alreadySubmitted;
+  document.getElementById('save-draft-btn').disabled   = alreadySubmitted;
+
+  const pupils = demoPupils[cls] || [];
+  currentMarksState = {};
+  pupils.forEach(p => { currentMarksState[p.adm] = ''; });
+
+  renderMarksTable(pupils);
+  checkMissingMarks();
+}
+
+function renderMarksTable(pupils) {
+  const tb = document.getElementById('marks-pupil-tb');
+  if (!pupils.length) {
+    tb.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-desc">No pupils found.</div></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = pupils.map((p, i) => `
+    <tr id="mk-row-${p.adm}">
+      <td>${i+1}</td>
+      <td class="mono">${p.adm}</td>
+      <td style="font-weight:600">${p.name}</td>
+      <td>
+        <input type="number" class="marks-input missing" id="mk-inp-${p.adm}"
+          min="0" max="${currentMaxMarks}" placeholder="—"
+          oninput="onMarksInput('${p.adm}', this)"/>
+      </td>
+      <td id="mk-grade-${p.adm}"><span class="grade-pill">—</span></td>
+      <td><input type="text" style="width:140px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.72rem" id="mk-comm-${p.adm}" placeholder="Optional comment"/></td>
+    </tr>`).join('');
+}
+
+function onMarksInput(adm, input) {
+  const val = input.value.trim();
+  const num = parseFloat(val);
+  if (val === '') {
+    input.className = 'marks-input missing';
+    currentMarksState[adm] = '';
+    document.getElementById('mk-grade-' + adm).innerHTML = '<span class="grade-pill">—</span>';
+  } else if (isNaN(num) || num < 0 || num > currentMaxMarks) {
+    input.className = 'marks-input invalid';
+    currentMarksState[adm] = null; // invalid
+    document.getElementById('mk-grade-' + adm).innerHTML = '<span class="grade-pill" style="background:#fde8e7;color:var(--red)">ERR</span>';
+  } else {
+    input.className = 'marks-input';
+    currentMarksState[adm] = num;
+    const g = getGrade(num, currentMaxMarks);
+    document.getElementById('mk-grade-' + adm).innerHTML = `<span class="grade-pill ${gradeClass(g)}">${g}</span>`;
+  }
+  checkMissingMarks();
+}
+
+function checkMissingMarks() {
+  const hasMissing = Object.values(currentMarksState).some(v => v === '' || v === null);
+  document.getElementById('mk-missing-alert').classList.toggle('hidden', !hasMissing);
+}
+
+function saveMarksDraft() {
+  toast('Marks draft saved successfully.', 'success');
+}
+
+function openSubmitConfirm() {
+  const cls   = document.getElementById('mk-class').value;
+  const subj  = document.getElementById('mk-subject').value;
+  const examV = document.getElementById('mk-exam').value;
+  const [examName] = examV.split('|');
+  const hasInvalid = Object.values(currentMarksState).some(v => v === null);
+  if (hasInvalid) { toast('Fix invalid marks before submitting.', 'error'); return; }
+
+  document.getElementById('confirm-class').textContent   = cls;
+  document.getElementById('confirm-subject').textContent = subj;
+  document.getElementById('confirm-exam').textContent    = examName;
+  document.getElementById('overlay-submitConfirm').classList.add('open');
+}
+
+function submitMarksToDOS() {
+  const cls   = document.getElementById('mk-class').value;
+  const subj  = document.getElementById('mk-subject').value;
+  const examV = document.getElementById('mk-exam').value;
+  const [examName] = examV.split('|');
+  const key = cls + '|' + subj + '|' + examName;
+  submittedMarks[key] = true;
+  closeM('overlay-submitConfirm');
+  document.getElementById('submit-marks-btn').disabled = true;
+  document.getElementById('save-draft-btn').disabled   = true;
+  document.querySelectorAll('.marks-input').forEach(i => i.disabled = true);
+  toast('Marks submitted to DOS for review.', 'success');
+}
+
+/* ══════════════════════════════
+   PUPIL PROGRESS
+══════════════════════════════ */
+const allPupils = Object.values(demoPupils).flat();
+
+function searchPupil(query) {
+  const q = query.trim().toLowerCase();
+  const profileCard = document.getElementById('prog-pupil-card');
+  const emptyState  = document.getElementById('prog-empty-state');
+
+  if (!q) { profileCard.classList.add('hidden'); emptyState.classList.remove('hidden'); return; }
+
+  const found = allPupils.find(p =>
+    p.name.toLowerCase().includes(q) || p.adm.toLowerCase().includes(q)
+  );
+
+  if (!found) {
+    emptyState.innerHTML = '<div class="empty" style="margin-top:30px"><div class="empty-icon">🔍</div><div class="empty-title">No Results</div><div class="empty-desc">No pupil found matching "' + query + '".</div></div>';
+    profileCard.classList.add('hidden');
+    emptyState.classList.remove('hidden');
+    return;
+  }
+
+  const cls = Object.entries(demoPupils).find(([, list]) => list.some(p => p.adm === found.adm))?.[0] || '—';
+  document.getElementById('prog-photo').textContent = found.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('prog-name').textContent  = found.name;
+  document.getElementById('prog-class').textContent = cls;
+  document.getElementById('prog-adm').textContent   = found.adm;
+  document.getElementById('prog-results-tb').innerHTML =
+    '<tr><td colspan="7"><div class="empty"><div class="empty-icon">📊</div><div class="empty-desc">No results on record yet. Results will appear after marks are submitted and approved.</div></div></td></tr>';
+  document.getElementById('prog-comments-list').innerHTML =
+    '<div class="empty"><div class="empty-icon">💬</div><div class="empty-desc">No comments on record yet.</div></div>';
+
+  profileCard.classList.remove('hidden');
+  emptyState.classList.add('hidden');
+}
+
+/* ══════════════════════════════
+   COMMENTS
+══════════════════════════════ */
+function loadCommentPupils() {
+  const cls  = document.getElementById('comm-class').value;
+  const term = document.getElementById('comm-term').value;
+  const card  = document.getElementById('comments-pupils-card');
+  const empty = document.getElementById('comments-empty-state');
+
+  if (!cls || !term) { card.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+
+  const pupils = demoPupils[cls] || [];
+  const list   = document.getElementById('comments-pupils-list');
+
+  if (!pupils.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-desc">No pupils in this class.</div></div>';
+  } else {
+    list.innerHTML = pupils.map(p => `
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-hd" style="padding:10px 16px">
+          <span class="card-title">${p.name} <span class="text-muted" style="font-weight:400;font-size:.7rem">— ${p.adm}</span></span>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="fg">
+              <label>Academic Comment</label>
+              <textarea id="ac-comm-${p.adm}" rows="2" maxlength="300"
+                placeholder="Academic performance comment…"
+                oninput="updateCharCount(this,'ac-cc-${p.adm}',300)"></textarea>
+              <div style="display:flex;justify-content:flex-end"><span class="char-count"><span id="ac-cc-${p.adm}">0</span>/300</span></div>
+            </div>
+            <div class="fg">
+              <label>Conduct / Behaviour Comment</label>
+              <textarea id="bh-comm-${p.adm}" rows="2" maxlength="300"
+                placeholder="Conduct and behaviour comment…"
+                oninput="updateCharCount(this,'bh-cc-${p.adm}',300)"></textarea>
+              <div style="display:flex;justify-content:flex-end"><span class="char-count"><span id="bh-cc-${p.adm}">0</span>/300</span></div>
+            </div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+  card.classList.remove('hidden');
+  empty.classList.add('hidden');
+}
+
+function saveAllComments() {
+  toast('Comments saved for all pupils.', 'success');
+}
+
+function updateCharCount(textarea, countId, max) {
+  const el = document.getElementById(countId);
+  if (el) el.textContent = textarea.value.length;
+}
+
+/* ══════════════════════════════
+   LESSON PLANS
+══════════════════════════════ */
+const lessonPlans = [];
+
+function saveLessonPlan(status) {
+  const week    = document.getElementById('lp-week').value.trim();
+  const date    = document.getElementById('lp-date').value;
+  const subject = document.getElementById('lp-subject').value;
+  const cls     = document.getElementById('lp-class').value;
+  const topic   = document.getElementById('lp-topic').value.trim();
+  const objectives = document.getElementById('lp-objectives').value.trim();
+  const activities = document.getElementById('lp-activities').value.trim();
+
+  if (!week || !subject || !cls || !topic || !objectives) {
+    toast('Please fill all required fields.', 'warn'); return;
+  }
+
+  lessonPlans.unshift({ week, date, subject, cls, topic, objectives, activities, status, created: new Date().toLocaleDateString() });
+  closeM('overlay-mLessonPlan');
+  renderLessonPlans();
+  toast('Lesson plan ' + status.toLowerCase() + '.', status === 'Submitted' ? 'success' : 'info');
+
+  // Reset form
+  ['lp-week','lp-date','lp-topic','lp-objectives','lp-activities','lp-resources','lp-aids'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('lp-subject').value = '';
+  document.getElementById('lp-class').value   = '';
+}
+
+function renderLessonPlans() {
+  const tb = document.getElementById('lessons-tb');
+  if (!lessonPlans.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">No lesson plans yet. Create your first one.</div></div></td></tr>';
+    return;
+  }
+  const badgeMap = {
+    Draft:     'b-amber',
+    Submitted: 'b-teal',
+    Approved:  'b-green'
+  };
+  tb.innerHTML = lessonPlans.map(lp => `
+    <tr>
+      <td>Week ${lp.week}</td>
+      <td>${lp.subject}</td>
+      <td>${lp.cls}</td>
+      <td>${lp.topic}</td>
+      <td>${lp.created}</td>
+      <td><span class="badge ${badgeMap[lp.status] || 'b-gray'}">${lp.status}</span></td>
+      <td><button class="btn btn-ghost btn-xs" onclick="toast('Viewing lesson plan details','info')">👁 View</button></td>
+    </tr>`).join('');
+}
+
+/* ══════════════════════════════
+   SCHEME OF WORK
+══════════════════════════════ */
+const sowData = {};   // key = "subject|class|term" → array of rows
+
+function getSoWKey() {
+  return document.getElementById('sow-subject').value + '|' +
+         document.getElementById('sow-class').value   + '|' +
+         document.getElementById('sow-term').value;
+}
+
+function loadSoW() {
+  const subj  = document.getElementById('sow-subject').value;
+  const cls   = document.getElementById('sow-class').value;
+  const term  = document.getElementById('sow-term').value;
+  const empty = document.getElementById('sow-empty-state');
+  const card  = document.getElementById('sow-content-card');
+
+  if (!subj || !cls || !term) { card.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+
+  card.classList.remove('hidden');
+  empty.classList.add('hidden');
+  const key = getSoWKey();
+  if (!sowData[key]) sowData[key] = [];
+  renderSoW();
+}
+
+function addSoWRow() {
+  const key = getSoWKey();
+  if (!key.startsWith('|') && !key.endsWith('|')) {
+    sowData[key] = sowData[key] || [];
+    const weekNo = sowData[key].length + 1;
+    sowData[key].push({ week: weekNo, topic:'', subTopics:'', outcomes:'', methods:'', resources:'', covered:false, dateCovered:'' });
+    renderSoW();
+  }
+}
+
+function renderSoW() {
+  const key  = getSoWKey();
+  const rows = sowData[key] || [];
+  const tb   = document.getElementById('sow-tb');
+
+  if (!rows.length) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-desc">No weeks added yet. Click "+ Add Week" to begin.</div></div></td></tr>';
+    updateSoWProgress(0, 0);
+    return;
+  }
+
+  tb.innerHTML = rows.map((row, i) => `
+    <tr class="${row.covered ? 'sow-row-covered' : ''}" id="sow-row-${i}">
+      <td style="font-weight:700;color:var(--navy)">Week ${row.week}</td>
+      <td><input type="text" value="${row.topic}" style="width:120px;padding:4px 7px;border:1.5px solid var(--border);border-radius:5px;font-size:.72rem" onchange="updateSoWCell(${i},'topic',this.value)"/></td>
+      <td><input type="text" value="${row.subTopics}" style="width:110px;padding:4px 7px;border:1.5px solid var(--border);border-radius:5px;font-size:.72rem" onchange="updateSoWCell(${i},'subTopics',this.value)"/></td>
+      <td><input type="text" value="${row.outcomes}" style="width:120px;padding:4px 7px;border:1.5px solid var(--border);border-radius:5px;font-size:.72rem" onchange="updateSoWCell(${i},'outcomes',this.value)"/></td>
+      <td><input type="text" value="${row.methods}" style="width:100px;padding:4px 7px;border:1.5px solid var(--border);border-radius:5px;font-size:.72rem" onchange="updateSoWCell(${i},'methods',this.value)"/></td>
+      <td><input type="text" value="${row.resources}" style="width:100px;padding:4px 7px;border:1.5px solid var(--border);border-radius:5px;font-size:.72rem" onchange="updateSoWCell(${i},'resources',this.value)"/></td>
+      <td style="text-align:center"><input type="checkbox" ${row.covered ? 'checked' : ''} onchange="toggleCovered(${i},this.checked)"/></td>
+      <td><input type="date" value="${row.dateCovered}" style="padding:4px 7px;border:1.5px solid var(--border);border-radius:5px;font-size:.72rem" onchange="updateSoWCell(${i},'dateCovered',this.value)" ${!row.covered ? 'disabled' : ''}/></td>
+    </tr>`).join('');
+
+  const covered = rows.filter(r => r.covered).length;
+  updateSoWProgress(covered, rows.length);
+}
+
+function updateSoWCell(i, field, value) {
+  const key = getSoWKey();
+  sowData[key][i][field] = value;
+}
+
+function toggleCovered(i, checked) {
+  const key = getSoWKey();
+  sowData[key][i].covered = checked;
+  if (!checked) sowData[key][i].dateCovered = '';
+  renderSoW();
+  const covered = sowData[key].filter(r => r.covered).length;
+  toast(checked ? 'Topic marked as covered.' : 'Topic marked as not yet covered.', checked ? 'success' : 'info');
+}
+
+function updateSoWProgress(covered, total) {
+  const pct = total ? Math.round((covered / total) * 100) : 0;
+  document.getElementById('sow-pct').textContent = pct + '%';
+  document.getElementById('sow-prog-fill').style.width = pct + '%';
+  document.getElementById('sow-prog-note').textContent = covered + ' of ' + total + ' topics covered';
+}
+
+/* ══════════════════════════════
+   TIMETABLE
+══════════════════════════════ */
+const demoTimetable = {
+  // [period][day] → {subject, class}
+  1: { Mon:{subject:'English',     cls:'P3 East'}, Tue:{subject:'Mathematics',cls:'P5 West'}, Wed:{subject:'English',  cls:'P3 East'}, Thu:{subject:'Mathematics',cls:'P3 East'}, Fri:{subject:'English', cls:'P5 West'} },
+  2: { Mon:{subject:'Mathematics', cls:'P3 East'}, Tue:{subject:'English',    cls:'P3 East'}, Wed:{subject:'',cls:''}, Thu:{subject:'English',    cls:'P5 West'}, Fri:{subject:'Mathematics',cls:'P3 East'} },
+  3: { Mon:{subject:'',cls:''},                    Tue:{subject:'English',    cls:'P5 West'}, Wed:{subject:'Mathematics',cls:'P5 West'}, Thu:{subject:'',cls:''}, Fri:{subject:'',cls:''} },
+  4: { Mon:{subject:'English',     cls:'P5 West'}, Tue:{subject:'',cls:''},                  Wed:{subject:'English',  cls:'P3 East'}, Thu:{subject:'Mathematics',cls:'P5 West'}, Fri:{subject:'Mathematics',cls:'P5 West'} },
+  5: { Mon:{subject:'',cls:''},                    Tue:{subject:'Mathematics',cls:'P3 East'}, Wed:{subject:'',cls:''}, Thu:{subject:'English',    cls:'P3 East'}, Fri:{subject:'English', cls:'P3 East'} },
+  6: { Mon:{subject:'Mathematics', cls:'P5 West'}, Tue:{subject:'',cls:''},                  Wed:{subject:'Mathematics',cls:'P3 East'}, Thu:{subject:'',cls:''}, Fri:{subject:'',cls:''} },
+  7: { Mon:{subject:'',cls:''},                    Tue:{subject:'English',    cls:'P3 East'}, Wed:{subject:'',cls:''}, Thu:{subject:'Mathematics',cls:'P3 East'}, Fri:{subject:'English', cls:'P5 West'} },
+  8: { Mon:{subject:'',cls:''},                    Tue:{subject:'',cls:''},                  Wed:{subject:'English',  cls:'P5 West'}, Thu:{subject:'',cls:''},     Fri:{subject:'Mathematics',cls:'P3 East'} },
+};
+
+const periodTimes = {
+  1:'7:30–8:15',2:'8:15–9:00',3:'9:00–9:45',4:'9:45–10:30',
+  5:'11:00–11:45',6:'11:45–12:30',7:'1:30–2:15',8:'2:15–3:00'
+};
+const days = ['Mon','Tue','Wed','Thu','Fri'];
+
+function buildTimetable() {
+  const tb = document.getElementById('tt-body');
+  tb.innerHTML = '';
+  for (let p = 1; p <= 8; p++) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="period-col">P${p}<br/><span style="font-size:.6rem;color:var(--sub)">${periodTimes[p]}</span></td>`;
+    days.forEach(d => {
+      const slot = demoTimetable[p]?.[d];
+      const td = document.createElement('td');
+      if (slot && slot.subject) {
+        td.innerHTML = `<div class="tt-cell"><div class="tt-cell-subj">${slot.subject}</div><div class="tt-cell-cls">${slot.cls}</div></div>`;
+      } else {
+        td.innerHTML = '<span class="tt-free">Free</span>';
+      }
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  }
+}
+
+/* ══════════════════════════════
+   ANNOUNCEMENTS
+══════════════════════════════ */
+const demoSchoolAnn = [];
+const myAnnouncements = [];
+
+function renderSchoolAnn() {
+  const list = document.getElementById('school-ann-list');
+  if (!demoSchoolAnn.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📢</div><div class="empty-desc">No school announcements yet.</div></div>';
+  } else {
+    list.innerHTML = demoSchoolAnn.map(a => `
+      <div class="ann-item">
+        <div style="font-weight:700;font-size:.8rem">${a.title}</div>
+        <div style="font-size:.74rem;color:var(--text);margin-top:4px">${a.message}</div>
+        <div class="ann-from">📌 ${a.from} &nbsp;·&nbsp; ${a.date}</div>
+      </div>`).join('');
+  }
+  document.getElementById('school-ann-count').textContent = demoSchoolAnn.length;
+  document.getElementById('sb-ann-badge').textContent = demoSchoolAnn.length;
+  document.getElementById('kpi-announcements').textContent = demoSchoolAnn.length;
+  // dash
+  const dashList = document.getElementById('dash-ann-list');
+  if (dashList) {
+    if (!demoSchoolAnn.length) {
+      dashList.innerHTML = '<div class="empty"><div class="empty-icon">📢</div><div class="empty-desc">No announcements from the school yet.</div></div>';
+    } else {
+      dashList.innerHTML = demoSchoolAnn.slice(0, 3).map(a => `
+        <div class="ann-item">
+          <div style="font-weight:600;font-size:.78rem">${a.title}</div>
+          <div class="ann-from">${a.from} &nbsp;·&nbsp; ${a.date}</div>
+        </div>`).join('');
+    }
+  }
+}
+
+function renderMyAnn() {
+  const list = document.getElementById('my-ann-list');
+  if (!myAnnouncements.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">You have not posted any class announcements yet.</div></div>';
+  } else {
+    list.innerHTML = myAnnouncements.map(a => `
+      <div class="ann-item">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div>
+            <div style="font-weight:700;font-size:.8rem">${a.title}</div>
+            <div style="font-size:.74rem;color:var(--text);margin-top:3px">${a.message}</div>
+            <div class="ann-from">📌 ${a.target || 'All Classes'} &nbsp;·&nbsp; ${a.date}</div>
+          </div>
+          <span class="badge b-teal">Posted</span>
+        </div>
+      </div>`).join('');
+  }
+  document.getElementById('my-ann-count').textContent = myAnnouncements.length;
+}
+
+function postMyAnnouncement() {
+  const title   = document.getElementById('ann-title').value.trim();
+  const target  = document.getElementById('ann-target').value;
+  const message = document.getElementById('ann-message').value.trim();
+  if (!title || !message) { toast('Title and message are required.', 'warn'); return; }
+  myAnnouncements.unshift({ title, target: target || 'All My Classes', message, date: new Date().toLocaleDateString() });
+  document.getElementById('ann-title').value   = '';
+  document.getElementById('ann-message').value = '';
+  document.getElementById('ann-cc').textContent = '0';
+  renderMyAnn();
+  toast('Announcement posted.', 'success');
+}
+
+/* ══════════════════════════════
+   RESOURCES
+══════════════════════════════ */
+const uploadedResources = [];
+
+function uploadResource() {
+  const fileInput = document.getElementById('res-file');
+  const subject   = document.getElementById('res-subject').value;
+  const cls       = document.getElementById('res-class').value;
+  const desc      = document.getElementById('res-desc').value.trim();
+
+  if (!fileInput.files.length || !subject) {
+    toast('Please choose a file and select a subject.', 'warn');
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const ext  = file.name.split('.').pop().toUpperCase();
+  uploadedResources.unshift({
+    name: file.name, subject, cls: cls || 'All', desc,
+    type: ext, date: new Date().toLocaleDateString()
+  });
+  closeM('overlay-mUpload');
+  renderResources();
+  toast('Resource uploaded successfully.', 'success');
+  fileInput.value = '';
+  document.getElementById('res-subject').value = '';
+  document.getElementById('res-class').value   = '';
+  document.getElementById('res-desc').value    = '';
+}
+
+function filterResources() {
+  renderResources();
+}
+
+function renderResources() {
+  const subjF  = document.getElementById('res-filter-subj').value;
+  const classF = document.getElementById('res-filter-class').value;
+  const tb = document.getElementById('resources-tb');
+
+  const filtered = uploadedResources.filter(r =>
+    (!subjF  || r.subject === subjF) &&
+    (!classF || r.cls === classF || r.cls === 'All')
+  );
+
+  if (!filtered.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">📁</div><div class="empty-desc">No resources found.</div></div></td></tr>';
+    return;
+  }
+
+  const typeIcon = { PDF:'📄', DOC:'📝', DOCX:'📝', XLSX:'📊', XLS:'📊', PPT:'📑', PPTX:'📑', JPG:'🖼️', JPEG:'🖼️', PNG:'🖼️' };
+  tb.innerHTML = filtered.map((r, i) => `
+    <tr>
+      <td style="font-weight:600">${typeIcon[r.type] || '📁'} ${r.name}</td>
+      <td>${r.subject}</td>
+      <td>${r.cls}</td>
+      <td style="max-width:160px;color:var(--sub)">${r.desc || '—'}</td>
+      <td><span class="badge b-navy">${r.type}</span></td>
+      <td>${r.date}</td>
+      <td style="display:flex;gap:4px">
+        <button class="btn btn-outline btn-xs" onclick="toast('Downloading ${r.name}','info')">⬇️</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteResource(${i})">🗑</button>
+      </td>
+    </tr>`).join('');
+}
+
+function deleteResource(idx) {
+  uploadedResources.splice(idx, 1);
+  renderResources();
+  toast('Resource deleted.', 'info');
+}
+
+function handleDrop(event) {
+  event.preventDefault();
+  const files = event.dataTransfer.files;
+  if (files.length) {
+    document.getElementById('res-file').files = files;
+    openM('mUpload');
+  }
+}
+
+/* ══════════════════════════════
+   INIT
+══════════════════════════════ */
+(function init() {
+  buildClassesGrid();
+  buildTimetable();
+  renderSchoolAnn();
+  renderMyAnn();
+  renderLessonPlans();
+  updateDashboardKPIs();
+})();
+</script>
+</body>
+</html>
