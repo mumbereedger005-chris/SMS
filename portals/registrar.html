@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Registrar Portal – Five Star Model School</title>
+<link rel="stylesheet" href="../assets/sms.css"/>
+<style>
+/* ── Local helpers ── */
+.search-wrap{position:relative}
+.search-wrap input{padding-left:30px}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--sub);pointer-events:none}
+.quick-action-btn{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;text-align:left;font-size:.76rem;font-weight:500;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:9px}
+.quick-action-btn:hover{background:#e8eef6;border-color:#c5d4e8;color:var(--navy)}
+
+/* KPI grid for class breakdown */
+.class-kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.class-kpi{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.class-kpi-val{font-size:1.35rem;font-weight:800;color:var(--navy)}
+.class-kpi-label{font-size:.66rem;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.4px}
+
+/* Admission number chip */
+.adm-chip{display:inline-block;background:#e8f0fa;color:var(--navy);font-weight:700;font-size:.8rem;padding:5px 12px;border-radius:6px;letter-spacing:.4px;border:1.5px dashed var(--navy)}
+
+/* Status badges */
+.status-active{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700;background:#d4f2e5;color:var(--green)}
+.status-pending{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700;background:#fff5d6;color:var(--amber)}
+.status-transferred{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700;background:#e0eaff;color:#3b5bdb}
+.status-withdrawn{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700;background:#fde8e8;color:var(--red)}
+.status-approved{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700;background:#d4f2e5;color:var(--green)}
+.status-rejected{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700;background:#fde8e8;color:var(--red)}
+.status-uploaded{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700;background:#d4f2e5;color:var(--green)}
+
+/* ID card grid */
+.id-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.id-card{background:var(--navy);border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(23,59,99,.18);color:#fff;display:flex;flex-direction:column}
+.id-card-top{background:var(--teal);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.id-card-top img{width:36px;height:36px;object-fit:contain;filter:brightness(0) invert(1)}
+.id-card-school{font-size:.7rem;font-weight:800;line-height:1.3;color:#fff}
+.id-card-body{padding:14px;flex:1;display:flex;gap:12px;align-items:flex-start}
+.id-card-photo{width:60px;height:72px;background:#1e4f87;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;color:#90b4d6}
+.id-card-info{flex:1;min-width:0}
+.id-card-name{font-size:.82rem;font-weight:800;margin-bottom:4px;line-height:1.3}
+.id-card-detail{font-size:.66rem;color:#a8c4de;margin-bottom:2px}
+.id-card-adm{font-size:.7rem;font-weight:700;color:var(--teal);margin-top:6px;letter-spacing:.3px}
+.id-card-bottom{background:#0f2846;padding:6px 14px;font-size:.58rem;color:#5a8ab8;text-align:center;letter-spacing:.3px}
+
+/* Upload zone */
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:.2s;background:var(--bg)}
+.upload-zone:hover{border-color:var(--teal);background:#f0fbfa}
+.upload-zone-icon{font-size:2rem;margin-bottom:8px}
+.upload-zone-text{font-size:.78rem;color:var(--sub)}
+.upload-zone-text strong{color:var(--teal);cursor:pointer}
+
+/* Pupil detail view */
+.detail-section-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--teal);border-bottom:1px solid var(--border);padding-bottom:4px;margin:14px 0 8px}
+.detail-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.detail-item{flex:1;min-width:160px;max-width:280px}
+.detail-label{font-size:.64rem;color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:1px}
+.detail-value{font-size:.78rem;color:var(--text);font-weight:500}
+
+/* Promo tabs */
+.promo-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px}
+.promo-tab{padding:9px 18px;font-size:.76rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--sub);transition:.15s}
+.promo-tab.active{color:var(--navy);border-color:var(--navy)}
+
+/* Pupil checkbox scrollable table */
+.sel-tbl-wrap{max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:8px}
+
+/* Print */
+@media print{
+  .sidebar,.topbar,.no-print{display:none!important}
+  .main-area{margin-left:0!important}
+  .page-content{padding:0!important}
+  body{background:#fff}
+  .print-header{display:block!important}
+  #print-target{display:block!important}
+  [id^="pg-"]{display:none!important}
+}
+.print-header{display:none}
+#print-target{display:none}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
+    <div>
+      <div class="sb-school-name">Five Star School</div>
+      <div class="sb-portal-name">Registrar Portal</div>
+    </div>
+  </div>
+  <nav class="sb-body">
+    <div class="sb-group"><div class="sb-group-label">Overview</div></div>
+    <div class="sb-link active" onclick="nav('dashboard',this)"><span class="sb-icon">🏠</span><span>Dashboard</span></div>
+    <div class="sb-group"><div class="sb-group-label">Admissions</div></div>
+    <div class="sb-link" onclick="nav('admission',this)"><span class="sb-icon">➕</span><span>New Admission</span></div>
+    <div class="sb-link" onclick="nav('pupils',this)"><span class="sb-icon">🎓</span><span>Pupil Records</span><span class="sb-badge" id="badge-pupils">0</span></div>
+    <div class="sb-group"><div class="sb-group-label">Relationships</div></div>
+    <div class="sb-link" onclick="nav('parents',this)"><span class="sb-icon">👨‍👩‍👧</span><span>Parent Linking</span><span class="sb-badge" id="badge-parents">0</span></div>
+    <div class="sb-group"><div class="sb-group-label">Classes</div></div>
+    <div class="sb-link" onclick="nav('classlists',this)"><span class="sb-icon">📋</span><span>Class Lists</span></div>
+    <div class="sb-link" onclick="nav('promotion',this)"><span class="sb-icon">🔼</span><span>Promotion &amp; Transfer</span></div>
+    <div class="sb-group"><div class="sb-group-label">Records</div></div>
+    <div class="sb-link" onclick="nav('idcards',this)"><span class="sb-icon">🪪</span><span>ID Cards</span></div>
+    <div class="sb-link" onclick="nav('documents',this)"><span class="sb-icon">📁</span><span>Documents</span></div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-av" id="sb-av-init">R</div>
+      <div><div class="sb-uname" id="sb-uname">Registrar</div><div class="sb-urole">Registrar</div></div>
+      <button class="sb-signout" onclick="signOut()" title="Sign Out">⏻</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<div class="main-area">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-left">
+      <div>
+        <div class="tb-title" id="pg-title">Dashboard</div>
+        <div class="tb-crumb" id="pg-crumb">Registrar › Dashboard</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-meta" id="tb-date"></span>
+      <div class="tb-user-chip">
+        <div class="tb-user-av" id="tb-av">R</div>
+        <span id="tb-uname">Registrar</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-content">
+
+<!-- ════════════════════════════════════════════════
+     PAGE: DASHBOARD
+════════════════════════════════════════════════ -->
+<div id="pg-dashboard">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:1.05rem;font-weight:800;color:var(--navy)" id="welcome-msg">Good morning, Registrar 👋</div>
+      <div style="font-size:.74rem;color:var(--sub);margin-top:2px" id="today-date"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-teal btn-sm" onclick="nav('admission',null)">+ New Admission</button>
+      <button class="btn btn-outline btn-sm" onclick="nav('classlists',null)">📋 Class Lists</button>
+    </div>
+  </div>
+
+  <!-- KPI row -->
+  <div class="kpi-grid" style="margin-bottom:20px">
+    <div class="kpi"><div class="kpi-icon ic-navy">🎓</div><div><div class="kpi-val" id="kpi-total">0</div><div class="kpi-label">Total Pupils</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-green">✅</div><div><div class="kpi-val" id="kpi-active">0</div><div class="kpi-label">Active</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-amber">⏳</div><div><div class="kpi-val" id="kpi-pending-adm">0</div><div class="kpi-label">Pending Admissions</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-red">🔗</div><div><div class="kpi-val" id="kpi-pending-par">0</div><div class="kpi-label">Pending Parent Verifications</div></div></div>
+  </div>
+
+  <!-- Pupils by class -->
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">📊</span>Pupils by Class</span>
+      <button class="btn btn-outline btn-sm" onclick="nav('classlists',null)">View Class Lists</button>
+    </div>
+    <div class="card-body">
+      <div class="class-kpi-grid" id="class-breakdown"></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Recent admissions -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-title"><span class="card-title-icon">🆕</span>Recent Admissions</span>
+        <button class="btn btn-ghost btn-sm" onclick="nav('pupils',null)">View All</button>
+      </div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Adm. No.</th><th>Full Name</th><th>Class</th><th>Date</th></tr></thead>
+          <tbody id="recent-adm-tb">
+            <tr><td colspan="4"><div class="empty"><div class="empty-icon">📄</div><div class="empty-desc">No admissions recorded yet.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Quick actions + pending links -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="card-hd"><span class="card-title"><span class="card-title-icon">⚡</span>Quick Actions</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:7px">
+          <button class="quick-action-btn" onclick="nav('admission',null)">➕ New Admission</button>
+          <button class="quick-action-btn" onclick="nav('pupils',null)">🔍 Search Pupil Records</button>
+          <button class="quick-action-btn" onclick="nav('parents',null)">👨‍👩‍👧 Review Parent Link Requests</button>
+          <button class="quick-action-btn" onclick="nav('promotion',null)">🔼 Promote / Transfer Pupils</button>
+          <button class="quick-action-btn" onclick="nav('idcards',null)">🪪 Print ID Cards</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-title"><span class="card-title-icon">🔗</span>Pending Parent Requests</span>
+          <button class="btn btn-ghost btn-sm" onclick="nav('parents',null)">Manage</button>
+        </div>
+        <div class="card-body" style="text-align:center;padding:20px">
+          <div style="font-size:2.2rem;font-weight:900;color:var(--amber)" id="dash-pend-par">0</div>
+          <div style="font-size:.72rem;color:var(--sub)">Requests awaiting identity verification &amp; approval</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /pg-dashboard -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: NEW ADMISSION
+════════════════════════════════════════════════ -->
+<div id="pg-admission" class="hidden">
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">➕</span>New Admission</span>
+      <button class="btn btn-outline btn-sm" onclick="nav('pupils',null)">📋 View Pupil Records</button>
+    </div>
+    <div class="card-body">
+
+      <!-- Auto-generated admission number -->
+      <div style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:#eef3fb;border-radius:10px;border:1px solid #c5d4ea;margin-bottom:20px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sub);margin-bottom:4px">Auto-generated Admission Number</div>
+          <div class="adm-chip" id="adm-number-display">BFS-2026-00001</div>
+        </div>
+        <div style="font-size:.7rem;color:var(--sub);flex:1;min-width:180px">This number is assigned automatically and saved when the form is submitted.</div>
+      </div>
+
+      <!-- Pupil Information -->
+      <div class="form-section">Pupil Information</div>
+      <div class="form-row">
+        <div class="fg"><label>First Name *</label><input type="text" id="adm-fn" placeholder="First name"/></div>
+        <div class="fg"><label>Middle Name</label><input type="text" id="adm-mn" placeholder="Middle name (optional)"/></div>
+        <div class="fg"><label>Last Name *</label><input type="text" id="adm-ln" placeholder="Last name"/></div>
+        <div class="fg"><label>Gender *</label>
+          <select id="adm-gender">
+            <option value="">— Select —</option>
+            <option>Male</option><option>Female</option>
+          </select>
+        </div>
+        <div class="fg"><label>Date of Birth *</label><input type="date" id="adm-dob"/></div>
+        <div class="fg"><label>Nationality</label><input type="text" id="adm-nationality" placeholder="e.g. Ugandan"/></div>
+        <div class="fg"><label>Religion</label><input type="text" id="adm-religion" placeholder="e.g. Christian, Muslim"/></div>
+        <div class="fg"><label>Home District</label><input type="text" id="adm-district" placeholder="e.g. Kasese"/></div>
+        <div class="fg"><label>Previous School (if any)</label><input type="text" id="adm-prev-school" placeholder="Name of previous school"/></div>
+        <div class="fg"><label>Date of Admission *</label><input type="date" id="adm-date"/></div>
+        <div class="fg"><label>Pupil Photo</label><input type="file" id="adm-photo" accept="image/*"/><span class="hint">Passport-size photo preferred</span></div>
+      </div>
+
+      <!-- Class Assignment -->
+      <div class="form-section">Class Assignment</div>
+      <div class="form-row">
+        <div class="fg"><label>Class *</label>
+          <select id="adm-class">
+            <option value="">— Select Class —</option>
+            <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+            <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+            <option>P5</option><option>P6</option><option>P7</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Stream <span style="font-weight:400;color:var(--sub)">(optional)</span></label>
+          <input type="text" id="adm-stream" placeholder="e.g. East, West, A, B"/>
+          <span class="hint">Leave blank if the class has no streams.</span>
+        </div>
+      </div>
+
+      <!-- Parent / Guardian -->
+      <div class="form-section">Parent / Guardian Information</div>
+      <div class="form-row">
+        <div class="fg"><label>Full Name *</label><input type="text" id="adm-par-name" placeholder="Guardian's full name"/></div>
+        <div class="fg"><label>Phone Number *</label><input type="tel" id="adm-par-phone" placeholder="+256…"/></div>
+        <div class="fg"><label>Relationship *</label>
+          <select id="adm-par-rel">
+            <option value="">— Select —</option>
+            <option>Father</option><option>Mother</option><option>Guardian</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Email Address</label><input type="email" id="adm-par-email" placeholder="Optional"/></div>
+        <div class="fg"><label>National ID Number</label><input type="text" id="adm-par-nid" placeholder="National ID or passport number"/></div>
+        <div class="fg"><label>Home Address</label><input type="text" id="adm-par-addr" placeholder="Village / Parish / Town"/></div>
+        <div class="fg"><label>Emergency Contact Name</label><input type="text" id="adm-emg-name" placeholder="Name of emergency contact"/></div>
+        <div class="fg"><label>Emergency Contact Phone</label><input type="tel" id="adm-emg-phone" placeholder="+256…"/></div>
+      </div>
+
+      <!-- Medical Notes -->
+      <div class="form-section">Medical Notes</div>
+      <div class="fg" style="max-width:620px">
+        <label>Known Conditions / Allergies / Special Needs</label>
+        <textarea id="adm-medical" rows="3" placeholder="Describe any known medical conditions, allergies, or special educational needs. Leave blank if none."></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="btn btn-primary" onclick="submitAdmission()">✅ Admit Pupil</button>
+        <button class="btn btn-outline" onclick="resetAdmissionForm()">🔄 Reset Form</button>
+      </div>
+    </div>
+  </div>
+</div><!-- /pg-admission -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: PUPIL RECORDS
+════════════════════════════════════════════════ -->
+<div id="pg-pupils" class="hidden">
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">🎓</span>Pupil Records</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="pupil-srch" oninput="filterPupils()" placeholder="Search by name or adm. no…"
+            style="padding:7px 10px 7px 28px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none;width:220px"/>
+        </div>
+        <select id="pupil-class-f" onchange="filterPupils()"
+          style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none">
+          <option value="">All Classes</option>
+          <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+          <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+          <option>P5</option><option>P6</option><option>P7</option>
+        </select>
+        <select id="pupil-status-f" onchange="filterPupils()"
+          style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none">
+          <option value="">All Status</option>
+          <option>Active</option><option>Transferred</option><option>Withdrawn</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="nav('admission',null)">+ New Admission</button>
+      </div>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Adm. No.</th><th>Full Name</th><th>Class</th><th>Gender</th>
+            <th>DOB</th><th>Guardian</th><th>Phone</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="pupils-tb">
+          <tr><td colspan="9">
+            <div class="empty"><div class="empty-icon">🎓</div>
+            <div class="empty-desc">No pupil records yet. Use <strong>New Admission</strong> to register pupils.</div></div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /pg-pupils -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: PARENT LINKING
+════════════════════════════════════════════════ -->
+<div id="pg-parents" class="hidden">
+
+  <div class="alert alert-warn no-print" style="margin-bottom:16px;display:flex;align-items:flex-start;gap:10px">
+    <span style="font-size:1.1rem;flex-shrink:0">⚠️</span>
+    <div><strong>Security Notice:</strong> Verify the parent or guardian's identity and their relationship to the pupil before approving any link request. Request a valid National ID or other official document. Unauthorised access to a child's records is a serious concern.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">🔗</span>Parent Link Requests</span>
+      <button class="btn btn-primary btn-sm" onclick="openM('mParentLink')">+ Add Link Manually</button>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Pupil Name</th><th>Adm. No.</th><th>Parent Name</th><th>Phone</th>
+            <th>Relationship</th><th>Requested Date</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="parent-link-tb">
+          <tr><td colspan="8">
+            <div class="empty"><div class="empty-icon">🔗</div>
+            <div class="empty-desc">No pending parent link requests at this time.</div></div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /pg-parents -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: CLASS LISTS
+════════════════════════════════════════════════ -->
+<div id="pg-classlists" class="hidden">
+
+  <!-- Hidden print target -->
+  <div id="print-target">
+    <div class="print-header" style="text-align:center;margin-bottom:24px;border-bottom:2px solid #173B63;padding-bottom:14px">
+      <img src="../star logo.png" style="width:72px;height:72px;object-fit:contain" alt="Logo"/>
+      <div style="font-size:1.2rem;font-weight:900;color:#173B63;margin-top:6px">Five Star Model School</div>
+      <div style="font-size:.8rem;font-style:italic;color:#555">"Nature for Excellence"</div>
+      <div style="font-size:.72rem;color:#666">Kasese District, Uganda</div>
+      <div style="font-size:.84rem;font-weight:700;margin-top:8px;color:#173B63" id="print-class-title">Class List</div>
+      <div style="font-size:.68rem;color:#666;margin-top:2px" id="print-date-line"></div>
+    </div>
+    <div id="print-list-container"></div>
+  </div>
+
+  <div class="no-print card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">📋</span>Class Lists</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="classlist-select" onchange="loadClassList()"
+          style="padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;outline:none;min-width:160px">
+          <option value="">— Select a Class —</option>
+          <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+          <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+          <option>P5</option><option>P6</option><option>P7</option>
+        </select>
+        <button class="btn btn-teal btn-sm" onclick="printClassList()">🖨️ Print List</button>
+      </div>
+    </div>
+    <div id="classlist-wrap" class="card-flush tbl-wrap">
+      <div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">Select a class above to view its pupil list.</div></div>
+    </div>
+  </div>
+</div><!-- /pg-classlists -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: PROMOTION & TRANSFER
+════════════════════════════════════════════════ -->
+<div id="pg-promotion" class="hidden">
+
+  <div class="promo-tabs">
+    <div class="promo-tab active" onclick="switchPromoTab(this,'promo-promote')">🔼 Promote</div>
+    <div class="promo-tab" onclick="switchPromoTab(this,'promo-transfer')">🚌 Transfer Out</div>
+    <div class="promo-tab" onclick="switchPromoTab(this,'promo-withdraw')">🚪 Withdrawal</div>
+  </div>
+
+  <!-- PROMOTE -->
+  <div id="promo-promote">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🔼</span>Promote Pupils to Next Class</span></div>
+      <div class="card-body">
+        <div class="form-row" style="max-width:620px">
+          <div class="fg">
+            <label>Current Class *</label>
+            <select id="prom-from" onchange="loadPromoList()">
+              <option value="">— Select Current Class —</option>
+              <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+              <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+              <option>P5</option><option>P6</option><option>P7</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Target Class *</label>
+            <select id="prom-to">
+              <option value="">— Select Target Class —</option>
+              <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+              <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+              <option>P5</option><option>P6</option><option>P7</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-section" style="margin-top:8px">Select Pupils to Promote</div>
+        <div class="sel-tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:36px"><input type="checkbox" id="prom-chk-all" onchange="toggleAllPromo(this)"/></th>
+                <th>Adm. No.</th><th>Full Name</th><th>Gender</th>
+              </tr>
+            </thead>
+            <tbody id="prom-tb">
+              <tr><td colspan="4"><div class="empty"><div class="empty-icon">🔼</div><div class="empty-desc">Select a current class above to list pupils.</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+          <button class="btn btn-primary" onclick="promoteSelected()">🔼 Promote Selected</button>
+          <span style="font-size:.72rem;color:var(--sub)" id="prom-count-label"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSFER OUT -->
+  <div id="promo-transfer" style="display:none">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🚌</span>Transfer Out</span></div>
+      <div class="card-body">
+        <div class="form-row" style="max-width:680px">
+          <div class="fg">
+            <label>Search Pupil</label>
+            <input type="text" id="tr-pupil-srch" placeholder="Type name or admission number" oninput="filterTransferPupil()"/>
+          </div>
+          <div class="fg">
+            <label>Select Pupil *</label>
+            <select id="tr-pupil-select"><option value="">— Search above then select —</option></select>
+          </div>
+          <div class="fg"><label>Destination School *</label><input type="text" id="tr-dest" placeholder="Name of receiving school"/></div>
+          <div class="fg"><label>Transfer Date *</label><input type="date" id="tr-date"/></div>
+          <div class="fg"><label>Reason for Transfer</label><input type="text" id="tr-reason" placeholder="e.g. Relocation, family decision"/></div>
+          <div class="fg" style="grid-column:1/-1"><label>Additional Notes</label><textarea id="tr-notes" rows="2" placeholder="Any additional information…"></textarea></div>
+        </div>
+        <button class="btn btn-primary" onclick="submitTransfer()">🚌 Record Transfer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WITHDRAWAL -->
+  <div id="promo-withdraw" style="display:none">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🚪</span>Withdrawal</span></div>
+      <div class="card-body">
+        <div class="form-row" style="max-width:680px">
+          <div class="fg">
+            <label>Search Pupil</label>
+            <input type="text" id="wd-pupil-srch" placeholder="Type name or admission number" oninput="filterWithdrawPupil()"/>
+          </div>
+          <div class="fg">
+            <label>Select Pupil *</label>
+            <select id="wd-pupil-select"><option value="">— Search above then select —</option></select>
+          </div>
+          <div class="fg">
+            <label>Reason for Withdrawal *</label>
+            <select id="wd-reason">
+              <option value="">— Select reason —</option>
+              <option>Financial constraints</option>
+              <option>Relocation</option>
+              <option>Medical reasons</option>
+              <option>Discipline</option>
+              <option>Family decision</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="fg"><label>Withdrawal Date *</label><input type="date" id="wd-date"/></div>
+          <div class="fg" style="grid-column:1/-1"><label>Notes</label><textarea id="wd-notes" rows="2" placeholder="Additional details…"></textarea></div>
+        </div>
+        <button class="btn btn-primary" onclick="submitWithdrawal()">🚪 Record Withdrawal</button>
+      </div>
+    </div>
+  </div>
+</div><!-- /pg-promotion -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: ID CARDS
+════════════════════════════════════════════════ -->
+<div id="pg-idcards" class="hidden">
+  <div class="card no-print">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">🪪</span>Student ID Cards</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="idcard-class-f" onchange="renderIdCards()"
+          style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none">
+          <option value="">All Classes</option>
+          <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+          <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+          <option>P5</option><option>P6</option><option>P7</option>
+        </select>
+        <button class="btn btn-teal btn-sm" onclick="window.print()">🖨️ Print All</button>
+      </div>
+    </div>
+    <div class="card-body" id="id-cards-grid">
+      <div class="empty"><div class="empty-icon">🪪</div><div class="empty-desc">No pupils registered yet. Admit pupils to generate ID cards.</div></div>
+    </div>
+  </div>
+</div><!-- /pg-idcards -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: DOCUMENTS
+════════════════════════════════════════════════ -->
+<div id="pg-documents" class="hidden">
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">📁</span>Pupil Documents</span>
+    </div>
+    <div class="card-body">
+      <div class="form-row" style="max-width:500px;margin-bottom:16px">
+        <div class="fg">
+          <label>Search by Admission Number or Pupil Name</label>
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="doc-srch" oninput="filterDocs()" placeholder="e.g. BFS-2026-00001 or pupil name"
+              style="padding:7px 10px 7px 28px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none;width:100%"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">Upload Document</div>
+      <div class="form-row" style="max-width:680px">
+        <div class="fg"><label>Pupil Admission Number *</label><input type="text" id="doc-adm" placeholder="BFS-2026-00001"/></div>
+        <div class="fg">
+          <label>Document Type *</label>
+          <select id="doc-type">
+            <option value="">— Select Type —</option>
+            <option>Admission Form</option>
+            <option>Birth Certificate</option>
+            <option>Medical Records</option>
+            <option>Previous School Report</option>
+            <option>Transfer Letter</option>
+            <option>Parent ID Copy</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <label class="upload-zone" style="max-width:480px;display:block;margin-bottom:12px">
+        <div class="upload-zone-icon">📂</div>
+        <div class="upload-zone-text"><strong>Click to browse</strong> or drag and drop a file here</div>
+        <div class="upload-zone-text" style="font-size:.68rem;margin-top:4px">PDF, JPG, PNG — max 5 MB</div>
+        <input type="file" id="doc-file" style="display:none" accept=".pdf,.jpg,.jpeg,.png"/>
+      </label>
+      <div style="font-size:.74rem;color:var(--sub);margin-bottom:12px" id="doc-file-name"></div>
+      <button class="btn btn-primary" onclick="uploadDocument()">📤 Upload Document</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📋</span>Uploaded Documents</span></div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Pupil / Adm. No.</th><th>Document Type</th><th>Filename</th>
+            <th>Date Uploaded</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="docs-tb">
+          <tr><td colspan="6">
+            <div class="empty"><div class="empty-icon">📁</div><div class="empty-desc">No documents uploaded yet.</div></div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /pg-documents -->
+
+  </div><!-- /page-content -->
+</div><!-- /main-area -->
+</div><!-- /layout -->
+
+<!-- ═══════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════ -->
+
+<!-- Pupil View Modal -->
+<div class="overlay" id="mPupilView">
+  <div class="modal modal-lg">
+    <div class="modal-hd">
+      <span class="modal-title">🎓 Pupil Details</span>
+      <button class="modal-close" onclick="closeM('mPupilView')">×</button>
+    </div>
+    <div class="modal-bd" id="mPupilView-body"></div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mPupilView')">Close</button>
+      <button class="btn btn-teal" onclick="window.print()">🖨️ Print Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pupil Edit Modal -->
+<div class="overlay" id="mPupilEdit">
+  <div class="modal modal-lg">
+    <div class="modal-hd">
+      <span class="modal-title">✏️ Edit Pupil Record</span>
+      <button class="modal-close" onclick="closeM('mPupilEdit')">×</button>
+    </div>
+    <div class="modal-bd">
+      <input type="hidden" id="edit-idx"/>
+      <div class="form-section">Pupil Information</div>
+      <div class="form-row">
+        <div class="fg"><label>First Name *</label><input type="text" id="edit-fn"/></div>
+        <div class="fg"><label>Middle Name</label><input type="text" id="edit-mn"/></div>
+        <div class="fg"><label>Last Name *</label><input type="text" id="edit-ln"/></div>
+        <div class="fg"><label>Gender *</label>
+          <select id="edit-gender"><option>Male</option><option>Female</option></select>
+        </div>
+        <div class="fg"><label>Date of Birth</label><input type="date" id="edit-dob"/></div>
+        <div class="fg"><label>Nationality</label><input type="text" id="edit-nationality"/></div>
+        <div class="fg"><label>Religion</label><input type="text" id="edit-religion"/></div>
+        <div class="fg"><label>Home District</label><input type="text" id="edit-district"/></div>
+      </div>
+      <div class="form-section">Class Assignment</div>
+      <div class="form-row">
+        <div class="fg"><label>Class *</label>
+          <select id="edit-class">
+            <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+            <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+            <option>P5</option><option>P6</option><option>P7</option>
+          </select>
+        </div>
+        <div class="fg"><label>Stream</label><input type="text" id="edit-stream"/></div>
+        <div class="fg"><label>Status</label>
+          <select id="edit-status">
+            <option>Active</option><option>Transferred</option><option>Withdrawn</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-section">Guardian</div>
+      <div class="form-row">
+        <div class="fg"><label>Guardian Name</label><input type="text" id="edit-par-name"/></div>
+        <div class="fg"><label>Phone</label><input type="tel" id="edit-par-phone"/></div>
+        <div class="fg"><label>Relationship</label>
+          <select id="edit-par-rel">
+            <option>Father</option><option>Mother</option><option>Guardian</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mPupilEdit')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditPupil()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Parent Link -->
+<div class="overlay" id="mParentLink">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-title">🔗 Add Parent Link</span>
+      <button class="modal-close" onclick="closeM('mParentLink')">×</button>
+    </div>
+    <div class="modal-bd">
+      <div class="alert alert-warn" style="margin-bottom:12px;font-size:.73rem">
+        ⚠️ Verify the parent's identity before saving. This links a parent account to a pupil record.
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Pupil Admission Number *</label><input type="text" id="pl-adm" placeholder="BFS-2026-00001"/></div>
+        <div class="fg"><label>Parent Full Name *</label><input type="text" id="pl-par-name" placeholder="Parent's full name"/></div>
+        <div class="fg"><label>Phone Number *</label><input type="tel" id="pl-phone" placeholder="+256…"/></div>
+        <div class="fg"><label>Relationship *</label>
+          <select id="pl-rel">
+            <option value="">— Select —</option>
+            <option>Father</option><option>Mother</option><option>Guardian</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>National ID / Document No.</label><input type="text" id="pl-nid" placeholder="ID number verified"/></div>
+        <div class="fg"><label>Initial Status</label>
+          <select id="pl-status"><option>Pending</option><option>Approved</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mParentLink')">Cancel</button>
+      <button class="btn btn-primary" onclick="addParentLink()">🔗 Save Link</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+/* ─── Session ─── */
+const sess = JSON.parse(sessionStorage.getItem('sms_user') || '{}');
+if (!sess.loggedIn) location.href = '../index.html';
+function signOut() { sessionStorage.clear(); location.href = '../index.html'; }
+
+/* ─── Init topbar / sidebar user info ─── */
+const userName = sess.name || sess.username || 'Registrar';
+const userInit  = userName.charAt(0).toUpperCase();
+document.getElementById('sb-uname').textContent   = userName;
+document.getElementById('sb-av-init').textContent = userInit;
+document.getElementById('tb-uname').textContent   = userName;
+document.getElementById('tb-av').textContent      = userInit;
+
+const now = new Date();
+document.getElementById('today-date').textContent =
+  now.toLocaleDateString('en-UG', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+document.getElementById('tb-date').textContent =
+  now.toLocaleDateString('en-UG', {day:'numeric', month:'short', year:'numeric'});
+
+const hr = now.getHours();
+document.getElementById('welcome-msg').textContent =
+  `${hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening'}, ${userName} 👋`;
+
+/* ─── In-memory store ─── */
+let pupils      = [];   // pupil objects
+let parentLinks = [];   // parent–pupil link objects
+let documents_  = [];   // uploaded document records
+let admSeq      = 1;
+
+const ALL_CLASSES = [
+  'Baby Class','Middle Class','Upper Class',
+  'P1','P2','P3','P4','P5','P6','P7'
+];
+
+function genAdmNo() {
+  return `BFS-${now.getFullYear()}-${String(admSeq).padStart(5,'0')}`;
+}
+
+/* ─── Navigation ─── */
+const PAGE_META = {
+  dashboard:  ['Dashboard',            'Registrar › Dashboard'],
+  admission:  ['New Admission',        'Registrar › New Admission'],
+  pupils:     ['Pupil Records',        'Registrar › Pupil Records'],
+  parents:    ['Parent Linking',       'Registrar › Parent Linking'],
+  classlists: ['Class Lists',          'Registrar › Class Lists'],
+  promotion:  ['Promotion & Transfer', 'Registrar › Promotion & Transfer'],
+  idcards:    ['ID Cards',             'Registrar › ID Cards'],
+  documents:  ['Documents',            'Registrar › Documents'],
+};
+
+function nav(page, el) {
+  document.querySelectorAll('[id^="pg-"]').forEach(d => d.classList.add('hidden'));
+  const target = document.getElementById('pg-' + page);
+  if (target) target.classList.remove('hidden');
+
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  if (el) {
+    el.classList.add('active');
+  } else {
+    document.querySelectorAll('.sb-link').forEach(l => {
+      if ((l.getAttribute('onclick') || '').includes(`'${page}'`)) l.classList.add('active');
+    });
+  }
+
+  const meta = PAGE_META[page] || [page, 'Registrar › ' + page];
+  document.getElementById('pg-title').textContent = meta[0];
+  document.getElementById('pg-crumb').textContent = meta[1];
+
+  /* Per-page refresh */
+  if (page === 'dashboard')  renderDashboard();
+  if (page === 'admission')  resetAdmissionForm();
+  if (page === 'pupils')     { document.getElementById('pupil-srch').value=''; document.getElementById('pupil-class-f').value=''; document.getElementById('pupil-status-f').value=''; renderPupils(); }
+  if (page === 'parents')    renderParentLinks();
+  if (page === 'classlists') {
+    document.getElementById('classlist-select').value = '';
+    document.getElementById('classlist-wrap').innerHTML =
+      '<div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">Select a class above to view its pupil list.</div></div>';
+  }
+  if (page === 'promotion')  resetPromoTab();
+  if (page === 'idcards')    renderIdCards();
+  if (page === 'documents')  { renderDocs(); document.getElementById('doc-srch').value=''; }
+}
+
+/* ─── Modal helpers ─── */
+function openM(id)  { document.getElementById(id).classList.add('active'); }
+function closeM(id) { document.getElementById(id).classList.remove('active'); }
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); });
+});
+
+/* ─── Toast ─── */
+function toast(msg, type = 'info') {
+  let stack = document.querySelector('.toast-stack');
+  if (!stack) {
+    stack = document.createElement('div');
+    stack.className = 'toast-stack';
+    document.body.appendChild(stack);
+  }
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<span>${msg}</span><button onclick="this.parentElement.remove()">×</button>`;
+  stack.appendChild(t);
+  setTimeout(() => { if (t.parentElement) t.remove(); }, 3500);
+}
+
+/* ══════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════ */
+function renderDashboard() {
+  const total   = pupils.length;
+  const active  = pupils.filter(p => p.status === 'Active').length;
+  const pendPar = parentLinks.filter(l => l.status === 'Pending').length;
+
+  document.getElementById('kpi-total').textContent       = total;
+  document.getElementById('kpi-active').textContent      = active;
+  document.getElementById('kpi-pending-adm').textContent = 0;   // future: real pending from backend
+  document.getElementById('kpi-pending-par').textContent = pendPar;
+  document.getElementById('dash-pend-par').textContent   = pendPar;
+  document.getElementById('badge-pupils').textContent    = total;
+  document.getElementById('badge-parents').textContent   = pendPar;
+
+  /* Class breakdown */
+  document.getElementById('class-breakdown').innerHTML = ALL_CLASSES.map(cls => {
+    const cnt = pupils.filter(p => p.class_ === cls).length;
+    return `<div class="class-kpi">
+      <div class="class-kpi-val">${cnt}</div>
+      <div class="class-kpi-label">${cls}</div>
+    </div>`;
+  }).join('');
+
+  /* Recent admissions (last 5, newest first) */
+  const recent = [...pupils].reverse().slice(0, 5);
+  const tb = document.getElementById('recent-adm-tb');
+  if (recent.length === 0) {
+    tb.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">📄</div><div class="empty-desc">No admissions recorded yet.</div></div></td></tr>';
+  } else {
+    tb.innerHTML = recent.map(p => `<tr>
+      <td><code style="font-size:.7rem">${p.admNo}</code></td>
+      <td>${p.fn} ${p.mn ? p.mn + ' ' : ''}${p.ln}</td>
+      <td>${p.class_}${p.stream ? ' · ' + p.stream : ''}</td>
+      <td>${p.admDate || '—'}</td>
+    </tr>`).join('');
+  }
+}
+
+/* ══════════════════════════════════════════
+   NEW ADMISSION
+══════════════════════════════════════════ */
+function resetAdmissionForm() {
+  const fields = [
+    'adm-fn','adm-mn','adm-ln','adm-nationality','adm-religion',
+    'adm-district','adm-prev-school','adm-stream','adm-par-name',
+    'adm-par-phone','adm-par-email','adm-par-nid','adm-par-addr',
+    'adm-emg-name','adm-emg-phone','adm-medical'
+  ];
+  fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['adm-gender','adm-class','adm-par-rel'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.selectedIndex = 0;
+  });
+  document.getElementById('adm-dob').value  = '';
+  document.getElementById('adm-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('adm-number-display').textContent = genAdmNo();
+}
+
+function submitAdmission() {
+  const fn      = document.getElementById('adm-fn').value.trim();
+  const ln      = document.getElementById('adm-ln').value.trim();
+  const gender  = document.getElementById('adm-gender').value;
+  const cls     = document.getElementById('adm-class').value;
+  const parName = document.getElementById('adm-par-name').value.trim();
+  const parPhone= document.getElementById('adm-par-phone').value.trim();
+  const parRel  = document.getElementById('adm-par-rel').value;
+  const admDate = document.getElementById('adm-date').value;
+
+  if (!fn || !ln)  { toast("Enter the pupil's first and last name.", 'warn'); return; }
+  if (!gender)     { toast("Select the pupil's gender.", 'warn'); return; }
+  if (!cls)        { toast('Assign a class to the pupil.', 'warn'); return; }
+  if (!parName)    { toast("Enter the guardian's full name.", 'warn'); return; }
+  if (!parPhone)   { toast("Enter the guardian's phone number.", 'warn'); return; }
+  if (!parRel)     { toast("Specify the guardian's relationship.", 'warn'); return; }
+  if (!admDate)    { toast('Set the date of admission.', 'warn'); return; }
+
+  const admNo = genAdmNo();
+  pupils.push({
+    admNo,
+    fn, mn: document.getElementById('adm-mn').value.trim(), ln,
+    gender, dob: document.getElementById('adm-dob').value,
+    nationality : document.getElementById('adm-nationality').value.trim(),
+    religion    : document.getElementById('adm-religion').value.trim(),
+    district    : document.getElementById('adm-district').value.trim(),
+    prevSchool  : document.getElementById('adm-prev-school').value.trim(),
+    admDate, class_: cls,
+    stream      : document.getElementById('adm-stream').value.trim(),
+    parName, parPhone, parRel,
+    parEmail    : document.getElementById('adm-par-email').value.trim(),
+    parNid      : document.getElementById('adm-par-nid').value.trim(),
+    parAddr     : document.getElementById('adm-par-addr').value.trim(),
+    emgName     : document.getElementById('adm-emg-name').value.trim(),
+    emgPhone    : document.getElementById('adm-emg-phone').value.trim(),
+    medical     : document.getElementById('adm-medical').value.trim(),
+    status      : 'Active'
+  });
+  admSeq++;
+  toast(`Pupil admitted successfully!  Admission No: ${admNo}`, 'success');
+  resetAdmissionForm();
+  renderDashboard();
+}
+
+/* ══════════════════════════════════════════
+   PUPIL RECORDS
+══════════════════════════════════════════ */
+function renderPupils(list) {
+  const src = list !== undefined ? list : pupils;
+  const tb  = document.getElementById('pupils-tb');
+  if (src.length === 0) {
+    tb.innerHTML = '<tr><td colspan="9"><div class="empty"><div class="empty-icon">🎓</div><div class="empty-desc">No pupil records found. Use <strong>New Admission</strong> to register pupils.</div></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = src.map(p => {
+    const idx = pupils.indexOf(p);
+    const sc  = p.status === 'Active' ? 'status-active' : p.status === 'Transferred' ? 'status-transferred' : 'status-withdrawn';
+    return `<tr>
+      <td><code style="font-size:.7rem">${p.admNo}</code></td>
+      <td style="font-weight:600">${p.fn} ${p.mn ? p.mn + ' ' : ''}${p.ln}</td>
+      <td>${p.class_}${p.stream ? ' · ' + p.stream : ''}</td>
+      <td>${p.gender}</td>
+      <td>${p.dob || '—'}</td>
+      <td>${p.parName}</td>
+      <td>${p.parPhone}</td>
+      <td><span class="${sc}">${p.status}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick="viewPupil(${idx})" title="View">👁️</button>
+        <button class="btn btn-ghost btn-sm" onclick="editPupil(${idx})" title="Edit">✏️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterPupils() {
+  const q   = document.getElementById('pupil-srch').value.toLowerCase();
+  const cls = document.getElementById('pupil-class-f').value;
+  const st  = document.getElementById('pupil-status-f').value;
+  renderPupils(pupils.filter(p => {
+    const name = `${p.fn} ${p.mn || ''} ${p.ln}`.toLowerCase();
+    return (!q   || name.includes(q) || p.admNo.toLowerCase().includes(q))
+        && (!cls || p.class_ === cls)
+        && (!st  || p.status === st);
+  }));
+}
+
+function viewPupil(idx) {
+  const p = pupils[idx]; if (!p) return;
+  const full = `${p.fn} ${p.mn ? p.mn + ' ' : ''}${p.ln}`;
+  const sc   = p.status === 'Active' ? 'status-active' : p.status === 'Transferred' ? 'status-transferred' : 'status-withdrawn';
+  document.getElementById('mPupilView-body').innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:4px">
+      <div style="width:64px;height:64px;background:#e8f0fa;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:var(--navy);flex-shrink:0">
+        ${p.fn.charAt(0)}${p.ln.charAt(0)}
+      </div>
+      <div>
+        <div style="font-size:1rem;font-weight:800;color:var(--navy)">${full}</div>
+        <div class="adm-chip" style="margin-top:5px">${p.admNo}</div>
+        <div style="margin-top:6px"><span class="${sc}">${p.status}</span></div>
+      </div>
+    </div>
+
+    <div class="detail-section-title">Academic Placement</div>
+    <div class="detail-row">
+      <div class="detail-item"><div class="detail-label">Class</div><div class="detail-value">${p.class_}</div></div>
+      <div class="detail-item"><div class="detail-label">Stream</div><div class="detail-value">${p.stream || '—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Date of Admission</div><div class="detail-value">${p.admDate || '—'}</div></div>
+    </div>
+
+    <div class="detail-section-title">Personal Information</div>
+    <div class="detail-row">
+      <div class="detail-item"><div class="detail-label">Gender</div><div class="detail-value">${p.gender}</div></div>
+      <div class="detail-item"><div class="detail-label">Date of Birth</div><div class="detail-value">${p.dob || '—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Nationality</div><div class="detail-value">${p.nationality || '—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Religion</div><div class="detail-value">${p.religion || '—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Home District</div><div class="detail-value">${p.district || '—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Previous School</div><div class="detail-value">${p.prevSchool || '—'}</div></div>
+    </div>
+
+    <div class="detail-section-title">Guardian / Parent</div>
+    <div class="detail-row">
+      <div class="detail-item"><div class="detail-label">Full Name</div><div class="detail-value">${p.parName}</div></div>
+      <div class="detail-item"><div class="detail-label">Relationship</div><div class="detail-value">${p.parRel}</div></div>
+      <div class="detail-item"><div class="detail-label">Phone</div><div class="detail-value">${p.parPhone}</div></div>
+      <div class="detail-item"><div class="detail-label">Email</div><div class="detail-value">${p.parEmail || '—'}</div></div>
+      <div class="detail-item"><div class="detail-label">National ID</div><div class="detail-value">${p.parNid || '—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Home Address</div><div class="detail-value">${p.parAddr || '—'}</div></div>
+    </div>
+
+    <div class="detail-section-title">Emergency Contact</div>
+    <div class="detail-row">
+      <div class="detail-item"><div class="detail-label">Name</div><div class="detail-value">${p.emgName || '—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Phone</div><div class="detail-value">${p.emgPhone || '—'}</div></div>
+    </div>
+
+    ${p.medical ? `
+    <div class="detail-section-title">Medical Notes</div>
+    <div style="font-size:.78rem;color:var(--text);background:var(--bg);border-radius:8px;padding:10px 12px;border:1px solid var(--border)">${p.medical}</div>` : ''}
+  `;
+  openM('mPupilView');
+}
+
+function editPupil(idx) {
+  const p = pupils[idx]; if (!p) return;
+  document.getElementById('edit-idx').value          = idx;
+  document.getElementById('edit-fn').value           = p.fn;
+  document.getElementById('edit-mn').value           = p.mn || '';
+  document.getElementById('edit-ln').value           = p.ln;
+  document.getElementById('edit-gender').value       = p.gender;
+  document.getElementById('edit-dob').value          = p.dob || '';
+  document.getElementById('edit-nationality').value  = p.nationality || '';
+  document.getElementById('edit-religion').value     = p.religion || '';
+  document.getElementById('edit-district').value     = p.district || '';
+  document.getElementById('edit-class').value        = p.class_;
+  document.getElementById('edit-stream').value       = p.stream || '';
+  document.getElementById('edit-status').value       = p.status;
+  document.getElementById('edit-par-name').value     = p.parName;
+  document.getElementById('edit-par-phone').value    = p.parPhone;
+  document.getElementById('edit-par-rel').value      = p.parRel;
+  openM('mPupilEdit');
+}
+
+function saveEditPupil() {
+  const idx = parseInt(document.getElementById('edit-idx').value);
+  if (isNaN(idx) || !pupils[idx]) { toast('Invalid record.', 'error'); return; }
+  const p       = pupils[idx];
+  p.fn          = document.getElementById('edit-fn').value.trim();
+  p.mn          = document.getElementById('edit-mn').value.trim();
+  p.ln          = document.getElementById('edit-ln').value.trim();
+  p.gender      = document.getElementById('edit-gender').value;
+  p.dob         = document.getElementById('edit-dob').value;
+  p.nationality = document.getElementById('edit-nationality').value.trim();
+  p.religion    = document.getElementById('edit-religion').value.trim();
+  p.district    = document.getElementById('edit-district').value.trim();
+  p.class_      = document.getElementById('edit-class').value;
+  p.stream      = document.getElementById('edit-stream').value.trim();
+  p.status      = document.getElementById('edit-status').value;
+  p.parName     = document.getElementById('edit-par-name').value.trim();
+  p.parPhone    = document.getElementById('edit-par-phone').value.trim();
+  p.parRel      = document.getElementById('edit-par-rel').value;
+  closeM('mPupilEdit');
+  toast('Pupil record updated successfully.', 'success');
+  filterPupils();
+  renderDashboard();
+}
+
+/* ══════════════════════════════════════════
+   PARENT LINKING
+══════════════════════════════════════════ */
+function renderParentLinks(list) {
+  const src = list !== undefined ? list : parentLinks;
+  const tb  = document.getElementById('parent-link-tb');
+  if (src.length === 0) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">🔗</div><div class="empty-desc">No pending parent link requests at this time.</div></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = src.map(l => {
+    const ri  = parentLinks.indexOf(l);
+    const sc  = l.status === 'Approved' ? 'status-approved' : l.status === 'Rejected' ? 'status-rejected' : 'status-pending';
+    const act = l.status === 'Pending'
+      ? `<button class="btn btn-teal btn-sm" onclick="approveLink(${ri})">✔ Approve</button>
+         <button class="btn btn-outline btn-sm" style="color:var(--red)" onclick="rejectLink(${ri})">✖ Reject</button>`
+      : `<span style="color:var(--sub);font-size:.7rem">${l.status}</span>`;
+    return `<tr>
+      <td style="font-weight:600">${l.pupilName || '—'}</td>
+      <td><code style="font-size:.7rem">${l.pupilAdm}</code></td>
+      <td>${l.parName}</td>
+      <td>${l.phone}</td>
+      <td>${l.rel}</td>
+      <td>${l.reqDate}</td>
+      <td><span class="${sc}">${l.status}</span></td>
+      <td style="white-space:nowrap">${act}</td>
+    </tr>`;
+  }).join('');
+}
+
+function addParentLink() {
+  const admNo   = document.getElementById('pl-adm').value.trim();
+  const parName = document.getElementById('pl-par-name').value.trim();
+  const phone   = document.getElementById('pl-phone').value.trim();
+  const rel     = document.getElementById('pl-rel').value;
+  const status  = document.getElementById('pl-status').value;
+  if (!admNo || !parName || !phone || !rel) { toast('Fill in all required fields.', 'warn'); return; }
+  const pupil = pupils.find(p => p.admNo === admNo);
+  parentLinks.push({
+    pupilAdm  : admNo,
+    pupilName : pupil ? `${pupil.fn} ${pupil.ln}` : '—',
+    parName, phone, rel,
+    nid     : document.getElementById('pl-nid').value.trim(),
+    reqDate : new Date().toLocaleDateString('en-UG'),
+    status
+  });
+  closeM('mParentLink');
+  toast('Parent link saved.', 'success');
+  ['pl-adm','pl-par-name','pl-phone','pl-nid'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('pl-rel').selectedIndex    = 0;
+  document.getElementById('pl-status').selectedIndex = 0;
+  renderParentLinks();
+  renderDashboard();
+}
+
+function approveLink(idx) {
+  parentLinks[idx].status = 'Approved';
+  toast('Parent link approved.', 'success');
+  renderParentLinks(); renderDashboard();
+}
+
+function rejectLink(idx) {
+  parentLinks[idx].status = 'Rejected';
+  toast('Parent link rejected.', 'warn');
+  renderParentLinks(); renderDashboard();
+}
+
+/* ══════════════════════════════════════════
+   CLASS LISTS
+══════════════════════════════════════════ */
+function loadClassList() {
+  const cls  = document.getElementById('classlist-select').value;
+  const wrap = document.getElementById('classlist-wrap');
+  if (!cls) {
+    wrap.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">Select a class above to view its pupil list.</div></div>';
+    return;
+  }
+  const list = pupils.filter(p => p.class_ === cls && p.status === 'Active');
+  if (list.length === 0) {
+    wrap.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">No active pupils found in <strong>${cls}</strong>.</div></div>`;
+    return;
+  }
+  wrap.innerHTML = buildClassTable(list);
+}
+
+function buildClassTable(list) {
+  return `<table class="tbl">
+    <thead><tr><th>#</th><th>Adm. No.</th><th>Full Name</th><th>Gender</th><th>Date of Birth</th><th>Guardian Name</th><th>Guardian Phone</th></tr></thead>
+    <tbody>
+      ${list.map((p, i) => `<tr>
+        <td>${i + 1}</td>
+        <td><code style="font-size:.7rem">${p.admNo}</code></td>
+        <td>${p.fn} ${p.mn ? p.mn + ' ' : ''}${p.ln}</td>
+        <td>${p.gender}</td>
+        <td>${p.dob || '—'}</td>
+        <td>${p.parName}</td>
+        <td>${p.parPhone}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function printClassList() {
+  const cls = document.getElementById('classlist-select').value;
+  if (!cls) { toast('Select a class first.', 'warn'); return; }
+  const list = pupils.filter(p => p.class_ === cls && p.status === 'Active');
+
+  document.getElementById('print-class-title').textContent = `${cls} — Pupil Class List`;
+  document.getElementById('print-date-line').textContent   =
+    `Printed on: ${new Date().toLocaleDateString('en-UG', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}`;
+
+  const container = document.getElementById('print-list-container');
+  if (list.length === 0) {
+    container.innerHTML = `<p style="text-align:center;color:#666;font-size:.8rem">No active pupils found in ${cls}.</p>`;
+  } else {
+    container.innerHTML = `
+      <table style="width:100%;border-collapse:collapse;font-size:.75rem">
+        <thead style="background:#173B63;color:#fff">
+          <tr>
+            <th style="padding:7px 10px;text-align:left">#</th>
+            <th style="padding:7px 10px;text-align:left">Adm. No.</th>
+            <th style="padding:7px 10px;text-align:left">Full Name</th>
+            <th style="padding:7px 10px;text-align:left">Gender</th>
+            <th style="padding:7px 10px;text-align:left">Date of Birth</th>
+            <th style="padding:7px 10px;text-align:left">Guardian Name</th>
+            <th style="padding:7px 10px;text-align:left">Guardian Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.map((p, i) => `<tr style="border-bottom:1px solid #ddd;${i % 2 ? 'background:#f9f9f9' : ''}">
+            <td style="padding:5px 10px">${i + 1}</td>
+            <td style="padding:5px 10px">${p.admNo}</td>
+            <td style="padding:5px 10px;font-weight:600">${p.fn} ${p.mn ? p.mn + ' ' : ''}${p.ln}</td>
+            <td style="padding:5px 10px">${p.gender}</td>
+            <td style="padding:5px 10px">${p.dob || '—'}</td>
+            <td style="padding:5px 10px">${p.parName}</td>
+            <td style="padding:5px 10px">${p.parPhone}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div style="margin-top:36px;display:flex;justify-content:space-between;font-size:.72rem;padding-top:10px;border-top:1px solid #ccc">
+        <div>Prepared by: _________________________<br/><span style="font-size:.65rem;color:#666">Registrar</span></div>
+        <div style="text-align:center">Total pupils: <strong>${list.length}</strong></div>
+        <div style="text-align:right">Head Teacher: _________________________<br/><span style="font-size:.65rem;color:#666">Signature &amp; Stamp</span></div>
+      </div>`;
+  }
+
+  document.getElementById('print-target').style.display = 'block';
+  window.print();
+  document.getElementById('print-target').style.display = 'none';
+}
+
+/* ══════════════════════════════════════════
+   PROMOTION & TRANSFER
+══════════════════════════════════════════ */
+function switchPromoTab(el, tabId) {
+  document.querySelectorAll('.promo-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['promo-promote','promo-transfer','promo-withdraw'].forEach(id => {
+    document.getElementById(id).style.display = (id === tabId) ? '' : 'none';
+  });
+}
+
+function resetPromoTab() {
+  document.querySelectorAll('.promo-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+  document.getElementById('promo-promote').style.display  = '';
+  document.getElementById('promo-transfer').style.display = 'none';
+  document.getElementById('promo-withdraw').style.display = 'none';
+  document.getElementById('prom-from').value = '';
+  document.getElementById('prom-to').value   = '';
+  document.getElementById('prom-chk-all').checked = false;
+  renderPromoList([]);
+}
+
+function loadPromoList() {
+  const cls = document.getElementById('prom-from').value;
+  renderPromoList(cls ? pupils.filter(p => p.class_ === cls && p.status === 'Active') : []);
+}
+
+function renderPromoList(list) {
+  const tb    = document.getElementById('prom-tb');
+  const label = document.getElementById('prom-count-label');
+  if (list.length === 0) {
+    tb.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">🔼</div><div class="empty-desc">Select a current class above to list pupils.</div></div></td></tr>';
+    label.textContent = '';
+    return;
+  }
+  tb.innerHTML = list.map(p => {
+    const idx = pupils.indexOf(p);
+    return `<tr>
+      <td><input type="checkbox" class="prom-chk" data-idx="${idx}"/></td>
+      <td><code style="font-size:.7rem">${p.admNo}</code></td>
+      <td>${p.fn} ${p.mn ? p.mn + ' ' : ''}${p.ln}</td>
+      <td>${p.gender}</td>
+    </tr>`;
+  }).join('');
+  label.textContent = `${list.length} pupil(s) in this class`;
+}
+
+function toggleAllPromo(master) {
+  document.querySelectorAll('.prom-chk').forEach(c => c.checked = master.checked);
+}
+
+function promoteSelected() {
+  const toCls    = document.getElementById('prom-to').value;
+  const selected = [...document.querySelectorAll('.prom-chk:checked')];
+  if (!toCls)              { toast('Select a target class.', 'warn'); return; }
+  if (selected.length === 0){ toast('Select at least one pupil.', 'warn'); return; }
+  selected.forEach(chk => {
+    const idx = parseInt(chk.dataset.idx);
+    if (pupils[idx]) pupils[idx].class_ = toCls;
+  });
+  toast(`${selected.length} pupil(s) promoted to ${toCls}.`, 'success');
+  document.getElementById('prom-from').value = '';
+  document.getElementById('prom-to').value   = '';
+  document.getElementById('prom-chk-all').checked = false;
+  renderPromoList([]);
+  renderDashboard();
+}
+
+function filterTransferPupil() {
+  const q   = document.getElementById('tr-pupil-srch').value.toLowerCase();
+  const sel = document.getElementById('tr-pupil-select');
+  sel.innerHTML = '<option value="">— Select —</option>';
+  if (!q) return;
+  pupils
+    .filter(p => p.status === 'Active' &&
+      (`${p.fn} ${p.ln}`.toLowerCase().includes(q) || p.admNo.toLowerCase().includes(q)))
+    .forEach(p => {
+      const o = document.createElement('option');
+      o.value = pupils.indexOf(p);
+      o.textContent = `${p.fn} ${p.ln} (${p.admNo})`;
+      sel.appendChild(o);
+    });
+}
+
+function filterWithdrawPupil() {
+  const q   = document.getElementById('wd-pupil-srch').value.toLowerCase();
+  const sel = document.getElementById('wd-pupil-select');
+  sel.innerHTML = '<option value="">— Select —</option>';
+  if (!q) return;
+  pupils
+    .filter(p => p.status === 'Active' &&
+      (`${p.fn} ${p.ln}`.toLowerCase().includes(q) || p.admNo.toLowerCase().includes(q)))
+    .forEach(p => {
+      const o = document.createElement('option');
+      o.value = pupils.indexOf(p);
+      o.textContent = `${p.fn} ${p.ln} (${p.admNo})`;
+      sel.appendChild(o);
+    });
+}
+
+function submitTransfer() {
+  const idxVal = document.getElementById('tr-pupil-select').value;
+  const dest   = document.getElementById('tr-dest').value.trim();
+  const date   = document.getElementById('tr-date').value;
+  if (!idxVal) { toast('Select a pupil.', 'warn'); return; }
+  if (!dest)   { toast('Enter the destination school.', 'warn'); return; }
+  if (!date)   { toast('Set the transfer date.', 'warn'); return; }
+  const p = pupils[parseInt(idxVal)];
+  p.status = 'Transferred';
+  toast(`${p.fn} ${p.ln} transferred to ${dest}.`, 'success');
+  ['tr-pupil-srch','tr-dest','tr-notes'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('tr-date').value = '';
+  document.getElementById('tr-reason').value = '';
+  document.getElementById('tr-pupil-select').innerHTML = '<option value="">— Search above then select —</option>';
+  renderDashboard();
+}
+
+function submitWithdrawal() {
+  const idxVal = document.getElementById('wd-pupil-select').value;
+  const reason = document.getElementById('wd-reason').value;
+  const date   = document.getElementById('wd-date').value;
+  if (!idxVal) { toast('Select a pupil.', 'warn'); return; }
+  if (!reason) { toast('Select a reason for withdrawal.', 'warn'); return; }
+  if (!date)   { toast('Set the withdrawal date.', 'warn'); return; }
+  const p = pupils[parseInt(idxVal)];
+  p.status = 'Withdrawn';
+  toast(`${p.fn} ${p.ln} withdrawn — ${reason}.`, 'warn');
+  ['wd-pupil-srch','wd-notes'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('wd-date').value = '';
+  document.getElementById('wd-reason').selectedIndex = 0;
+  document.getElementById('wd-pupil-select').innerHTML = '<option value="">— Search above then select —</option>';
+  renderDashboard();
+}
+
+/* ══════════════════════════════════════════
+   ID CARDS
+══════════════════════════════════════════ */
+function renderIdCards() {
+  const cls  = document.getElementById('idcard-class-f').value;
+  const list = cls
+    ? pupils.filter(p => p.class_ === cls && p.status === 'Active')
+    : pupils.filter(p => p.status === 'Active');
+  const grid = document.getElementById('id-cards-grid');
+
+  if (list.length === 0) {
+    grid.className   = 'card-body';
+    grid.innerHTML   = '<div class="empty"><div class="empty-icon">🪪</div><div class="empty-desc">No pupils registered yet. Admit pupils to generate ID cards.</div></div>';
+    return;
+  }
+
+  grid.className = 'id-card-grid';
+  grid.innerHTML = list.map(p => `
+    <div class="id-card">
+      <div class="id-card-top">
+        <img src="../star logo.png" alt="Logo"/>
+        <div class="id-card-school">
+          Five Star Model School<br/>
+          <span style="font-weight:400;font-size:.58rem;opacity:.85">Kasese District, Uganda</span>
+        </div>
+      </div>
+      <div class="id-card-body">
+        <div class="id-card-photo">${p.fn.charAt(0)}${p.ln.charAt(0)}</div>
+        <div class="id-card-info">
+          <div class="id-card-name">${p.fn} ${p.mn ? p.mn + ' ' : ''}${p.ln}</div>
+          <div class="id-card-detail">Class: ${p.class_}${p.stream ? ' · ' + p.stream : ''}</div>
+          <div class="id-card-detail">Gender: ${p.gender}</div>
+          ${p.dob ? `<div class="id-card-detail">DOB: ${p.dob}</div>` : ''}
+          <div class="id-card-adm">${p.admNo}</div>
+        </div>
+      </div>
+      <div class="id-card-bottom">"Nature for Excellence" · ${new Date().getFullYear()}</div>
+    </div>
+  `).join('');
+}
+
+/* ══════════════════════════════════════════
+   DOCUMENTS
+══════════════════════════════════════════ */
+document.getElementById('doc-file').addEventListener('change', function () {
+  document.getElementById('doc-file-name').textContent =
+    this.files[0] ? `Selected: ${this.files[0].name}` : '';
+});
+
+function uploadDocument() {
+  const admNo   = document.getElementById('doc-adm').value.trim();
+  const docType = document.getElementById('doc-type').value;
+  const fileEl  = document.getElementById('doc-file');
+  if (!admNo)         { toast('Enter the pupil admission number.', 'warn'); return; }
+  if (!docType)       { toast('Select a document type.', 'warn'); return; }
+  if (!fileEl.files[0]){ toast('Select a file to upload.', 'warn'); return; }
+  const pupil = pupils.find(p => p.admNo === admNo);
+  documents_.push({
+    admNo,
+    pupilName : pupil ? `${pupil.fn} ${pupil.ln}` : '—',
+    docType,
+    filename  : fileEl.files[0].name,
+    date      : new Date().toLocaleDateString('en-UG'),
+    status    : 'Uploaded'
+  });
+  toast('Document uploaded successfully.', 'success');
+  document.getElementById('doc-adm').value = '';
+  document.getElementById('doc-type').selectedIndex = 0;
+  fileEl.value = '';
+  document.getElementById('doc-file-name').textContent = '';
+  renderDocs();
+}
+
+function renderDocs(list) {
+  const src = list !== undefined ? list : documents_;
+  const tb  = document.getElementById('docs-tb');
+  if (src.length === 0) {
+    tb.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📁</div><div class="empty-desc">No documents uploaded yet.</div></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = src.map((d, i) => {
+    const ri = documents_.indexOf(d);
+    return `<tr>
+      <td><strong>${d.pupilName}</strong><br/><code style="font-size:.65rem;color:var(--sub)">${d.admNo}</code></td>
+      <td>${d.docType}</td>
+      <td style="font-size:.72rem">${d.filename}</td>
+      <td>${d.date}</td>
+      <td><span class="status-uploaded">${d.status}</span></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="deleteDoc(${ri})" title="Remove">🗑️</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterDocs() {
+  const q = document.getElementById('doc-srch').value.toLowerCase();
+  renderDocs(q ? documents_.filter(d =>
+    d.admNo.toLowerCase().includes(q) || d.pupilName.toLowerCase().includes(q)
+  ) : documents_);
+}
+
+function deleteDoc(idx) {
+  if (!confirm('Remove this document record?')) return;
+  documents_.splice(idx, 1);
+  toast('Document removed.', 'warn');
+  renderDocs();
+}
+
+/* ── Boot ── */
+renderDashboard();
+</script>
+</body>
+</html>
