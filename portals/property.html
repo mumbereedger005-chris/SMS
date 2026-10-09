@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Property Portal – Five Star Model School</title>
+<link rel="stylesheet" href="../assets/sms.css"/>
+<style>
+/* ── Property-specific styles ── */
+.prog{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-top:4px}
+.prog-fill{height:100%;border-radius:4px;background:var(--teal);transition:width .4s}
+.prog-fill.warn{background:var(--amber)}
+.prog-fill.danger{background:var(--red)}
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px;flex-wrap:wrap}
+.tab-btn{padding:8px 18px;background:none;border:none;font-size:.75rem;font-weight:600;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;font-family:inherit}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab-btn:hover{color:var(--text)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.filter-bar select,.filter-bar input{padding:6px 10px;border:1px solid var(--border);border-radius:var(--r8);font-size:.74rem;background:var(--white);font-family:inherit}
+.filter-bar select:focus,.filter-bar input:focus{outline:none;border-color:var(--teal)}
+.empty{text-align:center;padding:36px 20px;color:var(--sub)}
+.empty-icon{font-size:2rem;margin-bottom:8px}
+.empty-desc{font-size:.74rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--white);border-radius:var(--r16);width:100%;max-width:600px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.18)}
+.modal-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:.9rem;font-weight:700;color:var(--text)}
+.modal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--sub);width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--bg);color:var(--text)}
+.modal-body{padding:20px 22px;overflow-y:auto;flex:1}
+.modal-ft{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+.form-row{display:grid;gap:12px;margin-bottom:14px}
+.form-row.col2{grid-template-columns:1fr 1fr}
+.form-row.col3{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:.7rem;font-weight:600;color:var(--text)}
+.form-group input,.form-group select,.form-group textarea{padding:7px 10px;border:1px solid var(--border);border-radius:var(--r8);font-size:.76rem;font-family:inherit;background:var(--white)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 2px rgba(24,169,153,.12)}
+.form-group textarea{resize:vertical;min-height:70px}
+.form-note{font-size:.65rem;color:var(--sub);margin-top:2px}
+.info-banner{background:#e8f4fd;border:1px solid #b8d9f0;border-radius:var(--r8);padding:10px 14px;font-size:.74rem;color:#1a4a6e;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start}
+.warn-banner{background:#fef3d8;border:1px solid #f0d080;border-radius:var(--r8);padding:10px 14px;font-size:.74rem;color:#7a4f00;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start}
+.error-banner{background:#fde8e7;border:1px solid #f0b0ae;border-radius:var(--r8);padding:10px 14px;font-size:.74rem;color:#7a1a18;margin-bottom:16px;display:flex;gap:8px}
+.report-section{margin-bottom:24px}
+.report-section h3{font-size:.82rem;font-weight:700;color:var(--navy);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.text-muted{font-size:.68rem;color:var(--sub)}
+.dorm-bar{height:10px;background:var(--bg);border-radius:5px;overflow:hidden;margin-top:6px;min-width:80px;display:inline-block;width:100%}
+.dorm-fill{height:100%;border-radius:5px;background:var(--teal)}
+
+/* Urgent badge pulse animation */
+@keyframes urgentPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,83,79,.4)}50%{box-shadow:0 0 0 5px rgba(217,83,79,0)}}
+.badge-urgent{background:#fde8e7;color:var(--red);animation:urgentPulse 1.4s ease-in-out infinite}
+
+/* Toast */
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--navy);color:#fff;padding:10px 16px;border-radius:var(--r8);font-size:.76rem;font-weight:500;box-shadow:var(--shadow-md);opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+.toast.warning{background:#b37b10}
+
+/* Print styles */
+@media print{
+  .sidebar,.topbar,.no-print{display:none!important}
+  .main-area{margin-left:0!important}
+  .page-content{padding:0!important}
+  body{background:#fff}
+  .card{box-shadow:none;border:1px solid #ccc}
+  .print-header{display:flex!important}
+}
+.print-header{display:none;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--navy)}
+.print-header img{width:50px;height:50px;object-fit:cover}
+.print-header-text h2{font-size:1rem;font-weight:800;color:var(--navy)}
+.print-header-text p{font-size:.72rem;color:var(--sub)}
+
+@media(max-width:900px){
+  .grid-2{grid-template-columns:1fr}
+  .grid-3{grid-template-columns:1fr 1fr}
+  .form-row.col2,.form-row.col3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
+    <div>
+      <div class="sb-school-name">Five Star School</div>
+      <div class="sb-portal-name">Property Portal</div>
+    </div>
+  </div>
+  <nav class="sb-body">
+    <div class="sb-group"><div class="sb-group-label">Overview</div></div>
+    <div class="sb-link active" onclick="nav('dashboard',this)"><span class="sb-icon">🏠</span><span>Dashboard</span></div>
+    <div class="sb-group"><div class="sb-group-label">Assets</div></div>
+    <div class="sb-link" onclick="nav('assets',this)"><span class="sb-icon">🏷️</span><span>Assets Register</span></div>
+    <div class="sb-link" onclick="nav('inventory',this)"><span class="sb-icon">📦</span><span>Inventory</span></div>
+    <div class="sb-group"><div class="sb-group-label">Procurement &amp; Maintenance</div></div>
+    <div class="sb-link" onclick="nav('procurement',this)"><span class="sb-icon">🛒</span><span>Procurement</span></div>
+    <div class="sb-link" onclick="nav('maintenance',this)"><span class="sb-icon">🔧</span><span>Maintenance</span></div>
+    <div class="sb-link" onclick="nav('repairs',this)"><span class="sb-icon">🛠️</span><span>Repair Requests</span><span class="sb-badge" id="repair-badge">0</span></div>
+    <div class="sb-group"><div class="sb-group-label">Boarding</div></div>
+    <div class="sb-link" onclick="nav('boarding',this)"><span class="sb-icon">🏨</span><span>Boarding Facilities</span></div>
+    <div class="sb-link" onclick="nav('dormitories',this)"><span class="sb-icon">🛏️</span><span>Dormitories</span></div>
+    <div class="sb-group"><div class="sb-group-label">Requests &amp; Reports</div></div>
+    <div class="sb-link" onclick="nav('stock-requests',this)"><span class="sb-icon">📋</span><span>Stock Requests</span></div>
+    <div class="sb-link" onclick="nav('reports',this)"><span class="sb-icon">📊</span><span>Reports</span></div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-av" id="sb-av-init">P</div>
+      <div><div class="sb-uname" id="sb-uname">Property Officer</div><div class="sb-urole">Property Staff</div></div>
+      <button class="sb-signout" onclick="signOut()" title="Sign Out">⏻</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main-area">
+  <header class="topbar">
+    <div class="tb-left">
+      <div>
+        <div class="tb-title" id="pg-title">Dashboard</div>
+        <div class="tb-crumb" id="pg-crumb">Property › Dashboard</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-meta" id="tb-term">Property Management</span>
+      <div class="tb-user-chip">
+        <div class="tb-user-av" id="tb-av">P</div>
+        <span id="tb-uname">Officer</span>
+      </div>
+    </div>
+  </header>
+  <div class="page-content">
+
+<!-- ════ PAGE: DASHBOARD ════ -->
+<div id="pg-dashboard">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:1.05rem;font-weight:800;color:var(--navy)" id="welcome-msg">Good morning, Property Officer 👋</div>
+      <div style="font-size:.74rem;color:var(--sub);margin-top:2px" id="today-date"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-teal btn-sm" onclick="openM('mAsset')">+ Register Asset</button>
+      <button class="btn btn-outline btn-sm" onclick="nav('repairs',null)">🛠️ Repair Requests</button>
+    </div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-icon ic-navy">🏷️</div><div><div class="kpi-val" id="kpi-assets">0</div><div class="kpi-label">Total Assets</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-red">🛠️</div><div><div class="kpi-val" id="kpi-repairs">0</div><div class="kpi-label">Open Repair Requests</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-amber">⚠️</div><div><div class="kpi-val" id="kpi-lowstock">0</div><div class="kpi-label">Low Stock Items</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-teal">🏨</div><div><div class="kpi-val" id="kpi-boarders">0</div><div class="kpi-label">Total Boarders</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-purple">🛏️</div><div><div class="kpi-val" id="kpi-dorms">0</div><div class="kpi-label">Dormitories</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-green">🛒</div><div><div class="kpi-val" id="kpi-procure">UGX 0</div><div class="kpi-label">Procurement This Term</div></div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">⚠️</span>Assets Needing Attention</span><button class="btn btn-outline btn-sm" onclick="nav('assets',null)">View All</button></div>
+      <div class="card-flush"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Asset</th><th>Category</th><th>Condition</th><th>Location</th></tr></thead>
+      <tbody id="dash-assets-attention"><tr><td colspan="4"><div class="empty"><div class="empty-icon">✅</div><div class="empty-desc">No assets flagged for attention.</div></div></td></tr></tbody></table></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🛠️</span>Recent Repair Requests</span><button class="btn btn-outline btn-sm" onclick="nav('repairs',null)">View All</button></div>
+      <div class="card-flush"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Item/Area</th><th>Priority</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody id="dash-repairs"><tr><td colspan="4"><div class="empty"><div class="empty-icon">🛠️</div><div class="empty-desc">No repair requests yet.</div></div></td></tr></tbody></table></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📦</span>Low Stock Alerts</span><button class="btn btn-outline btn-sm" onclick="nav('inventory',null)">Manage Inventory</button></div>
+    <div class="card-body" id="dash-lowstock"><div class="empty"><div class="empty-icon">📦</div><div class="empty-desc">All stock levels are adequate.</div></div></div>
+  </div>
+</div><!-- /pg-dashboard -->
+
+<!-- ════ PAGE: ASSETS REGISTER ════ -->
+<div id="pg-assets" style="display:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div class="filter-bar" style="margin:0">
+      <select id="asset-cat-filter" onchange="renderAssets()"><option value="">All Categories</option><option>Furniture</option><option>Electronics</option><option>Vehicles</option><option>Buildings</option><option>Sports Equipment</option><option>Kitchen Equipment</option><option>Laboratory</option><option>Library</option><option>Other</option></select>
+      <select id="asset-cond-filter" onchange="renderAssets()"><option value="">All Conditions</option><option>Good</option><option>Fair</option><option>Poor</option></select>
+      <input type="text" id="asset-search" placeholder="Search by name or ID…" oninput="renderAssets()" style="min-width:200px"/>
+    </div>
+    <button class="btn btn-teal btn-sm" onclick="openM('mAsset')">+ Register Asset</button>
+  </div>
+  <div class="card">
+    <div class="card-flush">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Asset ID</th><th>Name</th><th>Category</th><th>Condition</th><th>Location</th><th>Qty</th><th>Purchase Date</th><th>Price (UGX)</th><th>Assigned To</th><th>Warranty</th><th>Actions</th></tr></thead>
+          <tbody id="assets-tbody"><tr><td colspan="11"><div class="empty"><div class="empty-icon">🏷️</div><div class="empty-desc">No assets registered yet. Click "Register Asset" to begin.</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div><!-- /pg-assets -->
+
+<!-- ════ PAGE: INVENTORY ════ -->
+<div id="pg-inventory" style="display:none">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('inv','durable',this)">📋 Durable Assets</button>
+    <button class="tab-btn" onclick="switchTab('inv','consumables',this)">📦 Consumables</button>
+  </div>
+  <div id="inv-tab-durable" class="tab-panel active">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🏷️</span>Durable Assets</span><span class="text-muted" style="font-size:.7rem">Read-only view — manage in Assets Register</span></div>
+      <div class="card-flush"><div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Asset ID</th><th>Name</th><th>Category</th><th>Condition</th><th>Location</th><th>Qty</th><th>Assigned To</th></tr></thead>
+        <tbody id="inv-durable-tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon">🏷️</div><div class="empty-desc">No assets registered yet.</div></div></td></tr></tbody>
+      </table></div></div>
+    </div>
+  </div>
+  <div id="inv-tab-consumables" class="tab-panel">
+    <div id="low-stock-banner" style="display:none" class="warn-banner">⚠️ <span>Low stock items need restocking. Review items flagged below.</span></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px">
+      <button class="btn btn-green btn-sm" onclick="openM('mStockIn')">📥 Stock In</button>
+      <button class="btn btn-outline btn-sm" onclick="openM('mStockOut')">📤 Stock Out</button>
+      <button class="btn btn-teal btn-sm" onclick="openM('mConsumable')">+ Add Item</button>
+    </div>
+    <div class="card card-flush">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Item Name</th><th>Category</th><th>Unit</th><th>Current Stock</th><th>Min Stock</th><th>Status</th><th>Last Updated</th><th>Actions</th></tr></thead>
+        <tbody id="consumables-tbody"><tr><td colspan="8"><div class="empty"><div class="empty-icon">📦</div><div class="empty-desc">No consumable items added yet.</div></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</div><!-- /pg-inventory -->
+
+<!-- ════ PAGE: PROCUREMENT ════ -->
+<div id="pg-procurement" style="display:none">
+  <div class="info-banner">💡 <span>Financial approval is required for purchases over <strong>UGX 1,000,000</strong>. Please obtain authorisation before recording large procurements.</span></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div class="filter-bar" style="margin:0">
+      <input type="date" id="proc-from" onchange="renderProcurement()"/>
+      <input type="date" id="proc-to" onchange="renderProcurement()"/>
+      <select id="proc-status-filter" onchange="renderProcurement()"><option value="">All Status</option><option>Pending</option><option>Approved</option><option>Received</option><option>Cancelled</option></select>
+    </div>
+    <button class="btn btn-teal btn-sm" onclick="openM('mProcurement')">+ Record Procurement</button>
+  </div>
+  <div class="card card-flush">
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Date</th><th>Item/Service</th><th>Supplier</th><th>Qty</th><th>Unit Price (UGX)</th><th>Total (UGX)</th><th>Approved By</th><th>Reference</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="procurement-tbody"><tr><td colspan="10"><div class="empty"><div class="empty-icon">🛒</div><div class="empty-desc">No procurement records yet.</div></div></td></tr></tbody>
+    </table></div>
+  </div>
+</div><!-- /pg-procurement -->
+
+<!-- ════ PAGE: MAINTENANCE ════ -->
+<div id="pg-maintenance" style="display:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div class="filter-bar" style="margin:0">
+      <select id="maint-status-filter" onchange="renderMaintenance()"><option value="">All Status</option><option>Scheduled</option><option>In Progress</option><option>Completed</option><option>Cancelled</option></select>
+    </div>
+    <button class="btn btn-teal btn-sm" onclick="openM('mMaintenance')">+ Schedule Maintenance</button>
+  </div>
+  <div class="card card-flush">
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Asset</th><th>Type</th><th>Scheduled Date</th><th>Technician</th><th>Cost (UGX)</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="maintenance-tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon">🔧</div><div class="empty-desc">No maintenance records scheduled.</div></div></td></tr></tbody>
+    </table></div>
+  </div>
+  <div class="grid-2" style="margin-top:16px">
+    <div class="card"><div class="card-body">
+      <div style="font-size:.75rem;font-weight:700;color:var(--sub);margin-bottom:8px">COMPLETED MAINTENANCE (THIS TERM)</div>
+      <div style="display:flex;gap:24px">
+        <div><div class="kpi-val" id="maint-completed-count">0</div><div class="text-muted">Tasks Completed</div></div>
+        <div><div class="kpi-val" id="maint-completed-cost">UGX 0</div><div class="text-muted">Total Cost</div></div>
+      </div>
+    </div></div>
+  </div>
+</div><!-- /pg-maintenance -->
+
+<!-- ════ PAGE: REPAIR REQUESTS ════ -->
+<div id="pg-repairs" style="display:none">
+  <div class="info-banner">🛠️ <span>Submit repair requests for any damaged or faulty item or area. The property officer will review and assign each request.</span></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div class="filter-bar" style="margin:0">
+      <select id="repair-status-filter" onchange="renderRepairs()"><option value="">All Status</option><option>Open</option><option>In Progress</option><option>Done</option></select>
+      <select id="repair-priority-filter" onchange="renderRepairs()"><option value="">All Priority</option><option>Low</option><option>Medium</option><option>High</option><option>Urgent</option></select>
+    </div>
+    <button class="btn btn-teal btn-sm" onclick="openM('mRepair')">+ Submit Repair Request</button>
+  </div>
+  <div class="card card-flush">
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>ID</th><th>Item/Area</th><th>Reporter</th><th>Priority</th><th>Location</th><th>Status</th><th>Date</th><th>Assigned To</th><th>Actions</th></tr></thead>
+      <tbody id="repairs-tbody"><tr><td colspan="9"><div class="empty"><div class="empty-icon">🛠️</div><div class="empty-desc">No repair requests submitted yet.</div></div></td></tr></tbody>
+    </table></div>
+  </div>
+</div><!-- /pg-repairs -->
+
+<!-- ════ PAGE: BOARDING FACILITIES ════ -->
+<div id="pg-boarding" style="display:none">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-icon ic-teal">👥</div><div><div class="kpi-val" id="brd-total">0</div><div class="kpi-label">Total Boarders</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-navy">♂️</div><div><div class="kpi-val" id="brd-boys">0</div><div class="kpi-label">Boys</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-pink">♀️</div><div><div class="kpi-val" id="brd-girls">0</div><div class="kpi-label">Girls</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-purple">🛏️</div><div><div class="kpi-val" id="brd-dorms">0</div><div class="kpi-label">Dormitories</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-green">📊</div><div><div class="kpi-val" id="brd-rate">0%</div><div class="kpi-label">Occupancy Rate</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-amber">🛏️</div><div><div class="kpi-val" id="brd-avail">0</div><div class="kpi-label">Available Beds</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">🏨</span>Dormitory Occupancy</span><button class="btn btn-outline btn-sm" onclick="nav('dormitories',null)">Manage Dorms</button></div>
+    <div class="card-flush">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Dorm Name</th><th>Gender</th><th>Capacity</th><th>Occupied</th><th>Available</th><th>Occupancy</th><th>Housemaster</th><th>Condition</th></tr></thead>
+        <tbody id="boarding-dorms-tbody"><tr><td colspan="8"><div class="empty"><div class="empty-icon">🏨</div><div class="empty-desc">No dormitories added yet. Go to Dormitories to add them.</div></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</div><!-- /pg-boarding -->
+
+<!-- ════ PAGE: DORMITORIES ════ -->
+<div id="pg-dormitories" style="display:none">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('dorm','list',this)">🏨 Dormitory List</button>
+    <button class="tab-btn" onclick="switchTab('dorm','boarders',this)">👥 Boarders List</button>
+  </div>
+  <div id="dorm-tab-list" class="tab-panel active">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button class="btn btn-teal btn-sm" onclick="openM('mDorm')">+ Add Dormitory</button>
+    </div>
+    <div class="card card-flush">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Dorm Name</th><th>Gender</th><th>Capacity</th><th>Housemaster</th><th>Condition</th><th>Actions</th></tr></thead>
+        <tbody id="dorms-tbody"><tr><td colspan="6"><div class="empty"><div class="empty-icon">🛏️</div><div class="empty-desc">No dormitories added yet.</div></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+  <div id="dorm-tab-boarders" class="tab-panel">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button class="btn btn-teal btn-sm" onclick="openM('mBoarder')">+ Add Boarder</button>
+    </div>
+    <div class="card card-flush">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Pupil Name</th><th>Pupil ID</th><th>Class</th><th>Gender</th><th>Dormitory</th><th>Bed No</th><th>Guardian Contact</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="boarders-tbody"><tr><td colspan="9"><div class="empty"><div class="empty-icon">👥</div><div class="empty-desc">No boarders registered yet.</div></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</div><!-- /pg-dormitories -->
+
+<!-- ════ PAGE: STOCK REQUESTS ════ -->
+<div id="pg-stock-requests" style="display:none">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('sr','incoming',this)">📥 Incoming Requests</button>
+    <button class="tab-btn" onclick="switchTab('sr','mine',this)">📋 My Requests</button>
+  </div>
+  <div id="sr-tab-incoming" class="tab-panel active">
+    <div class="card card-flush">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Date</th><th>Requester</th><th>Department</th><th>Items Requested</th><th>Qty</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="sr-incoming-tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon">📥</div><div class="empty-desc">No incoming stock requests.</div></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+  <div id="sr-tab-mine" class="tab-panel">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button class="btn btn-teal btn-sm" onclick="openM('mStockReq')">+ Submit Stock Request</button>
+    </div>
+    <div class="card card-flush">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Date</th><th>Items</th><th>Qty</th><th>Purpose</th><th>Urgency</th><th>Status</th><th>Response</th></tr></thead>
+        <tbody id="sr-mine-tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">No requests submitted yet.</div></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</div><!-- /pg-stock-requests -->
+
+<!-- ════ PAGE: REPORTS ════ -->
+<div id="pg-reports" style="display:none">
+  <div class="print-header" id="rpt-print-hd">
+    <img src="../star logo.png" alt="Logo"/>
+    <div class="print-header-text"><h2>Five Star Model School</h2><p>Nature for Excellence &bull; Kasese District, Uganda</p><p>Property Department Report</p></div>
+  </div>
+  <div class="grid-2 no-print">
+    <div class="card" style="cursor:pointer" onclick="genReport('condition')">
+      <div class="card-body" style="text-align:center;padding:28px">
+        <div style="font-size:2rem;margin-bottom:8px">🏷️</div>
+        <div style="font-weight:700;font-size:.84rem;margin-bottom:4px">Asset Summary by Condition</div>
+        <div class="text-muted">View assets grouped by Good, Fair, Poor</div>
+        <button class="btn btn-teal btn-sm" style="margin-top:12px" onclick="event.stopPropagation();genReport('condition')">Generate Report</button>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="genReport('maintenance')">
+      <div class="card-body" style="text-align:center;padding:28px">
+        <div style="font-size:2rem;margin-bottom:8px">🔧</div>
+        <div style="font-weight:700;font-size:.84rem;margin-bottom:4px">Maintenance Cost Report</div>
+        <div class="text-muted">Total costs by type and period</div>
+        <button class="btn btn-teal btn-sm" style="margin-top:12px" onclick="event.stopPropagation();genReport('maintenance')">Generate Report</button>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="genReport('procurement')">
+      <div class="card-body" style="text-align:center;padding:28px">
+        <div style="font-size:2rem;margin-bottom:8px">🛒</div>
+        <div style="font-weight:700;font-size:.84rem;margin-bottom:4px">Procurement Total</div>
+        <div class="text-muted">Total procurement spending summary</div>
+        <button class="btn btn-teal btn-sm" style="margin-top:12px" onclick="event.stopPropagation();genReport('procurement')">Generate Report</button>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="genReport('boarding')">
+      <div class="card-body" style="text-align:center;padding:28px">
+        <div style="font-size:2rem;margin-bottom:8px">🏨</div>
+        <div style="font-weight:700;font-size:.84rem;margin-bottom:4px">Boarding Statistics</div>
+        <div class="text-muted">Boarders by class and dormitory</div>
+        <button class="btn btn-teal btn-sm" style="margin-top:12px" onclick="event.stopPropagation();genReport('boarding')">Generate Report</button>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="genReport('lowstock')">
+      <div class="card-body" style="text-align:center;padding:28px">
+        <div style="font-size:2rem;margin-bottom:8px">⚠️</div>
+        <div style="font-weight:700;font-size:.84rem;margin-bottom:4px">Low Stock Report</div>
+        <div class="text-muted">All items at or below minimum stock</div>
+        <button class="btn btn-teal btn-sm" style="margin-top:12px" onclick="event.stopPropagation();genReport('lowstock')">Generate Report</button>
+      </div>
+    </div>
+  </div>
+  <!-- Report output area -->
+  <div id="report-output" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-size:.88rem;font-weight:700;color:var(--navy)" id="report-output-title"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨️ Print</button>
+        <button class="btn btn-ghost btn-sm no-print" onclick="document.getElementById('report-output').style.display='none'">✕ Close</button>
+      </div>
+    </div>
+    <div id="report-output-body"></div>
+  </div>
+</div><!-- /pg-reports -->
+
+  </div><!-- /page-content -->
+</div><!-- /main-area -->
+</div><!-- /layout -->
+
+<!-- ════ TOAST CONTAINER ════ -->
+<div id="toast-container"></div>
+
+<!-- ════ MODAL: REGISTER ASSET ════ -->
+<div class="overlay" id="mAsset" style="display:none" onclick="overlayClose(event,'mAsset')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title">🏷️ Register New Asset</span><button class="modal-close" onclick="closeM('mAsset')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Asset ID (Auto-generated)</label><input type="text" id="asset-id-display" readonly placeholder="Auto-generated on save" style="background:var(--bg);color:var(--sub)"/></div>
+        <div class="form-group"><label>Asset Name *</label><input type="text" id="asset-name" placeholder="e.g. Science Lab Bench"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Category *</label>
+          <select id="asset-cat"><option value="">Select category</option><option>Furniture</option><option>Electronics</option><option>Vehicles</option><option>Buildings</option><option>Sports Equipment</option><option>Kitchen Equipment</option><option>Laboratory</option><option>Library</option><option>Other</option></select>
+        </div>
+        <div class="form-group"><label>Condition *</label>
+          <select id="asset-cond"><option value="">Select condition</option><option>Good</option><option>Fair</option><option>Poor</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Description</label><textarea id="asset-desc" placeholder="Brief description of the asset"></textarea></div>
+      </div>
+      <div class="form-row col3">
+        <div class="form-group"><label>Quantity *</label><input type="number" id="asset-qty" min="1" placeholder="1"/></div>
+        <div class="form-group"><label>Purchase Date</label><input type="date" id="asset-pdate"/></div>
+        <div class="form-group"><label>Purchase Price (UGX)</label><input type="number" id="asset-price" min="0" placeholder="0"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Supplier</label><input type="text" id="asset-supplier" placeholder="Supplier name"/></div>
+        <div class="form-group"><label>Reference / Invoice No</label><input type="text" id="asset-ref" placeholder="e.g. INV-2025-001"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Location *</label><input type="text" id="asset-location" placeholder="e.g. Block A, Science Lab"/></div>
+        <div class="form-group"><label>Assigned To</label><input type="text" id="asset-assigned" placeholder="Department or person"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Warranty Expiry Date</label><input type="date" id="asset-warranty"/></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mAsset')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveAsset()">Register Asset</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: VIEW ASSET ════ -->
+<div class="overlay" id="mAssetView" style="display:none" onclick="overlayClose(event,'mAssetView')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title" id="mAssetView-title">Asset Details</span><button class="modal-close" onclick="closeM('mAssetView')">✕</button></div>
+    <div class="modal-body" id="mAssetView-body"></div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mAssetView')">Close</button></div>
+  </div>
+</div>
+
+<!-- ════ MODAL: ADD CONSUMABLE ════ -->
+<div class="overlay" id="mConsumable" style="display:none" onclick="overlayClose(event,'mConsumable')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title">📦 Add Consumable Item</span><button class="modal-close" onclick="closeM('mConsumable')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Item Name *</label><input type="text" id="cons-name" placeholder="e.g. Chalk Boxes"/></div>
+        <div class="form-group"><label>Category *</label><input type="text" id="cons-cat" placeholder="e.g. Stationery"/></div>
+      </div>
+      <div class="form-row col3">
+        <div class="form-group"><label>Unit *</label><input type="text" id="cons-unit" placeholder="e.g. Box, Ream, Litre"/></div>
+        <div class="form-group"><label>Current Stock *</label><input type="number" id="cons-stock" min="0" placeholder="0"/></div>
+        <div class="form-group"><label>Minimum Stock *</label><input type="number" id="cons-min" min="0" placeholder="5"/></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mConsumable')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveConsumable()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: STOCK IN ════ -->
+<div class="overlay" id="mStockIn" style="display:none" onclick="overlayClose(event,'mStockIn')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title">📥 Stock In</span><button class="modal-close" onclick="closeM('mStockIn')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Item *</label>
+          <select id="si-item"><option value="">Select item</option></select>
+        </div>
+        <div class="form-group"><label>Quantity Added *</label><input type="number" id="si-qty" min="1" placeholder="0"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Supplier</label><input type="text" id="si-supplier" placeholder="Supplier name"/></div>
+        <div class="form-group"><label>Reference</label><input type="text" id="si-ref" placeholder="Delivery note / ref"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date *</label><input type="date" id="si-date"/></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mStockIn')">Cancel</button>
+      <button class="btn btn-green" onclick="saveStockIn()">Confirm Stock In</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: STOCK OUT ════ -->
+<div class="overlay" id="mStockOut" style="display:none" onclick="overlayClose(event,'mStockOut')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title">📤 Stock Out</span><button class="modal-close" onclick="closeM('mStockOut')">✕</button></div>
+    <div class="modal-body">
+      <div id="so-error" class="error-banner" style="display:none">⚠️ <span id="so-error-msg"></span></div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Item *</label>
+          <select id="so-item" onchange="updateSoMax()"><option value="">Select item</option></select>
+        </div>
+        <div class="form-group"><label>Quantity Taken *</label><input type="number" id="so-qty" min="1" placeholder="0" oninput="validateSoQty()"/><div class="form-note" id="so-avail-note"></div></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Purpose *</label><input type="text" id="so-purpose" placeholder="e.g. Classroom use"/></div>
+        <div class="form-group"><label>Approved By *</label><input type="text" id="so-approved" placeholder="Name of approver"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date *</label><input type="date" id="so-date"/></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mStockOut')">Cancel</button>
+      <button class="btn btn-danger" onclick="saveStockOut()">Confirm Stock Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: PROCUREMENT ════ -->
+<div class="overlay" id="mProcurement" style="display:none" onclick="overlayClose(event,'mProcurement')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title">🛒 Record Procurement</span><button class="modal-close" onclick="closeM('mProcurement')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Item / Service *</label><input type="text" id="pr-item" placeholder="Item or service name"/></div>
+        <div class="form-group"><label>Supplier *</label><input type="text" id="pr-supplier" placeholder="Supplier name"/></div>
+      </div>
+      <div class="form-row col3">
+        <div class="form-group"><label>Quantity *</label><input type="number" id="pr-qty" min="1" placeholder="1" oninput="calcProcTotal()"/></div>
+        <div class="form-group"><label>Unit Price (UGX) *</label><input type="number" id="pr-unitprice" min="0" placeholder="0" oninput="calcProcTotal()"/></div>
+        <div class="form-group"><label>Total (UGX)</label><input type="text" id="pr-total" readonly placeholder="Auto-calculated" style="background:var(--bg);color:var(--sub)"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Purchase Date *</label><input type="date" id="pr-date"/></div>
+        <div class="form-group"><label>Approved By *</label><input type="text" id="pr-approved" placeholder="Approver name"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Reference No</label><input type="text" id="pr-ref" placeholder="e.g. REC-2025-010"/></div>
+        <div class="form-group"><label>Status</label>
+          <select id="pr-status"><option>Pending</option><option>Approved</option><option>Received</option><option>Cancelled</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Receipt Upload</label><input type="file" id="pr-receipt" accept="image/*,application/pdf"/><div class="form-note">Attach scanned receipt or invoice (optional)</div></div>
+      </div>
+      <div id="pr-large-warn" class="warn-banner" style="display:none">⚠️ <span>This purchase exceeds UGX 1,000,000. Ensure financial approval has been obtained before recording.</span></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mProcurement')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveProcurement()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: MAINTENANCE ════ -->
+<div class="overlay" id="mMaintenance" style="display:none" onclick="overlayClose(event,'mMaintenance')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title" id="mMaint-title">🔧 Schedule Maintenance</span><button class="modal-close" onclick="closeM('mMaintenance')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Asset / Item *</label><input type="text" id="maint-asset" placeholder="Asset name or description"/></div>
+        <div class="form-group"><label>Maintenance Type *</label>
+          <select id="maint-type"><option value="">Select type</option><option>Routine</option><option>Repair</option><option>Inspection</option><option>Replacement</option></select>
+        </div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Scheduled Date *</label><input type="date" id="maint-date"/></div>
+        <div class="form-group"><label>Technician</label><input type="text" id="maint-tech" placeholder="Technician name"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Estimated Cost (UGX)</label><input type="number" id="maint-cost" min="0" placeholder="0"/></div>
+        <div class="form-group"><label>Status</label>
+          <select id="maint-status"><option>Scheduled</option><option>In Progress</option><option>Completed</option><option>Cancelled</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Notes</label><textarea id="maint-notes" placeholder="Additional details…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mMaintenance')">Cancel</button>
+      <button class="btn btn-teal" id="maint-save-btn" onclick="saveMaintenance()">Schedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: REPAIR REQUEST ════ -->
+<div class="overlay" id="mRepair" style="display:none" onclick="overlayClose(event,'mRepair')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title" id="mRepair-title">🛠️ Submit Repair Request</span><button class="modal-close" onclick="closeM('mRepair')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Item / Area *</label><input type="text" id="rep-item" placeholder="e.g. Broken window, Leaking roof"/></div>
+        <div class="form-group"><label>Location *</label><input type="text" id="rep-location" placeholder="e.g. Block B, P3 classroom"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Reporter Name *</label><input type="text" id="rep-reporter" placeholder="Your name"/></div>
+        <div class="form-group"><label>Priority *</label>
+          <select id="rep-priority"><option value="">Select priority</option><option>Low</option><option>Medium</option><option>High</option><option>Urgent</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Detailed Description *</label><textarea id="rep-desc" placeholder="Describe the problem in detail…"></textarea></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Assigned To</label><input type="text" id="rep-assigned" placeholder="Technician or officer"/></div>
+        <div class="form-group"><label>Status</label>
+          <select id="rep-status"><option>Open</option><option>In Progress</option><option>Done</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Photo</label><input type="file" id="rep-photo" accept="image/*"/><div class="form-note">Attach a photo of the damage (optional)</div></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mRepair')">Cancel</button>
+      <button class="btn btn-teal" id="rep-save-btn" onclick="saveRepair()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: ADD DORMITORY ════ -->
+<div class="overlay" id="mDorm" style="display:none" onclick="overlayClose(event,'mDorm')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title">🛏️ Add Dormitory</span><button class="modal-close" onclick="closeM('mDorm')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Dormitory Name *</label><input type="text" id="dorm-name" placeholder="e.g. Boys Dorm A"/></div>
+        <div class="form-group"><label>Gender *</label>
+          <select id="dorm-gender"><option value="">Select</option><option>Boys</option><option>Girls</option><option>Mixed</option></select>
+        </div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Capacity *</label><input type="number" id="dorm-cap" min="1" placeholder="e.g. 50"/></div>
+        <div class="form-group"><label>Housemaster</label><input type="text" id="dorm-hm" placeholder="Housemaster name"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Condition</label>
+          <select id="dorm-cond"><option>Good</option><option>Fair</option><option>Poor</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Notes</label><textarea id="dorm-notes" placeholder="Additional information…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mDorm')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveDorm()">Add Dormitory</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: ADD BOARDER ════ -->
+<div class="overlay" id="mBoarder" style="display:none" onclick="overlayClose(event,'mBoarder')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title">👤 Add Boarder</span><button class="modal-close" onclick="closeM('mBoarder')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Pupil Admission No *</label><input type="text" id="brd-admno" placeholder="e.g. BF-2025-001"/></div>
+        <div class="form-group"><label>Pupil Name *</label><input type="text" id="brd-name" placeholder="Full name"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Class *</label><input type="text" id="brd-class" placeholder="e.g. P4 East"/></div>
+        <div class="form-group"><label>Gender *</label>
+          <select id="brd-gender"><option value="">Select</option><option>Male</option><option>Female</option></select>
+        </div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Dormitory *</label>
+          <select id="brd-dorm"><option value="">Select dormitory</option></select>
+        </div>
+        <div class="form-group"><label>Bed Number *</label><input type="text" id="brd-bed" placeholder="e.g. B-12"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Guardian Contact *</label><input type="text" id="brd-guardian" placeholder="Phone number"/></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mBoarder')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveBoarder()">Add Boarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: STOCK REQUEST ════ -->
+<div class="overlay" id="mStockReq" style="display:none" onclick="overlayClose(event,'mStockReq')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title">📋 Submit Stock Request</span><button class="modal-close" onclick="closeM('mStockReq')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Items Needed *</label><input type="text" id="sreq-items" placeholder="List items needed"/></div>
+        <div class="form-group"><label>Quantity *</label><input type="number" id="sreq-qty" min="1" placeholder="0"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Department *</label><input type="text" id="sreq-dept" placeholder="e.g. Science Department"/></div>
+        <div class="form-group"><label>Urgency *</label>
+          <select id="sreq-urgency"><option value="">Select</option><option>Low</option><option>Medium</option><option>High</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Purpose *</label><textarea id="sreq-purpose" placeholder="Explain why these items are needed…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mStockReq')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveStockReq()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: FULFILL REQUEST ════ -->
+<div class="overlay" id="mFulfill" style="display:none" onclick="overlayClose(event,'mFulfill')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd"><span class="modal-title">✅ Fulfill Stock Request</span><button class="modal-close" onclick="closeM('mFulfill')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col2">
+        <div class="form-group"><label>Items Issued *</label><input type="text" id="ful-items" placeholder="Items being issued"/></div>
+        <div class="form-group"><label>Quantity *</label><input type="number" id="ful-qty" min="1" placeholder="0"/></div>
+      </div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Date Issued *</label><input type="date" id="ful-date"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Notes</label><textarea id="ful-notes" placeholder="Additional remarks…"></textarea></div>
+      </div>
+      <input type="hidden" id="ful-req-idx"/>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mFulfill')">Cancel</button>
+      <button class="btn btn-green" onclick="fulfillRequest()">Confirm Fulfillment</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   SESSION CHECK
+════════════════════════════════════════ */
+const sess = JSON.parse(sessionStorage.getItem('sms_user') || '{}');
+if (!sess.loggedIn) location.href = '../index.html';
+function signOut() { sessionStorage.clear(); location.href = '../index.html'; }
+
+/* ════════════════════════════════════════
+   IN-MEMORY DATA STORES
+════════════════════════════════════════ */
+let assets       = [];
+let consumables  = [];
+let procurement  = [];
+let maintenance  = [];
+let repairs      = [];
+let dormitories  = [];
+let boarders     = [];
+let stockReqs    = [];
+let assetSeq     = 1;
+let repairSeq    = 1;
+let editMaintIdx = null;
+let editRepairIdx= null;
+
+/* ════════════════════════════════════════
+   UTILITIES
+════════════════════════════════════════ */
+function ugx(n) {
+  return 'UGX ' + Number(n || 0).toLocaleString('en-UG');
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return isNaN(dt) ? d : dt.toLocaleDateString('en-UG', {day:'2-digit',month:'short',year:'numeric'});
+}
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+function genAssetID() {
+  const yr = new Date().getFullYear();
+  return 'BFS-AST-' + yr + '-' + String(assetSeq).padStart(4, '0');
+}
+function genRepairID() {
+  const yr = new Date().getFullYear();
+  return 'REP-' + yr + '-' + String(repairSeq).padStart(4, '0');
+}
+function condBadge(c) {
+  const m = {Good:'b-green',Fair:'b-amber',Poor:'b-red'};
+  return `<span class="badge ${m[c]||'b-gray'}">${c||'—'}</span>`;
+}
+function priorityBadge(p) {
+  const m = {Low:'b-gray',Medium:'b-amber',High:'b-red',Urgent:'badge-urgent'};
+  const cls = m[p] || 'b-gray';
+  return `<span class="badge ${cls}">${p||'—'}</span>`;
+}
+function statusBadge(s) {
+  const m = {Open:'b-red','In Progress':'b-amber',Done:'b-green',
+             Scheduled:'b-navy','In Progress':'b-amber',Completed:'b-green',Cancelled:'b-gray',
+             OK:'b-green',Low:'b-amber','Out of Stock':'b-red',
+             Pending:'b-amber',Approved:'b-green',Received:'b-teal',
+             Active:'b-teal',Left:'b-gray',Fulfilled:'b-green',Declined:'b-red'};
+  return `<span class="badge ${m[s]||'b-gray'}">${s||'—'}</span>`;
+}
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+function toast(msg, type) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type || '');
+  t.textContent = msg;
+  c.appendChild(t);
+  requestAnimationFrame(() => { t.classList.add('show'); });
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 350); }, 3200);
+}
+
+/* ════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════ */
+const PAGE_META = {
+  dashboard:      { title: 'Dashboard',          crumb: 'Property › Dashboard' },
+  assets:         { title: 'Assets Register',    crumb: 'Property › Assets Register' },
+  inventory:      { title: 'Inventory',          crumb: 'Property › Inventory' },
+  procurement:    { title: 'Procurement',        crumb: 'Property › Procurement' },
+  maintenance:    { title: 'Maintenance',        crumb: 'Property › Maintenance' },
+  repairs:        { title: 'Repair Requests',    crumb: 'Property › Repair Requests' },
+  boarding:       { title: 'Boarding Facilities',crumb: 'Property › Boarding' },
+  dormitories:    { title: 'Dormitories',        crumb: 'Property › Dormitories' },
+  'stock-requests':{ title: 'Stock Requests',   crumb: 'Property › Stock Requests' },
+  reports:        { title: 'Reports',            crumb: 'Property › Reports' },
+};
+function nav(page, el) {
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  else {
+    document.querySelectorAll('.sb-link').forEach(l => {
+      if (l.getAttribute('onclick') && l.getAttribute('onclick').includes("'"+page+"'")) l.classList.add('active');
+    });
+  }
+  document.querySelectorAll('[id^="pg-"]').forEach(p => p.style.display = 'none');
+  const pgEl = document.getElementById('pg-' + page);
+  if (pgEl) pgEl.style.display = '';
+  const meta = PAGE_META[page] || { title: page, crumb: 'Property › ' + page };
+  document.getElementById('pg-title').textContent = meta.title;
+  document.getElementById('pg-crumb').textContent = meta.crumb;
+  // Trigger renders
+  if (page === 'assets')         renderAssets();
+  if (page === 'inventory')      { renderDurableInv(); renderConsumables(); }
+  if (page === 'procurement')    renderProcurement();
+  if (page === 'maintenance')    renderMaintenance();
+  if (page === 'repairs')        renderRepairs();
+  if (page === 'boarding')       renderBoarding();
+  if (page === 'dormitories')    { renderDorms(); renderBoarders(); }
+  if (page === 'stock-requests') { renderSRIncoming(); renderSRMine(); }
+  if (page === 'dashboard')      renderDashboard();
+  document.querySelector('.page-content').scrollTop = 0;
+}
+
+/* ════════════════════════════════════════
+   MODAL HELPERS
+════════════════════════════════════════ */
+function openM(id) {
+  // Pre-populate dropdowns before opening
+  if (id === 'mStockIn' || id === 'mStockOut') populateConsDropdowns();
+  if (id === 'mBoarder') populateDormDropdown();
+  if (id === 'mAsset')   document.getElementById('asset-id-display').value = genAssetID();
+  document.getElementById(id).style.display = 'flex';
+}
+function closeM(id) {
+  document.getElementById(id).style.display = 'none';
+}
+function overlayClose(e, id) {
+  if (e.target === document.getElementById(id)) closeM(id);
+}
+function resetForm(ids) {
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else if (el.type === 'checkbox') el.checked = false;
+    else el.value = '';
+  });
+}
+
+/* ════════════════════════════════════════
+   DASHBOARD
+════════════════════════════════════════ */
+function renderDashboard() {
+  // Welcome
+  const h = new Date().getHours();
+  const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  const name = sess.name || 'Property Officer';
+  document.getElementById('welcome-msg').textContent = g + ', ' + name + ' 👋';
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-UG', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  // KPIs
+  document.getElementById('kpi-assets').textContent   = assets.length;
+  const openRep = repairs.filter(r => r.status !== 'Done').length;
+  document.getElementById('kpi-repairs').textContent  = openRep;
+  document.getElementById('repair-badge').textContent = openRep;
+  const lowCt = consumables.filter(c => c.stock <= c.min).length;
+  document.getElementById('kpi-lowstock').textContent = lowCt;
+  document.getElementById('kpi-boarders').textContent = boarders.filter(b => b.status === 'Active').length;
+  document.getElementById('kpi-dorms').textContent    = dormitories.length;
+  const procTotal = procurement.reduce((s, p) => s + (Number(p.total) || 0), 0);
+  document.getElementById('kpi-procure').textContent  = ugx(procTotal);
+
+  // Assets needing attention (Poor condition or no maintenance)
+  const attn = assets.filter(a => a.cond === 'Poor');
+  const attnTbody = document.getElementById('dash-assets-attention');
+  if (attn.length === 0) {
+    attnTbody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">✅</div><div class="empty-desc">No assets flagged for attention.</div></div></td></tr>';
+  } else {
+    attnTbody.innerHTML = attn.slice(0, 5).map(a =>
+      `<tr><td>${a.name}</td><td>${a.cat}</td><td>${condBadge(a.cond)}</td><td>${a.location||'—'}</td></tr>`
+    ).join('');
+  }
+
+  // Recent repairs
+  const repTbody = document.getElementById('dash-repairs');
+  if (repairs.length === 0) {
+    repTbody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">🛠️</div><div class="empty-desc">No repair requests yet.</div></div></td></tr>';
+  } else {
+    repTbody.innerHTML = [...repairs].reverse().slice(0, 5).map(r =>
+      `<tr><td>${r.item}</td><td>${priorityBadge(r.priority)}</td><td>${statusBadge(r.status)}</td><td>${fmtDate(r.date)}</td></tr>`
+    ).join('');
+  }
+
+  // Low stock
+  const lowItems = consumables.filter(c => c.stock <= c.min);
+  const lsDiv = document.getElementById('dash-lowstock');
+  if (lowItems.length === 0) {
+    lsDiv.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><div class="empty-desc">All stock levels are adequate.</div></div>';
+  } else {
+    lsDiv.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:8px">' + lowItems.map(i => {
+      const st = i.stock === 0 ? 'Out of Stock' : 'Low';
+      return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.74rem">
+        <strong>${i.name}</strong> — ${i.stock} ${i.unit} left ${statusBadge(st)}
+      </div>`;
+    }).join('') + '</div>';
+  }
+}
+
+/* ════════════════════════════════════════
+   ASSETS
+════════════════════════════════════════ */
+function saveAsset() {
+  const name     = document.getElementById('asset-name').value.trim();
+  const cat      = document.getElementById('asset-cat').value;
+  const cond     = document.getElementById('asset-cond').value;
+  const location = document.getElementById('asset-location').value.trim();
+  const qty      = document.getElementById('asset-qty').value;
+  if (!name || !cat || !cond || !location || !qty) { toast('Please fill all required fields.', 'error'); return; }
+  const id = genAssetID();
+  assets.push({
+    id, name, cat, desc: document.getElementById('asset-desc').value.trim(),
+    cond, qty: Number(qty),
+    pdate:    document.getElementById('asset-pdate').value,
+    price:    document.getElementById('asset-price').value,
+    supplier: document.getElementById('asset-supplier').value.trim(),
+    ref:      document.getElementById('asset-ref').value.trim(),
+    location, assigned: document.getElementById('asset-assigned').value.trim(),
+    warranty: document.getElementById('asset-warranty').value,
+  });
+  assetSeq++;
+  closeM('mAsset');
+  resetForm(['asset-name','asset-cat','asset-cond','asset-desc','asset-qty','asset-pdate','asset-price','asset-supplier','asset-ref','asset-location','asset-assigned','asset-warranty']);
+  renderAssets();
+  toast('Asset registered: ' + name, 'success');
+}
+
+function renderAssets() {
+  const cat    = document.getElementById('asset-cat-filter').value;
+  const cond   = document.getElementById('asset-cond-filter').value;
+  const search = (document.getElementById('asset-search').value || '').toLowerCase();
+  let data = assets.filter(a =>
+    (!cat  || a.cat  === cat)  &&
+    (!cond || a.cond === cond) &&
+    (!search || a.name.toLowerCase().includes(search) || a.id.toLowerCase().includes(search))
+  );
+  const tbody = document.getElementById('assets-tbody');
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11"><div class="empty"><div class="empty-icon">🏷️</div><div class="empty-desc">No assets match the current filter.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map((a, i) => `
+    <tr>
+      <td><code style="font-size:.68rem">${a.id}</code></td>
+      <td>${a.name}</td><td>${a.cat}</td><td>${condBadge(a.cond)}</td>
+      <td>${a.location||'—'}</td><td>${a.qty}</td><td>${fmtDate(a.pdate)}</td>
+      <td>${a.price ? ugx(a.price) : '—'}</td>
+      <td>${a.assigned||'—'}</td><td>${a.warranty ? fmtDate(a.warranty) : '—'}</td>
+      <td>
+        <button class="btn btn-outline btn-xs" onclick="viewAsset(${assets.indexOf(a)})">View</button>
+      </td>
+    </tr>`).join('');
+}
+
+function viewAsset(idx) {
+  const a = assets[idx];
+  if (!a) return;
+  document.getElementById('mAssetView-title').textContent = a.name;
+  document.getElementById('mAssetView-body').innerHTML = `
+    <table class="tbl"><tbody>
+      <tr><td style="font-weight:600;width:140px">Asset ID</td><td><code>${a.id}</code></td></tr>
+      <tr><td style="font-weight:600">Name</td><td>${a.name}</td></tr>
+      <tr><td style="font-weight:600">Category</td><td>${a.cat}</td></tr>
+      <tr><td style="font-weight:600">Condition</td><td>${condBadge(a.cond)}</td></tr>
+      <tr><td style="font-weight:600">Quantity</td><td>${a.qty}</td></tr>
+      <tr><td style="font-weight:600">Location</td><td>${a.location||'—'}</td></tr>
+      <tr><td style="font-weight:600">Assigned To</td><td>${a.assigned||'—'}</td></tr>
+      <tr><td style="font-weight:600">Purchase Date</td><td>${fmtDate(a.pdate)}</td></tr>
+      <tr><td style="font-weight:600">Purchase Price</td><td>${a.price ? ugx(a.price) : '—'}</td></tr>
+      <tr><td style="font-weight:600">Supplier</td><td>${a.supplier||'—'}</td></tr>
+      <tr><td style="font-weight:600">Reference</td><td>${a.ref||'—'}</td></tr>
+      <tr><td style="font-weight:600">Warranty Expiry</td><td>${a.warranty ? fmtDate(a.warranty) : '—'}</td></tr>
+      <tr><td style="font-weight:600">Description</td><td>${a.desc||'—'}</td></tr>
+    </tbody></table>`;
+  openM('mAssetView');
+}
+
+/* ════════════════════════════════════════
+   INVENTORY – DURABLE
+════════════════════════════════════════ */
+function renderDurableInv() {
+  const tbody = document.getElementById('inv-durable-tbody');
+  if (assets.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">🏷️</div><div class="empty-desc">No assets registered yet.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = assets.map(a => `
+    <tr><td><code style="font-size:.68rem">${a.id}</code></td><td>${a.name}</td><td>${a.cat}</td>
+    <td>${condBadge(a.cond)}</td><td>${a.location||'—'}</td><td>${a.qty}</td><td>${a.assigned||'—'}</td></tr>
+  `).join('');
+}
+
+/* ════════════════════════════════════════
+   INVENTORY – CONSUMABLES
+════════════════════════════════════════ */
+function saveConsumable() {
+  const name  = document.getElementById('cons-name').value.trim();
+  const cat   = document.getElementById('cons-cat').value.trim();
+  const unit  = document.getElementById('cons-unit').value.trim();
+  const stock = parseInt(document.getElementById('cons-stock').value) || 0;
+  const min   = parseInt(document.getElementById('cons-min').value) || 0;
+  if (!name || !cat || !unit) { toast('Please fill all required fields.', 'error'); return; }
+  consumables.push({ name, cat, unit, stock, min, updated: today() });
+  closeM('mConsumable');
+  resetForm(['cons-name','cons-cat','cons-unit','cons-stock','cons-min']);
+  renderConsumables();
+  toast('Consumable item added: ' + name, 'success');
+}
+
+function stockStatus(c) {
+  if (c.stock === 0) return 'Out of Stock';
+  if (c.stock <= c.min) return 'Low';
+  return 'OK';
+}
+
+function renderConsumables() {
+  const tbody = document.getElementById('consumables-tbody');
+  const hasLow = consumables.some(c => c.stock <= c.min);
+  document.getElementById('low-stock-banner').style.display = hasLow ? '' : 'none';
+  if (consumables.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">📦</div><div class="empty-desc">No consumable items added yet.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = consumables.map((c, i) => {
+    const st = stockStatus(c);
+    return `<tr>
+      <td>${c.name}</td><td>${c.cat}</td><td>${c.unit}</td>
+      <td><strong>${c.stock}</strong></td><td>${c.min}</td>
+      <td>${statusBadge(st)}</td><td>${fmtDate(c.updated)}</td>
+      <td>
+        <button class="btn btn-green btn-xs" onclick="openSiFor(${i})">📥 In</button>
+        <button class="btn btn-outline btn-xs" onclick="openSoFor(${i})">📤 Out</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openSiFor(idx) {
+  populateConsDropdowns();
+  document.getElementById('si-item').value = idx;
+  openM('mStockIn');
+}
+function openSoFor(idx) {
+  populateConsDropdowns();
+  document.getElementById('so-item').value = idx;
+  updateSoMax();
+  openM('mStockOut');
+}
+function populateConsDropdowns() {
+  ['si-item','so-item'].forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = '<option value="">Select item</option>' + consumables.map((c, i) =>
+      `<option value="${i}">${c.name} (${c.stock} ${c.unit})</option>`
+    ).join('');
+  });
+}
+function updateSoMax() {
+  const idx = parseInt(document.getElementById('so-item').value);
+  const note = document.getElementById('so-avail-note');
+  if (isNaN(idx) || idx < 0 || !consumables[idx]) { note.textContent = ''; return; }
+  note.textContent = 'Available: ' + consumables[idx].stock + ' ' + consumables[idx].unit;
+}
+function validateSoQty() {
+  const idx = parseInt(document.getElementById('so-item').value);
+  const qty = parseInt(document.getElementById('so-qty').value) || 0;
+  const errDiv = document.getElementById('so-error');
+  if (isNaN(idx) || idx < 0 || !consumables[idx]) { errDiv.style.display = 'none'; return; }
+  if (qty > consumables[idx].stock) {
+    document.getElementById('so-error-msg').textContent = 'Quantity exceeds available stock (' + consumables[idx].stock + ' ' + consumables[idx].unit + '). Reduce the quantity.';
+    errDiv.style.display = 'flex';
+  } else {
+    errDiv.style.display = 'none';
+  }
+}
+function saveStockIn() {
+  const idx = parseInt(document.getElementById('si-item').value);
+  const qty = parseInt(document.getElementById('si-qty').value) || 0;
+  if (isNaN(idx) || !consumables[idx]) { toast('Please select an item.', 'error'); return; }
+  if (qty <= 0) { toast('Quantity must be greater than 0.', 'error'); return; }
+  consumables[idx].stock += qty;
+  consumables[idx].updated = today();
+  closeM('mStockIn');
+  resetForm(['si-item','si-qty','si-supplier','si-ref','si-date']);
+  renderConsumables();
+  toast(qty + ' ' + consumables[idx].unit + ' added to ' + consumables[idx].name, 'success');
+}
+function saveStockOut() {
+  const idx = parseInt(document.getElementById('so-item').value);
+  const qty = parseInt(document.getElementById('so-qty').value) || 0;
+  const purpose  = document.getElementById('so-purpose').value.trim();
+  const approved = document.getElementById('so-approved').value.trim();
+  if (isNaN(idx) || !consumables[idx]) { toast('Please select an item.', 'error'); return; }
+  if (qty <= 0) { toast('Quantity must be greater than 0.', 'error'); return; }
+  if (!purpose || !approved) { toast('Please fill all required fields.', 'error'); return; }
+  if (qty > consumables[idx].stock) { toast('Cannot issue more than available stock (' + consumables[idx].stock + ').', 'error'); return; }
+  consumables[idx].stock -= qty;
+  consumables[idx].updated = today();
+  closeM('mStockOut');
+  resetForm(['so-item','so-qty','so-purpose','so-approved','so-date']);
+  document.getElementById('so-error').style.display = 'none';
+  renderConsumables();
+  toast(qty + ' ' + consumables[idx].unit + ' issued from ' + consumables[idx].name, 'success');
+}
+
+/* ════════════════════════════════════════
+   PROCUREMENT
+════════════════════════════════════════ */
+function calcProcTotal() {
+  const qty   = parseFloat(document.getElementById('pr-qty').value) || 0;
+  const price = parseFloat(document.getElementById('pr-unitprice').value) || 0;
+  const total = qty * price;
+  document.getElementById('pr-total').value = total > 0 ? total.toLocaleString('en-UG') : '';
+  document.getElementById('pr-large-warn').style.display = total > 1000000 ? '' : 'none';
+}
+function saveProcurement() {
+  const item     = document.getElementById('pr-item').value.trim();
+  const supplier = document.getElementById('pr-supplier').value.trim();
+  const qty      = document.getElementById('pr-qty').value;
+  const unit     = document.getElementById('pr-unitprice').value;
+  const pdate    = document.getElementById('pr-date').value;
+  const approved = document.getElementById('pr-approved').value.trim();
+  if (!item || !supplier || !qty || !unit || !pdate || !approved) { toast('Please fill all required fields.', 'error'); return; }
+  const total = parseFloat(qty) * parseFloat(unit);
+  procurement.push({
+    item, supplier, qty: Number(qty), unitprice: Number(unit), total,
+    date: pdate, approved, ref: document.getElementById('pr-ref').value.trim(),
+    status: document.getElementById('pr-status').value,
+  });
+  closeM('mProcurement');
+  resetForm(['pr-item','pr-supplier','pr-qty','pr-unitprice','pr-total','pr-date','pr-approved','pr-ref']);
+  document.getElementById('pr-status').selectedIndex = 0;
+  document.getElementById('pr-large-warn').style.display = 'none';
+  renderProcurement();
+  toast('Procurement recorded: ' + item, 'success');
+}
+function renderProcurement() {
+  const from   = document.getElementById('proc-from').value;
+  const to     = document.getElementById('proc-to').value;
+  const status = document.getElementById('proc-status-filter').value;
+  let data = procurement.filter(p =>
+    (!status || p.status === status) &&
+    (!from || p.date >= from) &&
+    (!to   || p.date <= to)
+  );
+  const tbody = document.getElementById('procurement-tbody');
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="empty"><div class="empty-icon">🛒</div><div class="empty-desc">No procurement records match the filter.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map((p, i) => `
+    <tr>
+      <td>${fmtDate(p.date)}</td><td>${p.item}</td><td>${p.supplier}</td>
+      <td>${p.qty}</td><td>${ugx(p.unitprice)}</td><td>${ugx(p.total)}</td>
+      <td>${p.approved}</td><td>${p.ref||'—'}</td><td>${statusBadge(p.status)}</td>
+      <td>
+        <select class="btn btn-xs btn-outline" onchange="updateProcStatus(${procurement.indexOf(p)},this.value);this.blur()">
+          ${['Pending','Approved','Received','Cancelled'].map(s => `<option ${p.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+    </tr>`).join('');
+}
+function updateProcStatus(idx, val) {
+  if (procurement[idx]) { procurement[idx].status = val; renderProcurement(); toast('Status updated.', 'success'); }
+}
+
+/* ════════════════════════════════════════
+   MAINTENANCE
+════════════════════════════════════════ */
+function saveMaintenance() {
+  const asset = document.getElementById('maint-asset').value.trim();
+  const type  = document.getElementById('maint-type').value;
+  const mdate = document.getElementById('maint-date').value;
+  if (!asset || !type || !mdate) { toast('Please fill all required fields.', 'error'); return; }
+  const record = {
+    asset, type, date: mdate,
+    tech:   document.getElementById('maint-tech').value.trim(),
+    cost:   parseFloat(document.getElementById('maint-cost').value) || 0,
+    status: document.getElementById('maint-status').value,
+    notes:  document.getElementById('maint-notes').value.trim(),
+  };
+  if (editMaintIdx !== null) {
+    maintenance[editMaintIdx] = record;
+    editMaintIdx = null;
+    toast('Maintenance record updated.', 'success');
+  } else {
+    maintenance.push(record);
+    toast('Maintenance scheduled: ' + asset, 'success');
+  }
+  closeM('mMaintenance');
+  resetForm(['maint-asset','maint-type','maint-date','maint-tech','maint-cost','maint-status','maint-notes']);
+  renderMaintenance();
+}
+function renderMaintenance() {
+  const sf = document.getElementById('maint-status-filter').value;
+  let data = maintenance.filter(m => !sf || m.status === sf);
+  const tbody = document.getElementById('maintenance-tbody');
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">🔧</div><div class="empty-desc">No maintenance records scheduled.</div></div></td></tr>';
+  } else {
+    tbody.innerHTML = data.map((m, i) => `
+      <tr>
+        <td>${m.asset}</td><td>${m.type}</td><td>${fmtDate(m.date)}</td>
+        <td>${m.tech||'—'}</td><td>${ugx(m.cost)}</td><td>${statusBadge(m.status)}</td>
+        <td>
+          <button class="btn btn-outline btn-xs" onclick="editMaint(${maintenance.indexOf(m)})">Edit</button>
+        </td>
+      </tr>`).join('');
+  }
+  const completed = maintenance.filter(m => m.status === 'Completed');
+  document.getElementById('maint-completed-count').textContent = completed.length;
+  document.getElementById('maint-completed-cost').textContent  = ugx(completed.reduce((s,m) => s + m.cost, 0));
+}
+function editMaint(idx) {
+  const m = maintenance[idx];
+  if (!m) return;
+  editMaintIdx = idx;
+  document.getElementById('maint-asset').value  = m.asset;
+  document.getElementById('maint-type').value   = m.type;
+  document.getElementById('maint-date').value   = m.date;
+  document.getElementById('maint-tech').value   = m.tech;
+  document.getElementById('maint-cost').value   = m.cost;
+  document.getElementById('maint-status').value = m.status;
+  document.getElementById('maint-notes').value  = m.notes;
+  document.getElementById('mMaint-title').textContent = '🔧 Edit Maintenance Record';
+  document.getElementById('maint-save-btn').textContent = 'Update';
+  openM('mMaintenance');
+}
+
+/* ════════════════════════════════════════
+   REPAIR REQUESTS
+════════════════════════════════════════ */
+function saveRepair() {
+  const item     = document.getElementById('rep-item').value.trim();
+  const location = document.getElementById('rep-location').value.trim();
+  const reporter = document.getElementById('rep-reporter').value.trim();
+  const priority = document.getElementById('rep-priority').value;
+  const desc     = document.getElementById('rep-desc').value.trim();
+  if (!item || !location || !reporter || !priority || !desc) { toast('Please fill all required fields.', 'error'); return; }
+  const id = genRepairID();
+  const record = {
+    id, item, location, reporter, priority, desc,
+    assigned: document.getElementById('rep-assigned').value.trim(),
+    status:   document.getElementById('rep-status').value,
+    date:     today(),
+  };
+  if (editRepairIdx !== null) {
+    repairs[editRepairIdx] = { ...repairs[editRepairIdx], ...record, id: repairs[editRepairIdx].id };
+    editRepairIdx = null;
+    toast('Repair request updated.', 'success');
+  } else {
+    repairs.push(record);
+    repairSeq++;
+    toast('Repair request submitted: ' + item, 'success');
+  }
+  closeM('mRepair');
+  resetForm(['rep-item','rep-location','rep-reporter','rep-priority','rep-desc','rep-assigned','rep-status']);
+  renderRepairs();
+  renderDashboard();
+}
+function renderRepairs() {
+  const sf = document.getElementById('repair-status-filter').value;
+  const pf = document.getElementById('repair-priority-filter').value;
+  let data = repairs.filter(r => (!sf || r.status === sf) && (!pf || r.priority === pf));
+  const tbody = document.getElementById('repairs-tbody');
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty"><div class="empty-icon">🛠️</div><div class="empty-desc">No repair requests match the filter.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map((r, i) => `
+    <tr>
+      <td><code style="font-size:.65rem">${r.id}</code></td>
+      <td>${r.item}</td><td>${r.reporter}</td><td>${priorityBadge(r.priority)}</td>
+      <td>${r.location}</td><td>${statusBadge(r.status)}</td><td>${fmtDate(r.date)}</td>
+      <td>${r.assigned||'—'}</td>
+      <td>
+        <button class="btn btn-outline btn-xs" onclick="editRepair(${repairs.indexOf(r)})">Update</button>
+      </td>
+    </tr>`).join('');
+}
+function editRepair(idx) {
+  const r = repairs[idx];
+  if (!r) return;
+  editRepairIdx = idx;
+  document.getElementById('rep-item').value     = r.item;
+  document.getElementById('rep-location').value = r.location;
+  document.getElementById('rep-reporter').value = r.reporter;
+  document.getElementById('rep-priority').value = r.priority;
+  document.getElementById('rep-desc').value     = r.desc;
+  document.getElementById('rep-assigned').value = r.assigned;
+  document.getElementById('rep-status').value   = r.status;
+  document.getElementById('mRepair-title').textContent = '🛠️ Update Repair Request';
+  document.getElementById('rep-save-btn').textContent  = 'Update';
+  openM('mRepair');
+}
+
+/* ════════════════════════════════════════
+   BOARDING FACILITIES
+════════════════════════════════════════ */
+function renderBoarding() {
+  const activeBoarders = boarders.filter(b => b.status === 'Active');
+  const boys  = activeBoarders.filter(b => b.gender === 'Male').length;
+  const girls = activeBoarders.filter(b => b.gender === 'Female').length;
+  const totalCap = dormitories.reduce((s, d) => s + Number(d.cap || 0), 0);
+  const occupied = activeBoarders.length;
+  const avail    = Math.max(0, totalCap - occupied);
+  const rate     = totalCap > 0 ? Math.round((occupied / totalCap) * 100) : 0;
+  document.getElementById('brd-total').textContent = occupied;
+  document.getElementById('brd-boys').textContent  = boys;
+  document.getElementById('brd-girls').textContent = girls;
+  document.getElementById('brd-dorms').textContent = dormitories.length;
+  document.getElementById('brd-rate').textContent  = rate + '%';
+  document.getElementById('brd-avail').textContent = avail;
+  // Occupancy table
+  const tbody = document.getElementById('boarding-dorms-tbody');
+  if (dormitories.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">🏨</div><div class="empty-desc">No dormitories added yet.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = dormitories.map((d, i) => {
+    const occ   = activeBoarders.filter(b => b.dorm === d.name).length;
+    const cap   = Number(d.cap) || 0;
+    const pct   = cap > 0 ? Math.round((occ / cap) * 100) : 0;
+    const av    = Math.max(0, cap - occ);
+    const cls   = pct >= 90 ? 'danger' : pct >= 70 ? 'warn' : '';
+    return `<tr>
+      <td>${d.name}</td><td>${d.gender}</td><td>${cap}</td><td>${occ}</td><td>${av}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="dorm-bar"><div class="dorm-fill ${cls}" style="width:${pct}%"></div></div>
+          <span style="font-size:.68rem;min-width:32px">${pct}%</span>
+        </div>
+      </td>
+      <td>${d.hm||'—'}</td><td>${condBadge(d.cond)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════
+   DORMITORIES
+════════════════════════════════════════ */
+function saveDorm() {
+  const name   = document.getElementById('dorm-name').value.trim();
+  const gender = document.getElementById('dorm-gender').value;
+  const cap    = document.getElementById('dorm-cap').value;
+  if (!name || !gender || !cap) { toast('Please fill all required fields.', 'error'); return; }
+  dormitories.push({
+    name, gender, cap: Number(cap),
+    hm:   document.getElementById('dorm-hm').value.trim(),
+    cond: document.getElementById('dorm-cond').value,
+    notes:document.getElementById('dorm-notes').value.trim(),
+  });
+  closeM('mDorm');
+  resetForm(['dorm-name','dorm-gender','dorm-cap','dorm-hm','dorm-cond','dorm-notes']);
+  renderDorms();
+  toast('Dormitory added: ' + name, 'success');
+}
+function renderDorms() {
+  const tbody = document.getElementById('dorms-tbody');
+  if (dormitories.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">🛏️</div><div class="empty-desc">No dormitories added yet.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = dormitories.map((d, i) => `
+    <tr>
+      <td>${d.name}</td><td>${d.gender}</td><td>${d.cap}</td>
+      <td>${d.hm||'—'}</td><td>${condBadge(d.cond)}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="removeDorm(${i})">Remove</button></td>
+    </tr>`).join('');
+}
+function removeDorm(idx) {
+  if (!confirm('Remove this dormitory? This will not remove boarders assigned to it.')) return;
+  dormitories.splice(idx, 1);
+  renderDorms();
+  toast('Dormitory removed.', '');
+}
+function populateDormDropdown() {
+  const sel = document.getElementById('brd-dorm');
+  sel.innerHTML = '<option value="">Select dormitory</option>' +
+    dormitories.map(d => `<option value="${d.name}">${d.name} (${d.gender}, cap: ${d.cap})</option>`).join('');
+}
+function saveBoarder() {
+  const admno    = document.getElementById('brd-admno').value.trim();
+  const name     = document.getElementById('brd-name').value.trim();
+  const cls      = document.getElementById('brd-class').value.trim();
+  const gender   = document.getElementById('brd-gender').value;
+  const dorm     = document.getElementById('brd-dorm').value;
+  const bed      = document.getElementById('brd-bed').value.trim();
+  const guardian = document.getElementById('brd-guardian').value.trim();
+  if (!admno || !name || !cls || !gender || !dorm || !bed || !guardian) { toast('Please fill all required fields.', 'error'); return; }
+  boarders.push({ admno, name, cls, gender, dorm, bed, guardian, status: 'Active' });
+  closeM('mBoarder');
+  resetForm(['brd-admno','brd-name','brd-class','brd-gender','brd-dorm','brd-bed','brd-guardian']);
+  renderBoarders();
+  toast('Boarder added: ' + name, 'success');
+}
+function renderBoarders() {
+  const tbody = document.getElementById('boarders-tbody');
+  if (boarders.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty"><div class="empty-icon">👥</div><div class="empty-desc">No boarders registered yet.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = boarders.map((b, i) => `
+    <tr>
+      <td>${b.name}</td><td>${b.admno}</td><td>${b.cls}</td><td>${b.gender}</td>
+      <td>${b.dorm}</td><td>${b.bed}</td><td>${b.guardian}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td>
+        ${b.status === 'Active'
+          ? `<button class="btn btn-amber btn-xs" onclick="removeBoarder(${i})">Remove</button>`
+          : '<span class="text-muted">Left</span>'}
+      </td>
+    </tr>`).join('');
+}
+function removeBoarder(idx) {
+  if (!confirm('Mark this boarder as left?')) return;
+  boarders[idx].status = 'Left';
+  renderBoarders();
+  toast('Boarder marked as left.', '');
+}
+
+/* ════════════════════════════════════════
+   STOCK REQUESTS
+════════════════════════════════════════ */
+function saveStockReq() {
+  const items   = document.getElementById('sreq-items').value.trim();
+  const qty     = document.getElementById('sreq-qty').value;
+  const dept    = document.getElementById('sreq-dept').value.trim();
+  const urgency = document.getElementById('sreq-urgency').value;
+  const purpose = document.getElementById('sreq-purpose').value.trim();
+  if (!items || !qty || !dept || !urgency || !purpose) { toast('Please fill all required fields.', 'error'); return; }
+  stockReqs.push({ items, qty: Number(qty), dept, urgency, purpose, date: today(), status: 'Pending', response: '' });
+  closeM('mStockReq');
+  resetForm(['sreq-items','sreq-qty','sreq-dept','sreq-urgency','sreq-purpose']);
+  renderSRMine();
+  renderSRIncoming();
+  toast('Stock request submitted.', 'success');
+}
+function renderSRIncoming() {
+  const tbody = document.getElementById('sr-incoming-tbody');
+  if (stockReqs.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">📥</div><div class="empty-desc">No incoming stock requests.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = stockReqs.map((r, i) => `
+    <tr>
+      <td>${fmtDate(r.date)}</td><td>${sess.name || 'Staff'}</td><td>${r.dept}</td>
+      <td>${r.items}</td><td>${r.qty}</td><td>${statusBadge(r.status)}</td>
+      <td>
+        ${r.status === 'Pending'
+          ? `<button class="btn btn-green btn-xs" onclick="openFulfill(${i})">Fulfill</button>
+             <button class="btn btn-danger btn-xs" onclick="declineReq(${i})">Decline</button>`
+          : statusBadge(r.status)}
+      </td>
+    </tr>`).join('');
+}
+function renderSRMine() {
+  const tbody = document.getElementById('sr-mine-tbody');
+  if (stockReqs.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">No requests submitted yet.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = stockReqs.map(r => `
+    <tr>
+      <td>${fmtDate(r.date)}</td><td>${r.items}</td><td>${r.qty}</td>
+      <td>${r.purpose}</td><td>${statusBadge(r.urgency)}</td>
+      <td>${statusBadge(r.status)}</td><td>${r.response||'—'}</td>
+    </tr>`).join('');
+}
+function openFulfill(idx) {
+  document.getElementById('ful-req-idx').value = idx;
+  document.getElementById('ful-items').value   = stockReqs[idx].items;
+  document.getElementById('ful-qty').value     = stockReqs[idx].qty;
+  document.getElementById('ful-date').value    = today();
+  openM('mFulfill');
+}
+function fulfillRequest() {
+  const idx  = parseInt(document.getElementById('ful-req-idx').value);
+  const items = document.getElementById('ful-items').value.trim();
+  const qty  = document.getElementById('ful-qty').value;
+  const dt   = document.getElementById('ful-date').value;
+  if (!items || !qty || !dt) { toast('Please fill all required fields.', 'error'); return; }
+  stockReqs[idx].status   = 'Fulfilled';
+  stockReqs[idx].response = 'Issued ' + qty + ' units on ' + fmtDate(dt);
+  closeM('mFulfill');
+  resetForm(['ful-items','ful-qty','ful-date','ful-notes']);
+  renderSRIncoming(); renderSRMine();
+  toast('Request fulfilled.', 'success');
+}
+function declineReq(idx) {
+  if (!confirm('Decline this stock request?')) return;
+  stockReqs[idx].status   = 'Declined';
+  stockReqs[idx].response = 'Declined by property officer.';
+  renderSRIncoming(); renderSRMine();
+  toast('Request declined.', '');
+}
+
+/* ════════════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════════════ */
+function switchTab(prefix, tabId, btn) {
+  document.querySelectorAll('[id^="'+prefix+'-tab-"]').forEach(p => p.classList.remove('active'));
+  document.getElementById(prefix + '-tab-' + tabId).classList.add('active');
+  btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (prefix === 'inv' && tabId === 'durable')     renderDurableInv();
+  if (prefix === 'inv' && tabId === 'consumables') renderConsumables();
+  if (prefix === 'dorm' && tabId === 'list')       renderDorms();
+  if (prefix === 'dorm' && tabId === 'boarders')   renderBoarders();
+}
+
+/* ════════════════════════════════════════
+   REPORTS
+════════════════════════════════════════ */
+function genReport(type) {
+  const out   = document.getElementById('report-output');
+  const title = document.getElementById('report-output-title');
+  const body  = document.getElementById('report-output-body');
+  out.style.display = '';
+  out.scrollIntoView({ behavior: 'smooth' });
+
+  const hdr = `<div class="print-header" style="display:flex">
+    <img src="../star logo.png" alt="Logo" style="width:50px;height:50px;object-fit:cover;border-radius:50%;border:2px solid var(--navy)"/>
+    <div class="print-header-text" style="margin-left:12px">
+      <h2 style="font-size:1rem;font-weight:800;color:var(--navy)">Five Star Model School</h2>
+      <p style="font-size:.72rem;color:var(--sub)">Nature for Excellence &bull; Kasese District, Uganda</p>
+    </div>
+  </div><hr style="margin:10px 0;border-color:var(--border)"/>`;
+
+  if (type === 'condition') {
+    title.textContent = '🏷️ Asset Summary by Condition';
+    const groups = { Good: [], Fair: [], Poor: [] };
+    assets.forEach(a => { if (groups[a.cond]) groups[a.cond].push(a); });
+    body.innerHTML = hdr + Object.entries(groups).map(([cond, list]) => `
+      <div class="report-section">
+        <h3>${condBadge(cond)} ${cond} — ${list.length} asset(s)</h3>
+        ${list.length === 0 ? '<p class="text-muted">No assets.</p>' :
+          `<table class="tbl"><thead><tr><th>Asset ID</th><th>Name</th><th>Category</th><th>Location</th><th>Qty</th></tr></thead>
+          <tbody>${list.map(a => `<tr><td>${a.id}</td><td>${a.name}</td><td>${a.cat}</td><td>${a.location||'—'}</td><td>${a.qty}</td></tr>`).join('')}</tbody></table>`}
+      </div>`).join('');
+  }
+  else if (type === 'maintenance') {
+    title.textContent = '🔧 Maintenance Cost Report';
+    const types = ['Routine','Repair','Inspection','Replacement'];
+    body.innerHTML = hdr + `<table class="tbl"><thead><tr><th>Type</th><th>Count</th><th>Total Cost (UGX)</th></tr></thead><tbody>` +
+      types.map(t => {
+        const rows = maintenance.filter(m => m.type === t);
+        return `<tr><td>${t}</td><td>${rows.length}</td><td>${ugx(rows.reduce((s,m)=>s+m.cost,0))}</td></tr>`;
+      }).join('') +
+      `<tr style="font-weight:700"><td>Total</td><td>${maintenance.length}</td><td>${ugx(maintenance.reduce((s,m)=>s+m.cost,0))}</td></tr>
+      </tbody></table>`;
+  }
+  else if (type === 'procurement') {
+    title.textContent = '🛒 Procurement Total';
+    const total = procurement.reduce((s,p) => s + p.total, 0);
+    body.innerHTML = hdr + `<div style="margin-bottom:14px"><strong>Total Spending: ${ugx(total)}</strong></div>
+      <table class="tbl"><thead><tr><th>Date</th><th>Item</th><th>Supplier</th><th>Qty</th><th>Total (UGX)</th><th>Status</th></tr></thead>
+      <tbody>${procurement.length === 0 ? '<tr><td colspan="6" style="text-align:center">No records.</td></tr>' :
+        procurement.map(p => `<tr><td>${fmtDate(p.date)}</td><td>${p.item}</td><td>${p.supplier}</td><td>${p.qty}</td><td>${ugx(p.total)}</td><td>${p.status}</td></tr>`).join('')}
+      </tbody></table>`;
+  }
+  else if (type === 'boarding') {
+    title.textContent = '🏨 Boarding Statistics';
+    const active = boarders.filter(b => b.status === 'Active');
+    body.innerHTML = hdr + `<div style="display:flex;gap:24px;margin-bottom:16px">
+      <div><strong>${active.length}</strong><div class="text-muted">Total Boarders</div></div>
+      <div><strong>${active.filter(b=>b.gender==='Male').length}</strong><div class="text-muted">Boys</div></div>
+      <div><strong>${active.filter(b=>b.gender==='Female').length}</strong><div class="text-muted">Girls</div></div>
+    </div>
+    <table class="tbl"><thead><tr><th>Dormitory</th><th>Boarders</th></tr></thead><tbody>
+      ${dormitories.map(d => `<tr><td>${d.name} (${d.gender})</td><td>${active.filter(b=>b.dorm===d.name).length}</td></tr>`).join('')}
+      ${dormitories.length === 0 ? '<tr><td colspan="2" style="text-align:center">No dormitories.</td></tr>' : ''}
+    </tbody></table>`;
+  }
+  else if (type === 'lowstock') {
+    title.textContent = '⚠️ Low Stock Report';
+    const low = consumables.filter(c => c.stock <= c.min);
+    body.innerHTML = hdr + (low.length === 0
+      ? '<p class="text-muted">All items are above minimum stock levels.</p>'
+      : `<table class="tbl"><thead><tr><th>Item</th><th>Category</th><th>Unit</th><th>Current</th><th>Minimum</th><th>Status</th></tr></thead>
+         <tbody>${low.map(c => `<tr><td>${c.name}</td><td>${c.cat}</td><td>${c.unit}</td><td>${c.stock}</td><td>${c.min}</td><td>${statusBadge(stockStatus(c))}</td></tr>`).join('')}</tbody></table>`);
+  }
+}
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+(function init() {
+  const name = sess.name || 'Property Officer';
+  const init = name.charAt(0).toUpperCase();
+  document.getElementById('sb-av-init').textContent = init;
+  document.getElementById('sb-uname').textContent   = name;
+  document.getElementById('tb-av').textContent      = init;
+  document.getElementById('tb-uname').textContent   = name.split(' ')[0];
+  renderDashboard();
+})();
+</script>
+</body>
+</html>
+
+
