@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Accounts Portal – Five Star Model School</title>
+<link rel="stylesheet" href="../assets/sms.css"/>
+<style>
+/* ── page-local extras ── */
+.bar-chart-wrap { display:flex; flex-direction:column; gap:8px; }
+.bc-row { display:flex; align-items:center; gap:10px; font-size:.73rem; }
+.bc-label { width:110px; flex-shrink:0; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bc-track { flex:1; background:var(--bg); border-radius:4px; height:14px; overflow:hidden; }
+.bc-fill  { height:100%; border-radius:4px; background:var(--teal); transition:.5s ease; }
+.bc-fill.f-amber { background:var(--amber); }
+.bc-fill.f-red   { background:var(--red); }
+.bc-fill.f-navy  { background:var(--navy); }
+.bc-val  { min-width:80px; text-align:right; font-size:.7rem; color:var(--sub); flex-shrink:0; }
+
+.pupil-card { border:1.5px solid var(--teal); border-radius:var(--r12); padding:14px 16px; background:#f0fbfa; display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.pupil-photo { width:52px; height:52px; border-radius:50%; background:var(--navy); color:#fff; font-size:1.2rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.pupil-meta { flex:1; }
+.pupil-meta-name { font-size:.9rem; font-weight:700; color:var(--navy); }
+.pupil-meta-sub  { font-size:.72rem; color:var(--sub); margin-top:2px; }
+
+.balance-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-bottom:14px; }
+.bal-box { background:var(--bg); border-radius:var(--r8); padding:12px; text-align:center; border:1px solid var(--border); }
+.bal-box-val  { font-size:1.05rem; font-weight:800; color:var(--text); }
+.bal-box-lbl  { font-size:.65rem; color:var(--sub); margin-top:2px; font-weight:500; }
+.bal-box.outstanding { background:#fde8e7; border-color:#f5b8b7; }
+.bal-box.outstanding .bal-box-val { color:var(--red); }
+.bal-box.paid { background:#d8f5e8; border-color:#a3e4c0; }
+.bal-box.paid .bal-box-val { color:var(--green); }
+
+.receipt-box {
+  border:2px dashed var(--border); border-radius:var(--r12);
+  padding:20px; background:#fffdf7;
+  display:none; margin-top:14px;
+}
+.receipt-box.visible { display:block; }
+.receipt-header { text-align:center; margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid var(--navy); }
+.receipt-logo { width:56px; height:56px; object-fit:contain; margin:0 auto 6px; }
+.receipt-school { font-size:.9rem; font-weight:800; color:var(--navy); }
+.receipt-motto  { font-size:.67rem; color:var(--sub); }
+.receipt-address{ font-size:.66rem; color:var(--sub); margin-top:2px; }
+.receipt-title  { font-size:.78rem; font-weight:800; letter-spacing:1px; color:var(--teal); margin-top:10px; text-transform:uppercase; }
+.receipt-no     { font-size:.7rem; color:var(--navy); font-weight:700; margin-top:2px; }
+.receipt-row    { display:flex; justify-content:space-between; font-size:.75rem; padding:4px 0; border-bottom:1px dashed #e4e9f0; }
+.receipt-row:last-child { border-bottom:none; }
+.receipt-row .rl { color:var(--sub); }
+.receipt-row .rv { font-weight:600; color:var(--text); }
+.receipt-amount { text-align:center; margin:12px 0; padding:10px; background:var(--bg); border-radius:var(--r8); }
+.receipt-amount-val { font-size:1.3rem; font-weight:800; color:var(--navy); }
+.receipt-amount-lbl { font-size:.67rem; color:var(--sub); }
+.receipt-footer { text-align:center; margin-top:12px; font-size:.66rem; color:var(--sub); }
+
+.quick-action-btn { width:100%; padding:10px 14px; background:var(--bg); border:1px solid var(--border); border-radius:8px; text-align:left; font-size:.76rem; font-weight:500; cursor:pointer; transition:.15s; display:flex; align-items:center; gap:9px; }
+.quick-action-btn:hover { background:#e8eef6; border-color:#c5d4e8; color:var(--navy); }
+
+.search-wrap { position:relative; }
+.search-wrap input { padding-left:30px; }
+.search-icon { position:absolute; left:9px; top:50%; transform:translateY(-50%); font-size:.75rem; color:var(--sub); pointer-events:none; }
+
+.filter-bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+.filter-bar select, .filter-bar input { padding:6px 10px; border:1.5px solid var(--border); border-radius:var(--r8); font-size:.74rem; font-family:inherit; background:var(--white); }
+.filter-bar select:focus, .filter-bar input:focus { border-color:var(--teal); outline:none; }
+
+.section-note { font-size:.7rem; color:var(--sub); background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:7px 11px; margin-bottom:12px; }
+
+/* print: show only receipt */
+@media print {
+  .sidebar, .topbar, .no-print { display:none !important; }
+  .main-area { margin-left:0 !important; }
+  .page-content { padding:0 !important; }
+  body { background:#fff; }
+  #print-receipt-area { display:block !important; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
+    <div>
+      <div class="sb-school-name">Five Star School</div>
+      <div class="sb-portal-name">Accounts Portal</div>
+    </div>
+  </div>
+  <nav class="sb-body">
+    <div class="sb-group"><div class="sb-group-label">Overview</div></div>
+    <div class="sb-link active" onclick="nav('dashboard',this)"><span class="sb-icon">🏠</span><span>Dashboard</span></div>
+    <div class="sb-group"><div class="sb-group-label">Fees</div></div>
+    <div class="sb-link" onclick="nav('feestructure',this)"><span class="sb-icon">📋</span><span>Fee Structure</span></div>
+    <div class="sb-link" onclick="nav('pupilaccounts',this)"><span class="sb-icon">👤</span><span>Pupil Accounts</span></div>
+    <div class="sb-link" onclick="nav('recordpayment',this)"><span class="sb-icon">💳</span><span>Record Payment</span></div>
+    <div class="sb-link" onclick="nav('outstanding',this)"><span class="sb-icon">⚠️</span><span>Outstanding Fees</span></div>
+    <div class="sb-group"><div class="sb-group-label">Expenditure</div></div>
+    <div class="sb-link" onclick="nav('expenses',this)"><span class="sb-icon">💸</span><span>Expenses</span></div>
+    <div class="sb-link" onclick="nav('budget',this)"><span class="sb-icon">📊</span><span>Budget</span></div>
+    <div class="sb-group"><div class="sb-group-label">Reporting</div></div>
+    <div class="sb-link" onclick="nav('reports',this)"><span class="sb-icon">📈</span><span>Financial Reports</span></div>
+    <div class="sb-link" onclick="nav('approvals',this)"><span class="sb-icon">✅</span><span>Approvals</span><span class="sb-badge" id="appr-badge">0</span></div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-av" id="sb-av-init">A</div>
+      <div><div class="sb-uname" id="sb-uname">Accounts Staff</div><div class="sb-urole">Accounts</div></div>
+      <button class="sb-signout" onclick="signOut()" title="Sign Out">⏻</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════
+     MAIN AREA
+═══════════════════════════════════ -->
+<div class="main-area">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-left">
+      <div>
+        <div class="tb-title" id="pg-title">Dashboard</div>
+        <div class="tb-crumb" id="pg-crumb">Accounts › Dashboard</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-meta" id="tb-term">Accounts Portal</span>
+      <div class="tb-user-chip">
+        <div class="tb-user-av" id="tb-av">A</div>
+        <span id="tb-uname">Staff</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-content">
+
+<!-- ════════════════════════════════════════════
+     PAGE: DASHBOARD
+════════════════════════════════════════════ -->
+<div id="pg-dashboard">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:1.05rem;font-weight:800;color:var(--navy)" id="welcome-msg">Good morning 👋</div>
+      <div style="font-size:.74rem;color:var(--sub);margin-top:2px" id="today-date"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap" class="no-print">
+      <button class="btn btn-teal btn-sm" onclick="nav('recordpayment',null)">💳 Record Payment</button>
+      <button class="btn btn-outline btn-sm" onclick="nav('reports',null)">📈 Reports</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-icon ic-navy">💰</div><div><div class="kpi-val" id="kpi-charged">UGX —</div><div class="kpi-label">Total Charged</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-green">✅</div><div><div class="kpi-val" id="kpi-collected">UGX —</div><div class="kpi-label">Total Collected</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-red">📌</div><div><div class="kpi-val" id="kpi-outstanding">UGX —</div><div class="kpi-label">Outstanding Balance</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-amber">💸</div><div><div class="kpi-val" id="kpi-expenses">UGX —</div><div class="kpi-label">Total Expenses</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-teal">📈</div><div><div class="kpi-val" id="kpi-netincome">UGX —</div><div class="kpi-label">Net Income</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-purple">🧾</div><div><div class="kpi-val" id="kpi-today">—</div><div class="kpi-label">Payments Today</div></div></div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Bar chart: Collection by category -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📊</span>Fee Collection by Category</span></div>
+      <div class="card-body">
+        <div class="bar-chart-wrap" id="chart-categories">
+          <div class="empty"><div class="empty-icon">📊</div><div class="empty-desc">Collection data will appear once payments are recorded.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar chart: Outstanding by class -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📉</span>Outstanding by Class</span></div>
+      <div class="card-body">
+        <div class="bar-chart-wrap" id="chart-outstanding">
+          <div class="empty"><div class="empty-icon">📉</div><div class="empty-desc">Outstanding data will appear once pupils are charged.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent transactions -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">🕐</span>Recent Transactions</span>
+      <button class="btn btn-ghost btn-sm no-print" onclick="nav('pupilaccounts',null)">View All</button>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr>
+          <th>Date</th><th>Pupil</th><th>Amount</th><th>Method</th><th>Receipt No</th><th>Recorded By</th>
+        </tr></thead>
+        <tbody id="dash-transactions">
+          <tr><td colspan="6"><div class="empty"><div class="empty-icon">🧾</div><div class="empty-desc">No transactions recorded yet.</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Highest outstanding -->
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">⚠️</span>Pupils with Highest Outstanding Balance</span>
+      <button class="btn btn-outline btn-sm no-print" onclick="nav('outstanding',null)">Full List</button>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Pupil Name</th><th>Admission No</th><th>Class</th><th>Outstanding (UGX)</th></tr></thead>
+        <tbody id="dash-outstanding">
+          <tr><td colspan="4"><div class="empty"><div class="empty-icon">✅</div><div class="empty-desc">No outstanding balances recorded.</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /dashboard -->
+
+<!-- ════════════════════════════════════════════
+     PAGE: FEE STRUCTURE
+════════════════════════════════════════════ -->
+<div id="pg-feestructure" style="display:none">
+
+  <div class="flex-between" style="margin-bottom:16px" class="no-print">
+    <div></div>
+    <button class="btn btn-teal btn-sm no-print" onclick="openM('mFeeStruct')">+ Add Fee Structure</button>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📋</span>Fee Structure</span></div>
+    <div class="card-body" style="padding-bottom:0">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this,'fs-current')">Current Term</div>
+        <div class="tab" onclick="switchTab(this,'fs-historical')">Historical</div>
+      </div>
+    </div>
+
+    <!-- Current Term -->
+    <div id="fs-current" class="tab-pane active card-flush">
+      <div class="card-body" style="padding-top:0;padding-bottom:0">
+        <div class="filter-bar no-print">
+          <select id="fs-filter-class" onchange="filterFeeTable()">
+            <option value="">All Classes</option>
+            <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+            <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+            <option>P5</option><option>P6</option><option>P7</option>
+          </select>
+          <select id="fs-filter-cat" onchange="filterFeeTable()">
+            <option value="">All Categories</option>
+            <option>Tuition</option><option>Meals</option><option>Transport</option>
+            <option>Boarding</option><option>Uniform</option><option>Examination</option><option>Registration</option>
+          </select>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Class</th><th>Term</th><th>Year</th><th>Category</th><th>Amount (UGX)</th><th>Status</th></tr></thead>
+          <tbody id="fs-table-body">
+            <tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">No fee structures added yet. Click "Add Fee Structure" to begin.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Historical -->
+    <div id="fs-historical" class="tab-pane card-flush" style="display:none">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Class</th><th>Term</th><th>Year</th><th>Category</th><th>Amount (UGX)</th><th>Status</th></tr></thead>
+          <tbody id="fs-hist-body">
+            <tr><td colspan="6"><div class="empty"><div class="empty-icon">📂</div><div class="empty-desc">Historical fee structures will appear here when newer terms are configured.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /feestructure -->
+
+<!-- ════════════════════════════════════════════
+     PAGE: PUPIL ACCOUNTS
+════════════════════════════════════════════ -->
+<div id="pg-pupilaccounts" style="display:none">
+
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">🔍</span>Search Pupil</span></div>
+    <div class="card-body">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div class="search-wrap" style="flex:1;min-width:200px">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="pa-search" placeholder="Search by name or admission number…" oninput="searchPupilAccounts()" style="width:100%"/>
+        </div>
+        <button class="btn btn-teal btn-sm" onclick="searchPupilAccounts()">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected pupil card (hidden until pupil selected) -->
+  <div id="pa-pupil-card" style="display:none">
+
+    <div class="pupil-card">
+      <div class="pupil-photo" id="pa-photo">?</div>
+      <div class="pupil-meta">
+        <div class="pupil-meta-name" id="pa-name">—</div>
+        <div class="pupil-meta-sub"><span id="pa-class">—</span> &nbsp;|&nbsp; Adm: <span id="pa-admno">—</span></div>
+      </div>
+      <button class="btn btn-outline btn-sm no-print" onclick="openM('mDiscount')">+ Adjustment / Discount</button>
+    </div>
+
+    <!-- Balance summary -->
+    <div class="balance-grid">
+      <div class="bal-box"><div class="bal-box-val" id="pa-charged">UGX 0</div><div class="bal-box-lbl">Total Charged</div></div>
+      <div class="bal-box paid"><div class="bal-box-val" id="pa-paid">UGX 0</div><div class="bal-box-lbl">Total Paid</div></div>
+      <div class="bal-box outstanding"><div class="bal-box-val" id="pa-balance">UGX 0</div><div class="bal-box-lbl">Outstanding</div></div>
+      <div class="bal-box"><div class="bal-box-val" id="pa-discount">UGX 0</div><div class="bal-box-lbl">Discount Applied</div></div>
+    </div>
+
+    <!-- Charges table -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📋</span>Charges</span></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Category</th><th>Term</th><th>Year</th><th>Amount (UGX)</th><th>Date Charged</th><th>Notes</th></tr></thead>
+          <tbody id="pa-charges">
+            <tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">No charges found for this pupil.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Payments table -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">💳</span>Payment History</span></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Date</th><th>Amount (UGX)</th><th>Method</th><th>Receipt No</th><th>Recorded By</th></tr></thead>
+          <tbody id="pa-payments">
+            <tr><td colspan="5"><div class="empty"><div class="empty-icon">💳</div><div class="empty-desc">No payments found for this pupil.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /pa-pupil-card -->
+
+  <div id="pa-empty-state">
+    <div class="empty" style="padding:60px 20px">
+      <div class="empty-icon">👤</div>
+      <div class="empty-title">Search for a pupil</div>
+      <div class="empty-desc">Enter a pupil's name or admission number to view their account.</div>
+    </div>
+  </div>
+
+</div><!-- /pupilaccounts -->
+
+<!-- ════════════════════════════════════════════
+     PAGE: RECORD PAYMENT
+════════════════════════════════════════════ -->
+<div id="pg-recordpayment" style="display:none">
+
+  <div class="grid-2">
+
+    <!-- Left: form -->
+    <div>
+      <div class="card">
+        <div class="card-hd"><span class="card-title"><span class="card-title-icon">🔍</span>Select Pupil</span></div>
+        <div class="card-body">
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="rp-search" placeholder="Search pupil by name or admission number…" oninput="searchRPPupil()" style="width:100%"/>
+          </div>
+          <div id="rp-pupil-found" style="display:none;margin-top:12px">
+            <div class="pupil-card" style="margin-bottom:0;padding:10px 14px">
+              <div class="pupil-photo" id="rp-photo" style="width:38px;height:38px;font-size:.9rem">?</div>
+              <div class="pupil-meta">
+                <div class="pupil-meta-name" id="rp-name">—</div>
+                <div class="pupil-meta-sub"><span id="rp-class">—</span> &nbsp;|&nbsp; <span id="rp-admno">—</span></div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:.68rem;color:var(--sub)">Current Balance</div>
+                <div style="font-size:.9rem;font-weight:800;color:var(--red)" id="rp-balance">UGX 0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><span class="card-title"><span class="card-title-icon">💳</span>Payment Details</span></div>
+        <div class="card-body">
+          <div class="fg">
+            <label>Amount (UGX) <span style="color:var(--red)">*</span></label>
+            <input type="number" id="rp-amount" placeholder="e.g. 250000" min="1" oninput="updateReceiptPreview()"/>
+          </div>
+          <div class="fg">
+            <label>Payment Method <span style="color:var(--red)">*</span></label>
+            <select id="rp-method" onchange="updateReceiptPreview()">
+              <option value="">— Select —</option>
+              <option>Cash</option>
+              <option>Bank Transfer</option>
+              <option>Mobile Money</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Transaction Reference</label>
+            <input type="text" id="rp-ref" placeholder="Bank slip, MTN ref, etc." oninput="updateReceiptPreview()"/>
+          </div>
+          <div class="fg">
+            <label>Payment Date <span style="color:var(--red)">*</span></label>
+            <input type="date" id="rp-date" oninput="updateReceiptPreview()"/>
+          </div>
+          <div class="fg">
+            <label>Notes</label>
+            <textarea id="rp-notes" rows="2" placeholder="Optional notes…"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-teal" onclick="generateReceipt()">🧾 Generate Receipt</button>
+            <button class="btn btn-outline" onclick="clearPaymentForm()">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: receipt preview -->
+    <div>
+      <div class="card">
+        <div class="card-hd"><span class="card-title"><span class="card-title-icon">🧾</span>Receipt Preview</span></div>
+        <div class="card-body">
+          <div id="rp-receipt-empty" style="text-align:center;padding:30px 10px">
+            <div style="font-size:2rem;opacity:.3">🧾</div>
+            <div style="font-size:.76rem;color:var(--sub);margin-top:6px">Fill in the payment details and click <strong>Generate Receipt</strong> to preview.</div>
+          </div>
+
+          <!-- Receipt -->
+          <div class="receipt-box" id="print-receipt-area">
+            <div class="receipt-header">
+              <img src="../star logo.png" alt="Logo" class="receipt-logo"/>
+              <div class="receipt-school">Five Star Model School</div>
+              <div class="receipt-motto">Nature for Excellence</div>
+              <div class="receipt-address">Kasese District, Uganda</div>
+              <div class="receipt-title">Official Receipt</div>
+              <div class="receipt-no" id="rp-rcpt-no">BFS-RCP-—</div>
+            </div>
+            <div id="rp-rcpt-rows"></div>
+            <div class="receipt-amount">
+              <div class="receipt-amount-lbl">AMOUNT PAID</div>
+              <div class="receipt-amount-val" id="rp-rcpt-amount">UGX 0</div>
+            </div>
+            <div id="rp-rcpt-rows2"></div>
+            <div class="receipt-footer">Thank you. Please keep this receipt for your records.</div>
+          </div>
+
+          <div id="rp-print-btn" style="display:none;margin-top:10px">
+            <button class="btn btn-primary no-print" style="width:100%" onclick="window.print()">🖨️ Print Receipt</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /recordpayment -->
+
+<!-- ════════════════════════════════════════════
+     PAGE: OUTSTANDING FEES
+════════════════════════════════════════════ -->
+<div id="pg-outstanding" style="display:none">
+
+  <!-- KPI bar -->
+  <div class="kpi-grid" style="margin-bottom:18px">
+    <div class="kpi" style="grid-column:span 2"><div class="kpi-icon ic-red">⚠️</div><div><div class="kpi-val" id="out-total-kpi">UGX —</div><div class="kpi-label">Total Outstanding (All Classes)</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">⚠️</span>Outstanding Fees</span>
+      <div style="display:flex;gap:8px" class="no-print">
+        <button class="btn btn-outline btn-sm" onclick="sortOutstanding('amount')">Sort by Amount ↓</button>
+        <button class="btn btn-outline btn-sm" onclick="sortOutstanding('name')">Sort by Name</button>
+        <button class="btn btn-outline btn-sm" onclick="sortOutstanding('class')">Sort by Class</button>
+        <button class="btn btn-teal btn-sm" onclick="toast('Export requires backend connection','warn')">⬇ Export</button>
+      </div>
+    </div>
+    <div class="card-body" style="padding-bottom:0">
+      <div class="filter-bar no-print">
+        <label style="font-size:.73rem;font-weight:600;color:var(--sub)">Filter by class:</label>
+        <select id="out-filter-class" onchange="filterOutstanding()">
+          <option value="">All Classes</option>
+          <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+          <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+          <option>P5</option><option>P6</option><option>P7</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr>
+          <th>Pupil Name</th><th>Admission No</th><th>Class</th>
+          <th>Total Charged (UGX)</th><th>Total Paid (UGX)</th>
+          <th>Outstanding (UGX)</th><th>Last Payment Date</th>
+        </tr></thead>
+        <tbody id="out-table">
+          <tr><td colspan="7"><div class="empty"><div class="empty-icon">✅</div><div class="empty-desc">No outstanding balances found.</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /outstanding -->
+
+<!-- ════════════════════════════════════════════
+     PAGE: EXPENSES
+════════════════════════════════════════════ -->
+<div id="pg-expenses" style="display:none">
+
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">💸</span>Expenses</span>
+      <button class="btn btn-teal btn-sm no-print" onclick="openM('mExpense')">+ Record Expense</button>
+    </div>
+    <div class="card-body" style="padding-bottom:0">
+      <div class="filter-bar no-print">
+        <select id="exp-filter-cat">
+          <option value="">All Categories</option>
+          <option>Salaries</option><option>Utilities</option><option>Supplies</option>
+          <option>Repairs</option><option>Transport</option><option>Examination</option><option>Other</option>
+        </select>
+        <label style="font-size:.73rem;font-weight:600;color:var(--sub)">From:</label>
+        <input type="date" id="exp-from"/>
+        <label style="font-size:.73rem;font-weight:600;color:var(--sub)">To:</label>
+        <input type="date" id="exp-to"/>
+        <button class="btn btn-outline btn-sm" onclick="filterExpenses()">Apply</button>
+      </div>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr>
+          <th>Date</th><th>Category</th><th>Description</th><th>Amount (UGX)</th>
+          <th>Payee</th><th>Reference</th><th>Recorded By</th><th>Approval</th>
+        </tr></thead>
+        <tbody id="exp-table">
+          <tr><td colspan="8"><div class="empty"><div class="empty-icon">💸</div><div class="empty-desc">No expenses recorded yet.</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Monthly summary -->
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📊</span>Monthly Expense Summary</span></div>
+    <div class="card-body">
+      <div id="exp-monthly-chart">
+        <div class="empty"><div class="empty-icon">📊</div><div class="empty-desc">Monthly expense data will appear once expenses are recorded.</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /expenses -->
+
+<!-- ════════════════════════════════════════════
+     PAGE: BUDGET
+════════════════════════════════════════════ -->
+<div id="pg-budget" style="display:none">
+
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">📊</span>Budget</span>
+      <button class="btn btn-teal btn-sm no-print" onclick="openM('mBudget')">+ Add Budget Line</button>
+    </div>
+    <div class="card-body" style="padding-bottom:0">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this,'bgt-income')">Income Budget</div>
+        <div class="tab" onclick="switchTab(this,'bgt-expend')">Expenditure Budget</div>
+      </div>
+    </div>
+
+    <div id="bgt-income" class="tab-pane active card-flush">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Category</th><th>Term</th><th>Year</th><th>Budgeted (UGX)</th><th>Actual (UGX)</th><th>Variance (UGX)</th><th>% Used</th></tr></thead>
+          <tbody id="bgt-income-body">
+            <tr><td colspan="7"><div class="empty"><div class="empty-icon">📊</div><div class="empty-desc">No income budget lines added yet.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="bgt-expend" class="tab-pane card-flush" style="display:none">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Category</th><th>Term</th><th>Year</th><th>Budgeted (UGX)</th><th>Actual (UGX)</th><th>Variance (UGX)</th><th>% Used</th></tr></thead>
+          <tbody id="bgt-expend-body">
+            <tr><td colspan="7"><div class="empty"><div class="empty-icon">📊</div><div class="empty-desc">No expenditure budget lines added yet.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /budget -->
+
+<!-- ════════════════════════════════════════════
+     PAGE: FINANCIAL REPORTS
+════════════════════════════════════════════ -->
+<div id="pg-reports" style="display:none">
+
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📈</span>Financial Reports</span></div>
+    <div class="card-body" style="padding-bottom:0">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this,'rpt-ie')">Income &amp; Expenditure</div>
+        <div class="tab" onclick="switchTab(this,'rpt-daily')">Daily Summary</div>
+        <div class="tab" onclick="switchTab(this,'rpt-monthly')">Monthly Summary</div>
+        <div class="tab" onclick="switchTab(this,'rpt-termly')">Termly Summary</div>
+        <div class="tab" onclick="switchTab(this,'rpt-class')">Fee Collection by Class</div>
+      </div>
+    </div>
+
+    <!-- Shared filters -->
+    <div class="card-body" style="padding-top:0;border-bottom:1px solid var(--border)">
+      <div class="filter-bar no-print" style="align-items:flex-end">
+        <div>
+          <div style="font-size:.68rem;font-weight:600;color:var(--sub);margin-bottom:3px">Year</div>
+          <select id="rpt-year">
+            <option>2025</option><option>2024</option><option>2023</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:.68rem;font-weight:600;color:var(--sub);margin-bottom:3px">Term</div>
+          <select id="rpt-term">
+            <option value="">All Terms</option>
+            <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:.68rem;font-weight:600;color:var(--sub);margin-bottom:3px">From Date</div>
+          <input type="date" id="rpt-from"/>
+        </div>
+        <div>
+          <div style="font-size:.68rem;font-weight:600;color:var(--sub);margin-bottom:3px">To Date</div>
+          <input type="date" id="rpt-to"/>
+        </div>
+        <button class="btn btn-teal btn-sm" onclick="generateReport()">Generate</button>
+        <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Print</button>
+      </div>
+    </div>
+
+    <!-- Report panes -->
+    <div id="rpt-ie"      class="tab-pane active"><div id="rpt-ie-out"     ><div class="empty" style="padding:40px"><div class="empty-icon">📈</div><div class="empty-desc">Select filters and click Generate.</div></div></div></div>
+    <div id="rpt-daily"   class="tab-pane" style="display:none"><div id="rpt-daily-out"  ><div class="empty" style="padding:40px"><div class="empty-icon">📅</div><div class="empty-desc">Select filters and click Generate.</div></div></div></div>
+    <div id="rpt-monthly" class="tab-pane" style="display:none"><div id="rpt-monthly-out"><div class="empty" style="padding:40px"><div class="empty-icon">📅</div><div class="empty-desc">Select filters and click Generate.</div></div></div></div>
+    <div id="rpt-termly"  class="tab-pane" style="display:none"><div id="rpt-termly-out" ><div class="empty" style="padding:40px"><div class="empty-icon">📅</div><div class="empty-desc">Select filters and click Generate.</div></div></div></div>
+    <div id="rpt-class"   class="tab-pane" style="display:none"><div id="rpt-class-out"  ><div class="empty" style="padding:40px"><div class="empty-icon">🏫</div><div class="empty-desc">Select filters and click Generate.</div></div></div></div>
+
+  </div>
+</div><!-- /reports -->
+
+<!-- ════════════════════════════════════════════
+     PAGE: APPROVALS
+════════════════════════════════════════════ -->
+<div id="pg-approvals" style="display:none">
+
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">✅</span>Financial Approvals</span></div>
+    <div class="card-body" style="padding-bottom:0">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this,'appr-pending')">Pending</div>
+        <div class="tab" onclick="switchTab(this,'appr-approved')">Approved</div>
+        <div class="tab" onclick="switchTab(this,'appr-rejected')">Rejected</div>
+      </div>
+    </div>
+
+    <div id="appr-pending" class="tab-pane active card-flush">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Type</th><th>Requested By</th><th>Pupil / Payee</th><th>Amount (UGX)</th><th>Reason</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="appr-pending-body">
+            <tr><td colspan="7"><div class="empty"><div class="empty-icon">✅</div><div class="empty-desc">No pending approvals.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="appr-approved" class="tab-pane card-flush" style="display:none">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Type</th><th>Requested By</th><th>Pupil / Payee</th><th>Amount (UGX)</th><th>Reason</th><th>Date</th><th>Approved By</th></tr></thead>
+          <tbody id="appr-approved-body">
+            <tr><td colspan="7"><div class="empty"><div class="empty-icon">✅</div><div class="empty-desc">No approved requests.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="appr-rejected" class="tab-pane card-flush" style="display:none">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Type</th><th>Requested By</th><th>Pupil / Payee</th><th>Amount (UGX)</th><th>Reason</th><th>Date</th><th>Rejected By</th><th>Rejection Reason</th></tr></thead>
+          <tbody id="appr-rejected-body">
+            <tr><td colspan="7"><div class="empty"><div class="empty-icon">🚫</div><div class="empty-desc">No rejected requests.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /approvals -->
+
+  </div><!-- /page-content -->
+</div><!-- /main-area -->
+</div><!-- /layout -->
+
+<!-- ════════════════════════════════════════════
+     TOAST STACK
+════════════════════════════════════════════ -->
+<div class="toast-stack" id="toast-stack"></div>
+
+<!-- ════════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════ -->
+
+<!-- Add Fee Structure -->
+<div class="overlay" id="mFeeStruct">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-title">📋 Add Fee Structure</span>
+      <button class="modal-close" onclick="closeM('mFeeStruct')">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="fg">
+        <label>Class <span style="color:var(--red)">*</span></label>
+        <select id="fs-m-class">
+          <option value="">— All Classes —</option>
+          <option>Baby Class</option><option>Middle Class</option><option>Upper Class</option>
+          <option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+          <option>P5</option><option>P6</option><option>P7</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Term <span style="color:var(--red)">*</span></label>
+          <select id="fs-m-term">
+            <option value="">— Select —</option>
+            <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Year <span style="color:var(--red)">*</span></label>
+          <input type="number" id="fs-m-year" placeholder="e.g. 2025"/>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Fee Category <span style="color:var(--red)">*</span></label>
+        <select id="fs-m-cat">
+          <option value="">— Select —</option>
+          <option>Tuition</option><option>Meals</option><option>Transport</option>
+          <option>Boarding</option><option>Uniform</option><option>Examination</option><option>Registration</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Amount (UGX) <span style="color:var(--red)">*</span></label>
+        <input type="number" id="fs-m-amount" placeholder="e.g. 450000" min="1"/>
+      </div>
+      <div class="section-note">⚠️ Each term's fee structure is preserved separately. Adding a new structure does not overwrite previous ones.</div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mFeeStruct')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveFeeStruct()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Discount / Adjustment -->
+<div class="overlay" id="mDiscount">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-title">✏️ Add Adjustment / Discount</span>
+      <button class="modal-close" onclick="closeM('mDiscount')">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="fg">
+        <label>Type <span style="color:var(--red)">*</span></label>
+        <select id="disc-type">
+          <option value="">— Select —</option>
+          <option>Discount</option><option>Bursary</option><option>Adjustment</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Amount (UGX) <span style="color:var(--red)">*</span></label>
+        <input type="number" id="disc-amount" placeholder="e.g. 50000" min="1"/>
+      </div>
+      <div class="fg">
+        <label>Reason <span style="color:var(--red)">*</span></label>
+        <textarea id="disc-reason" rows="2" placeholder="State the reason for this adjustment…"></textarea>
+      </div>
+      <div class="fg">
+        <label>Authorized By <span style="color:var(--red)">*</span></label>
+        <input type="text" id="disc-auth" placeholder="Name of authorising officer…"/>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mDiscount')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveDiscount()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- Record Expense -->
+<div class="overlay" id="mExpense">
+  <div class="modal modal-lg">
+    <div class="modal-hd">
+      <span class="modal-title">💸 Record Expense</span>
+      <button class="modal-close" onclick="closeM('mExpense')">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="fg">
+          <label>Date <span style="color:var(--red)">*</span></label>
+          <input type="date" id="exp-m-date"/>
+        </div>
+        <div class="fg">
+          <label>Category <span style="color:var(--red)">*</span></label>
+          <select id="exp-m-cat">
+            <option value="">— Select —</option>
+            <option>Salaries</option><option>Utilities</option><option>Supplies</option>
+            <option>Repairs</option><option>Transport</option><option>Examination</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Description <span style="color:var(--red)">*</span></label>
+        <input type="text" id="exp-m-desc" placeholder="Brief description of the expense…"/>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Amount (UGX) <span style="color:var(--red)">*</span></label>
+          <input type="number" id="exp-m-amount" placeholder="e.g. 120000" min="1"/>
+        </div>
+        <div class="fg">
+          <label>Payee <span style="color:var(--red)">*</span></label>
+          <input type="text" id="exp-m-payee" placeholder="Person or supplier paid"/>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Reference / Receipt No</label>
+        <input type="text" id="exp-m-ref" placeholder="Receipt or voucher number…"/>
+      </div>
+      <div class="section-note" id="exp-approval-note" style="display:none">⚠️ This amount exceeds UGX 500,000 and will require an approval before being marked as confirmed.</div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mExpense')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveExpense()">Save Expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Budget Line -->
+<div class="overlay" id="mBudget">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-title">📊 Add Budget Line</span>
+      <button class="modal-close" onclick="closeM('mBudget')">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="fg">
+        <label>Category <span style="color:var(--red)">*</span></label>
+        <input type="text" id="bgt-m-cat" placeholder="e.g. Tuition Fees, Salaries…"/>
+      </div>
+      <div class="fg">
+        <label>Type <span style="color:var(--red)">*</span></label>
+        <select id="bgt-m-type">
+          <option value="">— Select —</option>
+          <option>Income</option><option>Expenditure</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Budgeted Amount (UGX) <span style="color:var(--red)">*</span></label>
+          <input type="number" id="bgt-m-amount" placeholder="e.g. 5000000" min="1"/>
+        </div>
+        <div class="fg">
+          <label>Year <span style="color:var(--red)">*</span></label>
+          <input type="number" id="bgt-m-year" placeholder="e.g. 2025"/>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Term</label>
+        <select id="bgt-m-term">
+          <option value="">All Terms</option>
+          <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mBudget')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveBudget()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Reason -->
+<div class="overlay" id="mReject">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-title">🚫 Reject Request</span>
+      <button class="modal-close" onclick="closeM('mReject')">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="fg">
+        <label>Rejection Reason <span style="color:var(--red)">*</span></label>
+        <textarea id="reject-reason" rows="3" placeholder="State the reason for rejection…"></textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeM('mReject')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmReject()">Reject</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── session ── */
+const sess = JSON.parse(sessionStorage.getItem('sms_user') || '{}');
+if (!sess.loggedIn) location.href = '../index.html';
+function signOut() { sessionStorage.clear(); location.href = '../index.html'; }
+
+/* ── session-display ── */
+const uname = sess.name || sess.username || 'Accounts Staff';
+document.getElementById('sb-uname').textContent = uname;
+document.getElementById('tb-uname').textContent = uname;
+const initials = uname.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+document.getElementById('sb-av-init').textContent = initials;
+document.getElementById('tb-av').textContent = initials;
+
+/* ── greeting & date ── */
+(function(){
+  const h = new Date().getHours();
+  const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('welcome-msg').textContent = g + ', ' + uname + ' 👋';
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-UG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+})();
+
+/* ── in-memory stores ── */
+let DB = {
+  feeStructures : JSON.parse(localStorage.getItem('sms_fee_struct') || '[]'),
+  payments      : JSON.parse(localStorage.getItem('sms_payments')   || '[]'),
+  expenses      : JSON.parse(localStorage.getItem('sms_expenses')   || '[]'),
+  budgets       : JSON.parse(localStorage.getItem('sms_budgets')    || '[]'),
+  approvals     : JSON.parse(localStorage.getItem('sms_approvals')  || '[]'),
+  discounts     : JSON.parse(localStorage.getItem('sms_discounts')  || '[]')
+};
+function saveDB(){
+  localStorage.setItem('sms_fee_struct', JSON.stringify(DB.feeStructures));
+  localStorage.setItem('sms_payments',   JSON.stringify(DB.payments));
+  localStorage.setItem('sms_expenses',   JSON.stringify(DB.expenses));
+  localStorage.setItem('sms_budgets',    JSON.stringify(DB.budgets));
+  localStorage.setItem('sms_approvals',  JSON.stringify(DB.approvals));
+  localStorage.setItem('sms_discounts',  JSON.stringify(DB.discounts));
+}
+
+/* ── sequence counter for receipts ── */
+function nextRcptSeq(){
+  let n = parseInt(localStorage.getItem('sms_rcpt_seq')||'0',10) + 1;
+  localStorage.setItem('sms_rcpt_seq', n);
+  return n;
+}
+function makeReceiptNo(){
+  return 'BFS-RCP-' + new Date().getFullYear() + '-' + String(nextRcptSeq()).padStart(5,'0');
+}
+
+/* ── formatting ── */
+function ugx(n){ return 'UGX ' + (Number(n)||0).toLocaleString('en-UG'); }
+function fmt(n){ return (Number(n)||0).toLocaleString('en-UG'); }
+
+/* ── toast ── */
+function toast(msg, type='info'){
+  const stack = document.getElementById('toast-stack');
+  const icons = {info:'ℹ️', success:'✅', warn:'⚠️', error:'❌'};
+  const cls   = {info:'', success:'t-success', warn:'t-warn', error:'t-error'};
+  const el = document.createElement('div');
+  el.className = 'toast ' + (cls[type]||'');
+  el.innerHTML = '<span>' + (icons[type]||'ℹ️') + '</span><span>' + msg + '</span>';
+  stack.appendChild(el);
+  setTimeout(()=>el.remove(), 3800);
+}
+
+/* ── modal helpers ── */
+function openM(id){ document.getElementById(id).classList.add('open'); }
+function closeM(id){ document.getElementById(id).classList.remove('open'); }
+// close on backdrop click
+document.querySelectorAll('.overlay').forEach(o=>{
+  o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+
+/* ── tab switching ── */
+function switchTab(el, paneId){
+  const container = el.closest('.card') || el.closest('.card-body') || el.parentElement.parentElement;
+  container.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const allPanes = container.querySelectorAll('.tab-pane');
+  allPanes.forEach(p=>{ p.classList.remove('active'); p.style.display='none'; });
+  const target = document.getElementById(paneId);
+  if(target){ target.classList.add('active'); target.style.display=''; }
+}
+
+/* ════════════════════════════════════════
+   NAV
+════════════════════════════════════════ */
+const PAGES = {
+  dashboard      : { title:'Dashboard',        crumb:'Accounts › Dashboard' },
+  feestructure   : { title:'Fee Structure',     crumb:'Accounts › Fee Structure' },
+  pupilaccounts  : { title:'Pupil Accounts',    crumb:'Accounts › Pupil Accounts' },
+  recordpayment  : { title:'Record Payment',    crumb:'Accounts › Record Payment' },
+  outstanding    : { title:'Outstanding Fees',  crumb:'Accounts › Outstanding Fees' },
+  expenses       : { title:'Expenses',          crumb:'Accounts › Expenses' },
+  budget         : { title:'Budget',            crumb:'Accounts › Budget' },
+  reports        : { title:'Financial Reports', crumb:'Accounts › Financial Reports' },
+  approvals      : { title:'Approvals',         crumb:'Accounts › Approvals' }
+};
+
+function nav(page, clickedEl){
+  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+  if(clickedEl) clickedEl.classList.add('active');
+  else {
+    const found = document.querySelector(`.sb-link[onclick*="'${page}'"]`);
+    if(found) found.classList.add('active');
+  }
+  document.querySelectorAll('[id^="pg-"]').forEach(p=>p.style.display='none');
+  const pg = document.getElementById('pg-' + page);
+  if(pg) pg.style.display='';
+  const meta = PAGES[page] || {};
+  document.getElementById('pg-title').textContent = meta.title || page;
+  document.getElementById('pg-crumb').textContent = meta.crumb || '';
+  if(page==='dashboard')     refreshDashboard();
+  if(page==='feestructure')  renderFeeTable();
+  if(page==='outstanding')   renderOutstanding();
+  if(page==='expenses')      renderExpenses();
+  if(page==='budget')        renderBudget();
+  if(page==='approvals')     renderApprovals();
+}
+
+/* ════════════════════════════════════════
+   DASHBOARD
+════════════════════════════════════════ */
+function refreshDashboard(){
+  const totalCharged = DB.payments.reduce((s,p)=>s + (p.charged||0), 0);
+  const totalCollected = DB.payments.reduce((s,p)=>s + (p.amount||0), 0);
+  const totalExpenses = DB.expenses.reduce((s,e)=>s + (e.amount||0), 0);
+  const outstanding = totalCharged - totalCollected;
+  const netIncome = totalCollected - totalExpenses;
+  const today = new Date().toISOString().slice(0,10);
+  const paymentsToday = DB.payments.filter(p=>p.date===today).length;
+
+  document.getElementById('kpi-charged').textContent    = ugx(totalCharged);
+  document.getElementById('kpi-collected').textContent  = ugx(totalCollected);
+  document.getElementById('kpi-outstanding').textContent= ugx(Math.max(0,outstanding));
+  document.getElementById('kpi-expenses').textContent   = ugx(totalExpenses);
+  document.getElementById('kpi-netincome').textContent  = ugx(netIncome);
+  document.getElementById('kpi-today').textContent      = paymentsToday;
+
+  // Recent transactions
+  const rtbody = document.getElementById('dash-transactions');
+  if(DB.payments.length===0){
+    rtbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">🧾</div><div class="empty-desc">No transactions recorded yet.</div></div></td></tr>';
+  } else {
+    const recent = [...DB.payments].reverse().slice(0,8);
+    rtbody.innerHTML = recent.map(p=>`
+      <tr>
+        <td>${p.date||'—'}</td>
+        <td><strong>${escHtml(p.pupilName||'—')}</strong></td>
+        <td>${ugx(p.amount)}</td>
+        <td><span class="badge b-teal">${escHtml(p.method||'—')}</span></td>
+        <td><span class="mono">${escHtml(p.rcptNo||'—')}</span></td>
+        <td>${escHtml(p.recordedBy||'—')}</td>
+      </tr>`).join('');
+  }
+
+  // Chart: categories (demo: show payment methods distribution)
+  const methods = {};
+  DB.payments.forEach(p=>{ methods[p.method||'Other'] = (methods[p.method||'Other']||0) + p.amount; });
+  const chartCat = document.getElementById('chart-categories');
+  const methodEntries = Object.entries(methods);
+  if(methodEntries.length===0){
+    chartCat.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-desc">Collection data will appear once payments are recorded.</div></div>';
+  } else {
+    const maxM = Math.max(...methodEntries.map(e=>e[1]),1);
+    chartCat.innerHTML = methodEntries.map(([k,v],i)=>{
+      const fills=['','f-amber','f-navy'];
+      const pct = Math.round((v/maxM)*100);
+      return `<div class="bc-row"><div class="bc-label">${escHtml(k)}</div><div class="bc-track"><div class="bc-fill ${fills[i%3]}" style="width:${pct}%"></div></div><div class="bc-val">${ugx(v)}</div></div>`;
+    }).join('');
+  }
+
+  // Chart: outstanding by class (placeholder — needs real pupil data from registrar)
+  const chartOut = document.getElementById('chart-outstanding');
+  chartOut.innerHTML = '<div class="empty"><div class="empty-icon">📉</div><div class="empty-desc">Outstanding data will appear once pupils are charged.</div></div>';
+
+  // Highest outstanding list
+  const outBody = document.getElementById('dash-outstanding');
+  const pupils = getOutstandingPupils();
+  if(pupils.length===0){
+    outBody.innerHTML = '<tr><td colspan="4"><div class="empty"><div class="empty-icon">✅</div><div class="empty-desc">No outstanding balances recorded.</div></div></td></tr>';
+  } else {
+    const top5 = pupils.sort((a,b)=>b.outstanding-a.outstanding).slice(0,5);
+    outBody.innerHTML = top5.map(p=>`<tr>
+      <td><strong>${escHtml(p.pupilName)}</strong></td>
+      <td><span class="mono">${escHtml(p.admNo||'—')}</span></td>
+      <td>${escHtml(p.class||'—')}</td>
+      <td style="color:var(--red);font-weight:700">${ugx(p.outstanding)}</td>
+    </tr>`).join('');
+  }
+}
+
+function getOutstandingPupils(){
+  // Aggregate by pupil from payments store (frontend simulation only)
+  const map = {};
+  DB.payments.forEach(p=>{
+    const k = p.admNo||p.pupilName;
+    if(!map[k]) map[k]={ pupilName:p.pupilName, admNo:p.admNo, class:p.class, charged:0, paid:0 };
+    map[k].charged += p.charged||0;
+    map[k].paid    += p.amount||0;
+  });
+  return Object.values(map).map(p=>({...p, outstanding:Math.max(0,p.charged-p.paid)})).filter(p=>p.outstanding>0);
+}
+
+/* ════════════════════════════════════════
+   FEE STRUCTURE
+════════════════════════════════════════ */
+function renderFeeTable(){
+  const cls = document.getElementById('fs-filter-class')?.value||'';
+  const cat = document.getElementById('fs-filter-cat')?.value||'';
+  let data = DB.feeStructures.filter(r=>r.status!=='historical');
+  if(cls) data = data.filter(r=>r.cls===cls);
+  if(cat) data = data.filter(r=>r.cat===cat);
+  const tbody = document.getElementById('fs-table-body');
+  if(!tbody) return;
+  if(data.length===0){
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">No fee structures added yet.</div></div></td></tr>';
+  } else {
+    tbody.innerHTML = data.map(r=>`<tr>
+      <td>${escHtml(r.cls||'All')}</td>
+      <td>${escHtml(r.term)}</td>
+      <td>${escHtml(r.year)}</td>
+      <td>${escHtml(r.cat)}</td>
+      <td style="font-weight:600">${ugx(r.amount)}</td>
+      <td><span class="badge b-green">Active</span></td>
+    </tr>`).join('');
+  }
+
+  const histData = DB.feeStructures.filter(r=>r.status==='historical');
+  const histBody = document.getElementById('fs-hist-body');
+  if(histBody){
+    if(histData.length===0){
+      histBody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📂</div><div class="empty-desc">No historical records.</div></div></td></tr>';
+    } else {
+      histBody.innerHTML = histData.map(r=>`<tr>
+        <td>${escHtml(r.cls||'All')}</td><td>${escHtml(r.term)}</td><td>${escHtml(r.year)}</td>
+        <td>${escHtml(r.cat)}</td><td>${ugx(r.amount)}</td>
+        <td><span class="badge b-gray">Archived</span></td>
+      </tr>`).join('');
+    }
+  }
+}
+function filterFeeTable(){ renderFeeTable(); }
+
+function saveFeeStruct(){
+  const cls = document.getElementById('fs-m-class').value;
+  const term = document.getElementById('fs-m-term').value;
+  const year = document.getElementById('fs-m-year').value;
+  const cat  = document.getElementById('fs-m-cat').value;
+  const amt  = parseFloat(document.getElementById('fs-m-amount').value);
+  if(!term||!year||!cat||!(amt>0)){ toast('Please fill all required fields.','error'); return; }
+  DB.feeStructures.push({ cls, term, year, cat, amount:amt, status:'active' });
+  saveDB();
+  closeM('mFeeStruct');
+  document.getElementById('fs-m-class').value='';
+  document.getElementById('fs-m-term').value='';
+  document.getElementById('fs-m-year').value='';
+  document.getElementById('fs-m-cat').value='';
+  document.getElementById('fs-m-amount').value='';
+  renderFeeTable();
+  toast('Fee structure saved.','success');
+}
+
+/* ════════════════════════════════════════
+   PUPIL ACCOUNTS
+════════════════════════════════════════ */
+function searchPupilAccounts(){
+  const q = (document.getElementById('pa-search').value||'').trim().toLowerCase();
+  const card = document.getElementById('pa-pupil-card');
+  const empty = document.getElementById('pa-empty-state');
+  if(!q){ card.style.display='none'; empty.style.display=''; return; }
+
+  // Find a pupil record by matching payments made under that name/admno
+  const matches = DB.payments.filter(p=>
+    (p.pupilName||'').toLowerCase().includes(q)||
+    (p.admNo||'').toLowerCase().includes(q)
+  );
+  if(matches.length===0){
+    card.style.display='none'; empty.style.display='';
+    toast('No records found for "'+q+'". Records appear here after a payment is recorded.','warn');
+    return;
+  }
+  const first = matches[0];
+  const pName = first.pupilName;
+  const pAdm  = first.admNo;
+  const pCls  = first.class||'—';
+  document.getElementById('pa-name').textContent  = pName;
+  document.getElementById('pa-class').textContent = pCls;
+  document.getElementById('pa-admno').textContent = pAdm||'—';
+  document.getElementById('pa-photo').textContent = (pName||'?')[0].toUpperCase();
+
+  // Aggregate
+  let charged=0, paid=0, discount=0;
+  DB.payments.filter(p=>p.admNo===pAdm||p.pupilName===pName).forEach(p=>{
+    charged += p.charged||0;
+    paid    += p.amount||0;
+  });
+  DB.discounts.filter(d=>d.admNo===pAdm||d.pupilName===pName).forEach(d=>{ discount+=d.amount||0; });
+  document.getElementById('pa-charged').textContent  = ugx(charged);
+  document.getElementById('pa-paid').textContent     = ugx(paid);
+  document.getElementById('pa-balance').textContent  = ugx(Math.max(0, charged-paid-discount));
+  document.getElementById('pa-discount').textContent = ugx(discount);
+
+  // Payments rows
+  const payRows = DB.payments.filter(p=>p.admNo===pAdm||p.pupilName===pName);
+  const payBody = document.getElementById('pa-payments');
+  payBody.innerHTML = payRows.length===0
+    ? '<tr><td colspan="5"><div class="empty"><div class="empty-icon">💳</div><div class="empty-desc">No payments.</div></div></td></tr>'
+    : payRows.reverse().map(p=>`<tr>
+        <td>${p.date}</td>
+        <td>${ugx(p.amount)}</td>
+        <td><span class="badge b-teal">${escHtml(p.method)}</span></td>
+        <td><span class="mono">${escHtml(p.rcptNo)}</span></td>
+        <td>${escHtml(p.recordedBy)}</td>
+      </tr>`).join('');
+
+  const chrBody = document.getElementById('pa-charges');
+  chrBody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">Charges are added from the fee structure assigned by Admin.</div></div></td></tr>';
+
+  empty.style.display='none';
+  card.style.display='';
+}
+
+function saveDiscount(){
+  const type   = document.getElementById('disc-type').value;
+  const amount = parseFloat(document.getElementById('disc-amount').value);
+  const reason = document.getElementById('disc-reason').value.trim();
+  const auth   = document.getElementById('disc-auth').value.trim();
+  if(!type||!(amount>0)||!reason||!auth){ toast('Please fill all required fields.','error'); return; }
+  const pName = document.getElementById('pa-name').textContent;
+  const pAdm  = document.getElementById('pa-admno').textContent;
+  DB.discounts.push({ type, amount, reason, auth, pupilName:pName, admNo:pAdm, date:today(), recordedBy:uname });
+  saveDB();
+  closeM('mDiscount');
+  document.getElementById('disc-type').value='';
+  document.getElementById('disc-amount').value='';
+  document.getElementById('disc-reason').value='';
+  document.getElementById('disc-auth').value='';
+  searchPupilAccounts();
+  toast('Adjustment applied successfully.','success');
+}
+
+/* ════════════════════════════════════════
+   RECORD PAYMENT
+════════════════════════════════════════ */
+let rpCurrentPupil = null;
+
+function searchRPPupil(){
+  const q = (document.getElementById('rp-search').value||'').trim().toLowerCase();
+  const found = document.getElementById('rp-pupil-found');
+  if(!q){ found.style.display='none'; rpCurrentPupil=null; return; }
+
+  // Simulate finding a pupil — in production this queries the registrar database
+  // For the frontend prototype, use the last known record in payments
+  const matches = DB.payments.filter(p=>
+    (p.pupilName||'').toLowerCase().includes(q)||
+    (p.admNo||'').toLowerCase().includes(q)
+  );
+  if(matches.length===0){
+    found.style.display='none'; rpCurrentPupil=null;
+    toast('Pupil not found in payment records. For new pupils, contact the Registrar portal.','warn');
+    return;
+  }
+  const m = matches[0];
+  rpCurrentPupil = m;
+  document.getElementById('rp-photo').textContent  = (m.pupilName||'?')[0].toUpperCase();
+  document.getElementById('rp-name').textContent   = m.pupilName;
+  document.getElementById('rp-class').textContent  = m.class||'—';
+  document.getElementById('rp-admno').textContent  = m.admNo||'—';
+
+  const charged = DB.payments.filter(p=>p.admNo===m.admNo||p.pupilName===m.pupilName).reduce((s,p)=>s+(p.charged||0),0);
+  const paid    = DB.payments.filter(p=>p.admNo===m.admNo||p.pupilName===m.pupilName).reduce((s,p)=>s+(p.amount||0),0);
+  const disc    = DB.discounts.filter(d=>d.admNo===m.admNo||d.pupilName===m.pupilName).reduce((s,d)=>s+(d.amount||0),0);
+  document.getElementById('rp-balance').textContent = ugx(Math.max(0, charged-paid-disc));
+  found.style.display='';
+}
+
+function updateReceiptPreview(){
+  const amt = parseFloat(document.getElementById('rp-amount').value)||0;
+  const expNote = document.getElementById('exp-approval-note');
+  if(expNote) expNote.style.display = amt>500000 ? '' : 'none';
+}
+
+function generateReceipt(){
+  if(!rpCurrentPupil){
+    toast('Please search and select a pupil first.','error'); return;
+  }
+  const amt    = parseFloat(document.getElementById('rp-amount').value);
+  const method = document.getElementById('rp-method').value;
+  const ref    = document.getElementById('rp-ref').value.trim();
+  const date   = document.getElementById('rp-date').value;
+  if(!(amt>0)){ toast('Amount must be greater than zero.','error'); return; }
+  if(!method){ toast('Please select a payment method.','error'); return; }
+  if(!date){ toast('Please enter the payment date.','error'); return; }
+
+  const rcptNo = makeReceiptNo();
+  const pupil  = rpCurrentPupil;
+
+  // Compute balance after payment
+  const charged = DB.payments.filter(p=>p.admNo===pupil.admNo||p.pupilName===pupil.pupilName).reduce((s,p)=>s+(p.charged||0),0);
+  const prevPaid= DB.payments.filter(p=>p.admNo===pupil.admNo||p.pupilName===pupil.pupilName).reduce((s,p)=>s+(p.amount||0),0);
+  const disc    = DB.discounts.filter(d=>d.admNo===pupil.admNo||d.pupilName===pupil.pupilName).reduce((s,d)=>s+(d.amount||0),0);
+  const balAfter= Math.max(0, charged - prevPaid - disc - amt);
+
+  // Save payment record
+  DB.payments.push({
+    date, amount:amt, method, ref, rcptNo,
+    pupilName:pupil.pupilName, admNo:pupil.admNo, class:pupil.class||'—',
+    recordedBy:uname, charged:pupil.charged||0
+  });
+  saveDB();
+
+  // Build receipt rows
+  document.getElementById('rp-rcpt-no').textContent = rcptNo;
+  document.getElementById('rp-rcpt-amount').textContent = ugx(amt);
+  document.getElementById('rp-rcpt-rows').innerHTML = [
+    ['Pupil Name', escHtml(pupil.pupilName)],
+    ['Class', escHtml(pupil.class||'—')],
+    ['Admission No', escHtml(pupil.admNo||'—')]
+  ].map(([l,v])=>`<div class="receipt-row"><span class="rl">${l}</span><span class="rv">${v}</span></div>`).join('');
+
+  document.getElementById('rp-rcpt-rows2').innerHTML = [
+    ['Payment Method', escHtml(method)],
+    ['Transaction Ref', escHtml(ref||'—')],
+    ['Payment Date', date],
+    ['Outstanding After', ugx(balAfter)],
+    ['Recorded By', escHtml(uname)]
+  ].map(([l,v])=>`<div class="receipt-row"><span class="rl">${l}</span><span class="rv">${v}</span></div>`).join('');
+
+  const box = document.getElementById('print-receipt-area');
+  box.classList.add('visible');
+  document.getElementById('rp-receipt-empty').style.display='none';
+  document.getElementById('rp-print-btn').style.display='';
+  toast('Payment saved. Receipt #'+rcptNo+' generated.','success');
+}
+
+function clearPaymentForm(){
+  ['rp-amount','rp-ref','rp-date','rp-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('rp-method').value='';
+  document.getElementById('rp-search').value='';
+  document.getElementById('rp-pupil-found').style.display='none';
+  document.getElementById('print-receipt-area').classList.remove('visible');
+  document.getElementById('rp-receipt-empty').style.display='';
+  document.getElementById('rp-print-btn').style.display='none';
+  rpCurrentPupil=null;
+}
+
+/* ════════════════════════════════════════
+   OUTSTANDING FEES
+════════════════════════════════════════ */
+let outSortKey = 'amount';
+function sortOutstanding(k){ outSortKey=k; renderOutstanding(); }
+function filterOutstanding(){ renderOutstanding(); }
+
+function renderOutstanding(){
+  const cls = (document.getElementById('out-filter-class')||{}).value||'';
+  let pupils = getOutstandingPupils();
+  if(cls) pupils = pupils.filter(p=>p.class===cls);
+  if(outSortKey==='amount') pupils.sort((a,b)=>b.outstanding-a.outstanding);
+  if(outSortKey==='name')   pupils.sort((a,b)=>(a.pupilName||'').localeCompare(b.pupilName||''));
+  if(outSortKey==='class')  pupils.sort((a,b)=>(a.class||'').localeCompare(b.class||''));
+
+  const total = pupils.reduce((s,p)=>s+p.outstanding,0);
+  const kpiEl = document.getElementById('out-total-kpi');
+  if(kpiEl) kpiEl.textContent = ugx(total);
+
+  const tbody = document.getElementById('out-table');
+  if(!tbody) return;
+  if(pupils.length===0){
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">✅</div><div class="empty-desc">No outstanding balances found.</div></div></td></tr>';
+  } else {
+    tbody.innerHTML = pupils.map(p=>`<tr>
+      <td><strong>${escHtml(p.pupilName)}</strong></td>
+      <td><span class="mono">${escHtml(p.admNo||'—')}</span></td>
+      <td>${escHtml(p.class||'—')}</td>
+      <td>${fmt(p.charged)}</td>
+      <td>${fmt(p.paid)}</td>
+      <td style="color:var(--red);font-weight:700">${ugx(p.outstanding)}</td>
+      <td>${escHtml(p.lastPayDate||'—')}</td>
+    </tr>`).join('');
+  }
+}
+
+/* ════════════════════════════════════════
+   EXPENSES
+════════════════════════════════════════ */
+function filterExpenses(){ renderExpenses(); }
+function renderExpenses(){
+  const cat  = (document.getElementById('exp-filter-cat')||{}).value||'';
+  const from = (document.getElementById('exp-from')||{}).value||'';
+  const to   = (document.getElementById('exp-to')||{}).value||'';
+  let data = [...DB.expenses];
+  if(cat)  data = data.filter(e=>e.cat===cat);
+  if(from) data = data.filter(e=>e.date>=from);
+  if(to)   data = data.filter(e=>e.date<=to);
+
+  const tbody = document.getElementById('exp-table');
+  if(!tbody) return;
+  if(data.length===0){
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">💸</div><div class="empty-desc">No expenses match the current filter.</div></div></td></tr>';
+  } else {
+    tbody.innerHTML = data.reverse().map(e=>{
+      const badge = e.approval==='Approved'
+        ? '<span class="badge b-green">Approved</span>'
+        : e.approval==='Rejected'
+        ? '<span class="badge b-red">Rejected</span>'
+        : '<span class="badge b-amber">Pending</span>';
+      return `<tr>
+        <td>${e.date}</td>
+        <td>${escHtml(e.cat)}</td>
+        <td>${escHtml(e.desc)}</td>
+        <td style="font-weight:600">${ugx(e.amount)}</td>
+        <td>${escHtml(e.payee)}</td>
+        <td><span class="mono">${escHtml(e.ref||'—')}</span></td>
+        <td>${escHtml(e.recordedBy)}</td>
+        <td>${badge}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Monthly summary chart
+  const monthlySums = {};
+  DB.expenses.forEach(e=>{
+    const m = (e.date||'').slice(0,7);
+    if(m) monthlySums[m] = (monthlySums[m]||0) + e.amount;
+  });
+  const chartEl = document.getElementById('exp-monthly-chart');
+  if(!chartEl) return;
+  const entries = Object.entries(monthlySums).sort((a,b)=>a[0].localeCompare(b[0])).slice(-6);
+  if(entries.length===0){
+    chartEl.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-desc">Monthly expense data will appear once expenses are recorded.</div></div>';
+  } else {
+    const maxV = Math.max(...entries.map(e=>e[1]),1);
+    chartEl.innerHTML = entries.map(([m,v])=>`
+      <div class="bc-row">
+        <div class="bc-label">${m}</div>
+        <div class="bc-track"><div class="bc-fill f-amber" style="width:${Math.round(v/maxV*100)}%"></div></div>
+        <div class="bc-val">${ugx(v)}</div>
+      </div>`).join('');
+  }
+}
+
+function saveExpense(){
+  const date  = document.getElementById('exp-m-date').value;
+  const cat   = document.getElementById('exp-m-cat').value;
+  const desc  = document.getElementById('exp-m-desc').value.trim();
+  const amt   = parseFloat(document.getElementById('exp-m-amount').value);
+  const payee = document.getElementById('exp-m-payee').value.trim();
+  const ref   = document.getElementById('exp-m-ref').value.trim();
+  if(!date||!cat||!desc||!(amt>0)||!payee){ toast('Please fill all required fields.','error'); return; }
+
+  const needsApproval = amt > 500000;
+  const approval = needsApproval ? 'Pending' : 'Approved';
+  if(needsApproval){
+    DB.approvals.push({
+      id: Date.now(), type:'Large Expense', requestedBy:uname, pupilPayee:payee,
+      amount:amt, reason:desc, date:today(), status:'Pending'
+    });
+  }
+  DB.expenses.push({ date, cat, desc, amount:amt, payee, ref, recordedBy:uname, approval });
+  saveDB();
+  closeM('mExpense');
+  ['exp-m-date','exp-m-cat','exp-m-desc','exp-m-amount','exp-m-payee','exp-m-ref'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  renderExpenses();
+  updateApprovalBadge();
+  toast(needsApproval ? 'Expense saved. Approval required (amount > UGX 500,000).' : 'Expense recorded.', needsApproval?'warn':'success');
+}
+
+/* ════════════════════════════════════════
+   BUDGET
+════════════════════════════════════════ */
+function renderBudget(){
+  ['income','expend'].forEach(type=>{
+    const rows = DB.budgets.filter(b=>b.type.toLowerCase()===(type==='income'?'income':'expenditure'));
+    const tbody = document.getElementById('bgt-'+type+'-body');
+    if(!tbody) return;
+    if(rows.length===0){
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📊</div><div class="empty-desc">No ${type==='income'?'income':'expenditure'} budget lines added.</div></div></td></tr>`;
+    } else {
+      tbody.innerHTML = rows.map(r=>{
+        const actual = type==='income'
+          ? DB.payments.reduce((s,p)=>s+(p.amount||0),0)
+          : DB.expenses.reduce((s,e)=>s+(e.amount||0),0);
+        const variance = r.amount - actual;
+        const pct = r.amount>0 ? Math.min(100,Math.round(actual/r.amount*100)) : 0;
+        const varColor = variance<0 ? 'var(--red)' : 'var(--green)';
+        return `<tr>
+          <td><strong>${escHtml(r.cat)}</strong></td>
+          <td>${escHtml(r.term||'All')}</td>
+          <td>${escHtml(r.year)}</td>
+          <td>${ugx(r.amount)}</td>
+          <td>${ugx(actual)}</td>
+          <td style="color:${varColor};font-weight:600">${variance<0?'':'+'}${ugx(variance)}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="prog" style="flex:1"><div class="prog-fill" style="width:${pct}%;background:${pct>90?'var(--red)':'var(--teal)'}"></div></div>
+              <span style="font-size:.7rem;font-weight:600;color:var(--sub);white-space:nowrap">${pct}%</span>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+  });
+}
+
+function saveBudget(){
+  const cat  = document.getElementById('bgt-m-cat').value.trim();
+  const type = document.getElementById('bgt-m-type').value;
+  const amt  = parseFloat(document.getElementById('bgt-m-amount').value);
+  const year = document.getElementById('bgt-m-year').value.trim();
+  const term = document.getElementById('bgt-m-term').value;
+  if(!cat||!type||!(amt>0)||!year){ toast('Please fill all required fields.','error'); return; }
+  DB.budgets.push({ cat, type, amount:amt, year, term });
+  saveDB();
+  closeM('mBudget');
+  ['bgt-m-cat','bgt-m-type','bgt-m-amount','bgt-m-year','bgt-m-term'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  renderBudget();
+  toast('Budget line saved.','success');
+}
+
+/* ════════════════════════════════════════
+   REPORTS
+════════════════════════════════════════ */
+function generateReport(){
+  const year = document.getElementById('rpt-year').value;
+  const term = document.getElementById('rpt-term').value;
+
+  // Find active pane
+  const activeTab = document.querySelector('#pg-reports .tab.active');
+  const activePane = document.querySelector('#pg-reports .tab-pane.active');
+  if(!activePane) return;
+  const outId = activePane.querySelector('[id$="-out"]')?.id;
+  if(!outId) return;
+  const outEl = document.getElementById(outId);
+  if(!outEl) return;
+
+  const header = `<div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--navy)">
+    <div style="font-size:1rem;font-weight:800;color:var(--navy)">Five Star Model School</div>
+    <div style="font-size:.72rem;color:var(--sub)">Financial Report — ${term||'All Terms'}, ${year}</div>
+  </div>`;
+
+  const totalIn  = DB.payments.reduce((s,p)=>s+(p.amount||0),0);
+  const totalExp = DB.expenses.reduce((s,e)=>s+(e.amount||0),0);
+  const net      = totalIn - totalExp;
+
+  outEl.innerHTML = header + `<table class="tbl">
+    <thead><tr><th>Category</th><th>Amount (UGX)</th></tr></thead>
+    <tbody>
+      <tr><td>Total Fees Collected</td><td style="font-weight:700;color:var(--green)">${ugx(totalIn)}</td></tr>
+      <tr><td>Total Expenses</td><td style="font-weight:700;color:var(--red)">${ugx(totalExp)}</td></tr>
+      <tr style="background:var(--bg)"><td><strong>Net Income</strong></td><td style="font-weight:800;color:${net>=0?'var(--green)':'var(--red)'}">${ugx(net)}</td></tr>
+    </tbody>
+  </table>
+  <div style="font-size:.68rem;color:var(--sub);margin-top:10px;text-align:right">Generated: ${new Date().toLocaleString()} by ${escHtml(uname)}</div>`;
+}
+
+/* ════════════════════════════════════════
+   APPROVALS
+════════════════════════════════════════ */
+let rejectTargetId = null;
+
+function renderApprovals(){
+  updateApprovalBadge();
+  ['Pending','Approved','Rejected'].forEach(status=>{
+    const key = status.toLowerCase();
+    const rows = DB.approvals.filter(a=>a.status===status);
+    const tbody = document.getElementById('appr-'+key+'-body');
+    if(!tbody) return;
+    if(rows.length===0){
+      const msg = status==='Pending'?'No pending approvals.':status==='Approved'?'No approved requests.':'No rejected requests.';
+      tbody.innerHTML = `<tr><td colspan="${status==='Rejected'?8:7}"><div class="empty"><div class="empty-icon">${status==='Rejected'?'🚫':'✅'}</div><div class="empty-desc">${msg}</div></div></td></tr>`;
+    } else {
+      tbody.innerHTML = rows.reverse().map(r=>{
+        const typeBadge = `<span class="badge b-navy">${escHtml(r.type)}</span>`;
+        const base = `<td>${typeBadge}</td><td>${escHtml(r.requestedBy)}</td><td>${escHtml(r.pupilPayee||'—')}</td><td style="font-weight:600">${ugx(r.amount)}</td><td>${escHtml(r.reason)}</td><td>${r.date}</td>`;
+        if(status==='Pending') return `<tr>${base}<td><div style="display:flex;gap:6px">
+          <button class="btn btn-green btn-xs" onclick="approveItem(${r.id})">Approve</button>
+          <button class="btn btn-danger btn-xs" onclick="startReject(${r.id})">Reject</button>
+        </div></td></tr>`;
+        if(status==='Approved') return `<tr>${base}<td>${escHtml(r.approvedBy||'—')}</td></tr>`;
+        return `<tr>${base}<td>${escHtml(r.rejectedBy||'—')}</td><td style="color:var(--red)">${escHtml(r.rejectReason||'—')}</td></tr>`;
+      }).join('');
+    }
+  });
+}
+
+function approveItem(id){
+  const item = DB.approvals.find(a=>a.id===id);
+  if(!item) return;
+  item.status='Approved'; item.approvedBy=uname;
+  saveDB(); renderApprovals(); toast('Request approved.','success');
+}
+
+function startReject(id){ rejectTargetId=id; document.getElementById('reject-reason').value=''; openM('mReject'); }
+
+function confirmReject(){
+  const reason = document.getElementById('reject-reason').value.trim();
+  if(!reason){ toast('Please state the rejection reason.','error'); return; }
+  const item = DB.approvals.find(a=>a.id===rejectTargetId);
+  if(!item){ closeM('mReject'); return; }
+  item.status='Rejected'; item.rejectedBy=uname; item.rejectReason=reason;
+  saveDB(); closeM('mReject'); renderApprovals(); toast('Request rejected.','warn');
+}
+
+function updateApprovalBadge(){
+  const pending = DB.approvals.filter(a=>a.status==='Pending').length;
+  const badge = document.getElementById('appr-badge');
+  if(badge) badge.textContent = pending;
+  badge.style.display = pending>0 ? '' : 'none';
+}
+
+/* ════════════════════════════════════════
+   EXPENSE AMOUNT WATCH (approval note)
+════════════════════════════════════════ */
+document.getElementById('exp-m-amount')?.addEventListener('input', function(){
+  const note = document.getElementById('exp-approval-note');
+  if(note) note.style.display = parseFloat(this.value||0)>500000 ? '' : 'none';
+});
+
+/* ════════════════════════════════════════
+   UTILITY
+════════════════════════════════════════ */
+function today(){ return new Date().toISOString().slice(0,10); }
+function escHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+(function init(){
+  // Set today's date as default for payment date
+  const rpDate = document.getElementById('rp-date');
+  if(rpDate) rpDate.value = today();
+  const expDate = document.getElementById('exp-m-date');
+  if(expDate) expDate.value = today();
+  updateApprovalBadge();
+  refreshDashboard();
+})();
+</script>
+</body>
+</html>
