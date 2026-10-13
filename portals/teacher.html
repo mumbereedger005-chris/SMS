@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Teacher Portal – Five Star Model School</title>
 <link rel="stylesheet" href="../assets/sms.css"/>
+<script src="../assets/storage.js"></script>
 <style>
 /* ── Teacher-specific styles ── */
 .att-btn {
@@ -95,40 +96,79 @@
 <!-- ═══════════════════════════════════
      SIDEBAR
 ═══════════════════════════════════ -->
-<aside class="sidebar">
-  <div class="sb-brand">
-    <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
-    <div>
-      <div class="sb-school-name">Five Star School</div>
-      <div class="sb-portal-name">Teacher Portal</div>
+<aside class="sidebar" id="sidebar">
+  <div class="sb-topbar">
+    <button class="sb-ham" id="sb-ham" title="Open / close menu">
+      <span class="sb-bar"></span>
+      <span class="sb-bar"></span>
+      <span class="sb-bar"></span>
+    </button>
+    <div class="sb-brand">
+      <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
+      <div>
+        <div class="sb-school-name">Five Star School</div>
+        <div class="sb-portal-tag">Teacher Portal</div>
+      </div>
     </div>
   </div>
   <nav class="sb-body">
-    <div class="sb-group"><div class="sb-group-label">Overview</div></div>
-    <div class="sb-link active" id="lnk-dashboard" onclick="nav('dashboard',this)"><span class="sb-icon">🏠</span><span>Dashboard</span></div>
-
-    <div class="sb-group"><div class="sb-group-label">Classroom</div></div>
-    <div class="sb-link" id="lnk-classes" onclick="nav('classes',this)"><span class="sb-icon">🏫</span><span>My Classes</span></div>
-    <div class="sb-link" id="lnk-attendance" onclick="nav('attendance',this)"><span class="sb-icon">✅</span><span>Attendance</span><span class="sb-badge" id="sb-att-badge" style="display:none">!</span></div>
-    <div class="sb-link" id="lnk-marks" onclick="nav('marks',this)"><span class="sb-icon">📝</span><span>Marks Entry</span><span class="sb-badge" id="sb-marks-badge" style="display:none">!</span></div>
-    <div class="sb-link" id="lnk-progress" onclick="nav('progress',this)"><span class="sb-icon">📈</span><span>Pupil Progress</span></div>
-    <div class="sb-link" id="lnk-comments" onclick="nav('comments',this)"><span class="sb-icon">💬</span><span>Comments</span></div>
-
-    <div class="sb-group"><div class="sb-group-label">Planning</div></div>
-    <div class="sb-link" id="lnk-lessons" onclick="nav('lessons',this)"><span class="sb-icon">📋</span><span>Lesson Plans</span></div>
-    <div class="sb-link" id="lnk-scheme" onclick="nav('scheme',this)"><span class="sb-icon">📓</span><span>Scheme of Work</span></div>
-    <div class="sb-link" id="lnk-timetable" onclick="nav('timetable',this)"><span class="sb-icon">🗓️</span><span>Timetable</span></div>
-
-    <div class="sb-group"><div class="sb-group-label">Communication</div></div>
-    <div class="sb-link" id="lnk-announcements" onclick="nav('announcements',this)"><span class="sb-icon">📢</span><span>Announcements</span><span class="sb-badge" id="sb-ann-badge">0</span></div>
-    <div class="sb-link" id="lnk-resources" onclick="nav('resources',this)"><span class="sb-icon">📁</span><span>Resources</span></div>
+    <div class="sb-sec"><div class="sb-sec-label">Overview</div></div>
+    <div class="sb-item active" id="lnk-dashboard" data-tip="Dashboard" data-close="1" onclick="nav('dashboard',this)">
+      <span class="sb-item-name">Dashboard</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Classroom</div></div>
+    <div class="sb-item" id="lnk-classes" data-tip="My Classes" onclick="nav('classes',this)">
+      <span class="sb-item-name">My Classes</span>
+    </div>
+    <div class="sb-item" id="lnk-attendance" data-tip="Attendance" onclick="nav('attendance',this)">
+      <span class="sb-item-name">Attendance</span>
+      <span class="sb-count" id="sb-att-badge" style="display:none">!</span>
+    </div>
+    <div class="sb-item" id="lnk-marks" data-tip="Marks Entry" onclick="nav('marks',this)">
+      <span class="sb-item-name">Marks Entry</span>
+      <span class="sb-count" id="sb-marks-badge" style="display:none">!</span>
+    </div>
+    <div class="sb-item" id="lnk-progress" data-tip="Pupil Progress" onclick="nav('progress',this)">
+      <span class="sb-item-name">Pupil Progress</span>
+    </div>
+    <div class="sb-item" id="lnk-comments" data-tip="Comments" onclick="nav('comments',this)">
+      <span class="sb-item-name">Comments</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Planning</div></div>
+    <div class="sb-item" id="lnk-lessons" data-tip="Lesson Plans" onclick="nav('lessons',this)">
+      <span class="sb-item-name">Lesson Plans</span>
+    </div>
+    <div class="sb-item" id="lnk-scheme" data-tip="Scheme of Work" onclick="nav('scheme',this)">
+      <span class="sb-item-name">Scheme of Work</span>
+    </div>
+    <div class="sb-item" id="lnk-timetable" data-tip="Timetable" onclick="nav('timetable',this)">
+      <span class="sb-item-name">Timetable</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Communication</div></div>
+    <div class="sb-item" id="lnk-announcements" data-tip="Announcements" onclick="nav('announcements',this)">
+      <span class="sb-item-name">Announcements</span>
+      <span class="sb-count" id="sb-ann-badge">0</span>
+    </div>
+    <div class="sb-item" id="lnk-resources" data-tip="Resources" onclick="nav('resources',this)">
+      <span class="sb-item-name">Resources</span>
+    </div>
   </nav>
   <div class="sb-foot">
-    <div class="sb-user">
+    <div class="sb-user-row">
       <div class="sb-av" id="sb-av-init">T</div>
-      <div><div class="sb-uname" id="sb-uname">Teacher</div><div class="sb-urole">Class Teacher</div></div>
-      <button class="sb-signout" onclick="signOut()" title="Sign Out">⏻</button>
+      <div class="sb-user-info">
+        <div class="sb-uname" id="sb-uname">Teacher</div>
+        <div class="sb-urole">Class Teacher</div>
+      </div>
     </div>
+    <button class="sb-logout" onclick="signOut()" title="Log Out">
+      <span class="sb-logout-icon">
+        <span class="sb-logout-arrow">
+          <svg class="sb-arrow-svg" viewBox="0 0 14 14"><path d="M5 2l5 5-5 5"/><line x1="10" y1="7" x2="2" y2="7"/></svg>
+        </span>
+      </span>
+      <span class="sb-logout-label">Log Out</span>
+    </button>
   </div>
 </aside>
 
@@ -962,18 +1002,70 @@ function gradeClass(g) {
 ══════════════════════════════ */
 function updateDashboardKPIs() {
   document.getElementById('kpi-classes').textContent = demoClasses.length;
-  document.getElementById('kpi-att-pending').textContent = '1';
-  document.getElementById('kpi-marks-pending').textContent = '2';
+  document.getElementById('kpi-att-pending').textContent = Object.keys(submittedAttendance).length ? '0' : '—';
+  document.getElementById('kpi-marks-pending').textContent = Object.keys(submittedMarks).length ? '0' : '—';
   document.getElementById('kpi-announcements').textContent = demoSchoolAnn.length;
 }
 
 /* ══════════════════════════════
    MY CLASSES
 ══════════════════════════════ */
-const demoClasses = [
-  { name:'P3 East', subject:'English, Mathematics', pupils:38 },
-  { name:'P5 West', subject:'English', pupils:35 },
-];
+const savedTeacherState = SMSStore.load('sms_teacher_records', {}) || {};
+const savedDOSState = SMSStore.load('sms_dos_records', {}) || {};
+const savedRegistrarState = SMSStore.load('sms_registrar_records', {}) || {};
+const teacherName = (sess.fullName || sess.username || '').trim().toLowerCase();
+const teacherAllocations = (savedDOSState.allocations || []).filter(item =>
+  String(item.teacher || '').trim().toLowerCase() === teacherName
+);
+const classSubjects = {};
+teacherAllocations.forEach(item => {
+  classSubjects[item.cls] = classSubjects[item.cls] || [];
+  if (!classSubjects[item.cls].includes(item.subject)) classSubjects[item.cls].push(item.subject);
+});
+const registrarPupils = Array.isArray(savedRegistrarState.pupils) ? savedRegistrarState.pupils : [];
+const demoPupils = {};
+teacherAllocations.forEach(item => {
+  const className = item.cls;
+  const classLongName = {'Baby':'Baby Class','Middle':'Middle Class','Upper':'Upper Class'}[className] || className;
+  demoPupils[className] = registrarPupils.filter(p => p.class_ === className || p.class_ === classLongName)
+    .map(p => ({adm:p.admNo, name:[p.fn,p.mn,p.ln].filter(Boolean).join(' ')}));
+});
+const demoClasses = [...new Set(teacherAllocations.map(item => item.cls))].map(name => ({
+  name,
+  subject: (classSubjects[name] || []).join(', '),
+  pupils: (demoPupils[name] || []).length
+}));
+const savedTeacherComments = savedTeacherState.comments || {};
+
+function saveTeacherRecords() {
+  SMSStore.save('sms_teacher_records', {
+    submittedAttendance, submittedMarks, markDrafts, comments: savedTeacherComments,
+    lessonPlans, sowData, myAnnouncements, uploadedResources
+  });
+}
+
+function setSelectOptions(id, placeholder, options) {
+  const select = document.getElementById(id);
+  if (!select) return;
+  const previous = select.value;
+  select.innerHTML = `<option value="">${placeholder}</option>` + options.map(option =>
+    `<option value="${option.value}">${option.label}</option>`
+  ).join('');
+  if (options.some(option => option.value === previous)) select.value = previous;
+}
+
+function populateTeacherSelectors() {
+  const classes = demoClasses.map(item => ({value:item.name, label:item.name}));
+  const subjects = [...new Set(teacherAllocations.map(item => item.subject).filter(Boolean))]
+    .map(subject => ({value:subject,label:subject}));
+  ['att-class','hist-class','mk-class','comm-class','sow-class','lp-class','res-class','res-filter-class']
+    .forEach(id => setSelectOptions(id, '— Select Class —', classes));
+  ['sow-subject','lp-subject','res-subject','res-filter-subj']
+    .forEach(id => setSelectOptions(id, '— Select Subject —', subjects));
+  setSelectOptions('ann-target', '— Select Class —', [
+    {value:'All My Classes',label:'All My Classes'}, ...classes
+  ]);
+}
 
 function buildClassesGrid() {
   const grid = document.getElementById('classes-grid');
@@ -1004,25 +1096,8 @@ function goToAttendanceFor(className) {
 /* ══════════════════════════════
    ATTENDANCE
 ══════════════════════════════ */
-const demoPupils = {
-  'P3 East': [
-    { adm:'BFS-2023-001', name:'Amanya John' },
-    { adm:'BFS-2023-002', name:'Birungi Harriet' },
-    { adm:'BFS-2023-003', name:'Kato Emmanuel' },
-    { adm:'BFS-2023-004', name:'Namukasa Fatuma' },
-    { adm:'BFS-2023-005', name:'Tumusiime Brian' },
-  ],
-  'P5 West': [
-    { adm:'BFS-2021-011', name:'Atwine Peter' },
-    { adm:'BFS-2021-012', name:'Kyomugisha Grace' },
-    { adm:'BFS-2021-013', name:'Mwesigwa Daniel' },
-    { adm:'BFS-2021-014', name:'Nakato Josephine' },
-    { adm:'BFS-2021-015', name:'Ochen Samuel' },
-  ]
-};
-
 /* Track submitted attendance: key = "className|date" */
-const submittedAttendance = {};
+const submittedAttendance = savedTeacherState.submittedAttendance || {};
 /* Current attendance state: key = admission no, value = status */
 let currentAttState = {};
 
@@ -1105,6 +1180,10 @@ function updateAttSummary() {
 function saveAttendance() {
   const cls  = document.getElementById('att-class').value;
   const date = document.getElementById('att-date').value;
+  if (!Object.keys(currentAttState).length) {
+    toast('There are no registered pupils in this class to mark.', 'warn');
+    return;
+  }
   const unset = Object.values(currentAttState).filter(s => !s).length;
   if (unset > 0) {
     toast(unset + ' pupil(s) have no status set. Please mark all pupils.', 'warn');
@@ -1112,6 +1191,7 @@ function saveAttendance() {
   }
   const key = cls + '|' + date;
   submittedAttendance[key] = { ...currentAttState };
+  saveTeacherRecords();
   document.getElementById('att-duplicate-alert').classList.remove('hidden');
   document.getElementById('save-att-btn').disabled = true;
   // Disable all att buttons
@@ -1153,13 +1233,9 @@ function loadAttHistory() {
 /* ══════════════════════════════
    MARKS ENTRY
 ══════════════════════════════ */
-const classSubjects = {
-  'P3 East': ['English','Mathematics','Science','Social Studies','Religious Education'],
-  'P5 West': ['English','Mathematics']
-};
-
 /* Track submitted marks: key = "class|subject|exam" */
-const submittedMarks = {};
+const submittedMarks = savedTeacherState.submittedMarks || {};
+const markDrafts = savedTeacherState.markDrafts || {};
 let currentMarksState = {};
 let currentMaxMarks = 100;
 
@@ -1200,6 +1276,7 @@ function loadMarksPupils() {
 
   const key = cls + '|' + subj + '|' + examName;
   const alreadySubmitted = !!submittedMarks[key];
+  const draft = markDrafts[key] || {};
 
   card.classList.remove('hidden');
   document.getElementById('submit-marks-btn').disabled = alreadySubmitted;
@@ -1207,9 +1284,17 @@ function loadMarksPupils() {
 
   const pupils = demoPupils[cls] || [];
   currentMarksState = {};
-  pupils.forEach(p => { currentMarksState[p.adm] = ''; });
+  pupils.forEach(p => { currentMarksState[p.adm] = draft.marks?.[p.adm] ?? ''; });
 
   renderMarksTable(pupils);
+  pupils.forEach(p => {
+    const comment = document.getElementById('mk-comm-' + p.adm);
+    if (comment) comment.value = draft.comments?.[p.adm] || '';
+    const input = document.getElementById('mk-inp-' + p.adm);
+    if (input && currentMarksState[p.adm] !== '') onMarksInput(p.adm, input);
+  });
+  document.getElementById('submit-marks-btn').disabled = alreadySubmitted;
+  document.getElementById('save-draft-btn').disabled = alreadySubmitted;
   checkMissingMarks();
 }
 
@@ -1227,7 +1312,7 @@ function renderMarksTable(pupils) {
       <td>
         <input type="number" class="marks-input missing" id="mk-inp-${p.adm}"
           min="0" max="${currentMaxMarks}" placeholder="—"
-          oninput="onMarksInput('${p.adm}', this)"/>
+          oninput="onMarksInput('${p.adm}', this)" value="${currentMarksState[p.adm] === '' ? '' : currentMarksState[p.adm]}"/>
       </td>
       <td id="mk-grade-${p.adm}"><span class="grade-pill">—</span></td>
       <td><input type="text" style="width:140px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.72rem" id="mk-comm-${p.adm}" placeholder="Optional comment"/></td>
@@ -1260,6 +1345,18 @@ function checkMissingMarks() {
 }
 
 function saveMarksDraft() {
+  const cls = document.getElementById('mk-class').value;
+  const subj = document.getElementById('mk-subject').value;
+  const examV = document.getElementById('mk-exam').value;
+  if (!cls || !subj || !examV) { toast('Select a class, subject, and examination first.', 'warn'); return; }
+  const [examName] = examV.split('|');
+  const key = cls + '|' + subj + '|' + examName;
+  const comments = {};
+  Object.keys(currentMarksState).forEach(adm => {
+    comments[adm] = document.getElementById('mk-comm-' + adm)?.value || '';
+  });
+  markDrafts[key] = {marks:{...currentMarksState}, comments, updatedAt:new Date().toISOString()};
+  saveTeacherRecords();
   toast('Marks draft saved successfully.', 'success');
 }
 
@@ -1270,6 +1367,11 @@ function openSubmitConfirm() {
   const [examName] = examV.split('|');
   const hasInvalid = Object.values(currentMarksState).some(v => v === null);
   if (hasInvalid) { toast('Fix invalid marks before submitting.', 'error'); return; }
+  if (!cls || !subj || !examV || Object.values(currentMarksState).length === 0 ||
+      Object.values(currentMarksState).some(v => v === '')) {
+    toast('Select an examination and enter marks for every pupil before submitting.', 'warn');
+    return;
+  }
 
   document.getElementById('confirm-class').textContent   = cls;
   document.getElementById('confirm-subject').textContent = subj;
@@ -1283,7 +1385,30 @@ function submitMarksToDOS() {
   const examV = document.getElementById('mk-exam').value;
   const [examName] = examV.split('|');
   const key = cls + '|' + subj + '|' + examName;
-  submittedMarks[key] = true;
+  const submission = {
+    class:cls, subject:subj, exam:examName, marks:{...currentMarksState},
+    comments:Object.fromEntries(Object.keys(currentMarksState).map(adm => [adm, document.getElementById('mk-comm-' + adm)?.value || ''])),
+    submittedAt:new Date().toISOString(), status:'Pending review'
+  };
+  submittedMarks[key] = submission;
+  const dosState = SMSStore.load('sms_dos_records', {}) || {};
+  const dosSubmissions = Array.isArray(dosState.submissions) ? dosState.submissions : [];
+  const existingSubmission = dosSubmissions.findIndex(item =>
+    item.teacher === (sess.fullName || sess.username) && item.cls === cls &&
+    item.subject === subj && item.exam === examName && item.status === 'Pending'
+  );
+  const dosSubmission = {
+    teacher:sess.fullName || sess.username, cls, subject:subj, exam:examName,
+    submitted:new Date().toLocaleDateString(), pupils:Object.keys(currentMarksState).length,
+    missing:0, status:'Pending', marks:submission.marks, comments:submission.comments,
+    submittedAt:submission.submittedAt
+  };
+  if (existingSubmission >= 0) dosSubmissions[existingSubmission] = dosSubmission;
+  else dosSubmissions.push(dosSubmission);
+  dosState.submissions = dosSubmissions;
+  SMSStore.save('sms_dos_records', dosState);
+  delete markDrafts[key];
+  saveTeacherRecords();
   closeM('overlay-submitConfirm');
   document.getElementById('submit-marks-btn').disabled = true;
   document.getElementById('save-draft-btn').disabled   = true;
@@ -1370,11 +1495,30 @@ function loadCommentPupils() {
         </div>
       </div>`).join('');
   }
+  pupils.forEach(p => {
+    const stored = savedTeacherComments[cls + '|' + term + '|' + p.adm] || {};
+    const academic = document.getElementById('ac-comm-' + p.adm);
+    const conduct = document.getElementById('bh-comm-' + p.adm);
+    if (academic) { academic.value = stored.academic || ''; updateCharCount(academic, 'ac-cc-' + p.adm, 300); }
+    if (conduct) { conduct.value = stored.conduct || ''; updateCharCount(conduct, 'bh-cc-' + p.adm, 300); }
+  });
   card.classList.remove('hidden');
   empty.classList.add('hidden');
 }
 
 function saveAllComments() {
+  const cls = document.getElementById('comm-class').value;
+  const term = document.getElementById('comm-term').value;
+  if (!cls || !term) { toast('Select a class and term first.', 'warn'); return; }
+  const pupils = demoPupils[cls] || [];
+  if (!pupils.length) { toast('There are no registered pupils in this class.', 'warn'); return; }
+  pupils.forEach(p => {
+    savedTeacherComments[cls + '|' + term + '|' + p.adm] = {
+      academic:document.getElementById('ac-comm-' + p.adm)?.value.trim() || '',
+      conduct:document.getElementById('bh-comm-' + p.adm)?.value.trim() || ''
+    };
+  });
+  saveTeacherRecords();
   toast('Comments saved for all pupils.', 'success');
 }
 
@@ -1386,7 +1530,7 @@ function updateCharCount(textarea, countId, max) {
 /* ══════════════════════════════
    LESSON PLANS
 ══════════════════════════════ */
-const lessonPlans = [];
+const lessonPlans = Array.isArray(savedTeacherState.lessonPlans) ? savedTeacherState.lessonPlans : [];
 
 function saveLessonPlan(status) {
   const week    = document.getElementById('lp-week').value.trim();
@@ -1401,7 +1545,11 @@ function saveLessonPlan(status) {
     toast('Please fill all required fields.', 'warn'); return;
   }
 
-  lessonPlans.unshift({ week, date, subject, cls, topic, objectives, activities, status, created: new Date().toLocaleDateString() });
+  lessonPlans.unshift({ week, date, subject, cls, topic, objectives, activities,
+    resources:document.getElementById('lp-resources').value.trim(),
+    aids:document.getElementById('lp-aids').value.trim(),
+    status, created: new Date().toLocaleDateString() });
+  saveTeacherRecords();
   closeM('overlay-mLessonPlan');
   renderLessonPlans();
   toast('Lesson plan ' + status.toLowerCase() + '.', status === 'Submitted' ? 'success' : 'info');
@@ -1431,14 +1579,20 @@ function renderLessonPlans() {
       <td>${lp.topic}</td>
       <td>${lp.created}</td>
       <td><span class="badge ${badgeMap[lp.status] || 'b-gray'}">${lp.status}</span></td>
-      <td><button class="btn btn-ghost btn-xs" onclick="toast('Viewing lesson plan details','info')">👁 View</button></td>
+      <td><button class="btn btn-ghost btn-xs" onclick="viewLessonPlan(${lessonPlans.indexOf(lp)})">👁 View</button></td>
     </tr>`).join('');
+}
+
+function viewLessonPlan(index) {
+  const plan = lessonPlans[index];
+  if (!plan) { toast('Lesson plan not found.', 'error'); return; }
+  alert(`Week ${plan.week} — ${plan.subject} / ${plan.cls}\n${plan.topic}\n\nObjectives:\n${plan.objectives}\n\nActivities:\n${plan.activities || 'Not provided'}\n\nResources:\n${plan.resources || 'Not provided'}\n\nTeaching aids:\n${plan.aids || 'Not provided'}\n\nStatus: ${plan.status}`);
 }
 
 /* ══════════════════════════════
    SCHEME OF WORK
 ══════════════════════════════ */
-const sowData = {};   // key = "subject|class|term" → array of rows
+const sowData = savedTeacherState.sowData || {};   // key = "subject|class|term" → array of rows
 
 function getSoWKey() {
   return document.getElementById('sow-subject').value + '|' +
@@ -1564,8 +1718,8 @@ function buildTimetable() {
 /* ══════════════════════════════
    ANNOUNCEMENTS
 ══════════════════════════════ */
-const demoSchoolAnn = [];
-const myAnnouncements = [];
+const demoSchoolAnn = Array.isArray(savedTeacherState.schoolAnnouncements) ? savedTeacherState.schoolAnnouncements : [];
+const myAnnouncements = Array.isArray(savedTeacherState.myAnnouncements) ? savedTeacherState.myAnnouncements : [];
 
 function renderSchoolAnn() {
   const list = document.getElementById('school-ann-list');
@@ -1633,7 +1787,7 @@ function postMyAnnouncement() {
 /* ══════════════════════════════
    RESOURCES
 ══════════════════════════════ */
-const uploadedResources = [];
+const uploadedResources = Array.isArray(savedTeacherState.uploadedResources) ? savedTeacherState.uploadedResources : [];
 
 function uploadResource() {
   const fileInput = document.getElementById('res-file');
@@ -1723,5 +1877,7 @@ function handleDrop(event) {
   updateDashboardKPIs();
 })();
 </script>
+<div class="sb-backdrop" id="sb-backdrop"></div>
+<script src="../assets/sidebar.js"></script>
 </body>
 </html>

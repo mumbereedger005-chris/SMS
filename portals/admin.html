@@ -1,0 +1,2068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin Portal – Five Star Model School</title>
+<link rel="stylesheet" href="../assets/sms.css"/>
+<style>
+.activity-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:7px}
+.perm-item{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:.72rem;cursor:pointer}
+.perm-item input{width:auto;flex-shrink:0}
+.role-card{border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--bg);margin-bottom:10px}
+.search-wrap{position:relative}
+.search-wrap input{padding-left:30px}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--sub);pointer-events:none}
+.quick-action-btn{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;text-align:left;font-size:.76rem;font-weight:500;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:9px}
+.quick-action-btn:hover{background:#e8eef6;border-color:#c5d4e8;color:var(--navy)}
+.class-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;font-size:.66rem;font-weight:600;background:var(--teal3);color:var(--teal2);margin:2px}
+.user-status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
+.dot-active{background:var(--green)}.dot-suspended{background:var(--amber)}.dot-inactive{background:var(--sub)}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-topbar">
+    <!-- Hamburger — three lines label -->
+    <button class="sb-hamburger" id="sb-ham" title="Open / close menu">
+      <span class="sb-hbar"></span>
+      <span class="sb-hbar"></span>
+      <span class="sb-hbar"></span>
+    </button>
+    <!-- Brand slides in when open -->
+    <div class="sb-brand">
+      <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
+      <div class="sb-school">
+        <div class="sb-school-name">Five Star School</div>
+        <div class="sb-portal-tag">Admin Portal</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sb-body">
+    <div class="sb-section"><div class="sb-section-label">Overview</div></div>
+    <div class="sb-item active" data-tip="Dashboard" data-close="1" onclick="nav('dashboard',this)">
+      <span class="sb-item-icon">&#9962;</span>
+      <span class="sb-item-name">Dashboard</span>
+    </div>
+
+    <div class="sb-section"><div class="sb-section-label">Users &amp; Staff</div></div>
+    <div class="sb-item" data-tip="User Accounts" onclick="nav('users',this)">
+      <span class="sb-item-icon">&#128101;</span>
+      <span class="sb-item-name">User Accounts</span>
+    </div>
+    <div class="sb-item" data-tip="Roles &amp; Permissions" onclick="nav('roles',this)">
+      <span class="sb-item-icon">&#128272;</span>
+      <span class="sb-item-name">Roles &amp; Permissions</span>
+    </div>
+    <div class="sb-item" data-tip="Staff Records" onclick="nav('staff',this)">
+      <span class="sb-item-icon">&#128100;</span>
+      <span class="sb-item-name">Staff Records</span>
+    </div>
+
+    <div class="sb-section"><div class="sb-section-label">School Setup</div></div>
+    <div class="sb-item" data-tip="School Profile" onclick="nav('profile',this)">
+      <span class="sb-item-icon">&#127979;</span>
+      <span class="sb-item-name">School Profile</span>
+    </div>
+    <div class="sb-item" data-tip="Classes &amp; Streams" onclick="nav('classes',this)">
+      <span class="sb-item-icon">&#128218;</span>
+      <span class="sb-item-name">Classes &amp; Streams</span>
+    </div>
+    <div class="sb-item" data-tip="Academic Settings" onclick="nav('academic',this)">
+      <span class="sb-item-icon">&#128197;</span>
+      <span class="sb-item-name">Academic Settings</span>
+    </div>
+    <div class="sb-item" data-tip="Subjects &amp; Grading" onclick="nav('subjects',this)">
+      <span class="sb-item-icon">&#128214;</span>
+      <span class="sb-item-name">Subjects &amp; Grading</span>
+    </div>
+
+    <div class="sb-section"><div class="sb-section-label">Operations</div></div>
+    <div class="sb-item" data-tip="Announcements" onclick="nav('announcements',this)">
+      <span class="sb-item-icon">&#128226;</span>
+      <span class="sb-item-name">Announcements</span>
+      <span class="sb-count" id="ann-badge">0</span>
+    </div>
+    <div class="sb-item" data-tip="Parent &amp; Community" onclick="nav('communications',this)">
+      <span class="sb-item-icon">&#128172;</span>
+      <span class="sb-item-name">Parent &amp; Community</span>
+    </div>
+    <div class="sb-item" data-tip="Reports" onclick="nav('reports',this)">
+      <span class="sb-item-icon">&#128202;</span>
+      <span class="sb-item-name">Reports</span>
+    </div>
+
+    <div class="sb-section"><div class="sb-section-label">System</div></div>
+    <div class="sb-item" data-tip="Audit Logs" onclick="nav('audit',this)">
+      <span class="sb-item-icon">&#128220;</span>
+      <span class="sb-item-name">Audit Logs</span>
+    </div>
+    <div class="sb-item" data-tip="Security &amp; Backup" onclick="nav('security',this)">
+      <span class="sb-item-icon">&#128274;</span>
+      <span class="sb-item-name">Security &amp; Backup</span>
+    </div>
+  </nav>
+
+  <div class="sb-foot">
+    <div class="sb-user-row">
+      <div class="sb-av" id="sb-av-init">A</div>
+      <div class="sb-user-info">
+        <div class="sb-uname" id="sb-uname">Administrator</div>
+        <div class="sb-urole">System Admin</div>
+      </div>
+    </div>
+    <button class="sb-logout" onclick="signOut()" title="Log Out">
+      <span class="sb-logout-icon">
+        <span class="sb-logout-arrow">
+          <svg class="sb-arrow-svg" viewBox="0 0 14 14"><path d="M5 2l5 5-5 5"/><line x1="10" y1="7" x2="2" y2="7"/></svg>
+        </span>
+      </span>
+      <span class="sb-logout-label">Log Out</span>
+    </button>
+  </div>
+</aside>
+<!-- Backdrop for mobile -->
+<div class="sb-backdrop" id="sb-backdrop"></div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main-area">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-left">
+      <div>
+        <div class="tb-title" id="pg-title">Dashboard</div>
+        <div class="tb-crumb" id="pg-crumb">Admin › Dashboard</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-meta" id="tb-term">Academic Year & Term</span>
+      <button class="tb-notif-btn" onclick="nav('announcements',null)" title="Announcements">
+        🔔<span class="tb-notif-dot" id="notif-dot" style="display:none"></span>
+      </button>
+      <div class="tb-user-chip">
+        <div class="tb-user-av" id="tb-av">A</div>
+        <span id="tb-uname">Admin</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-content">
+
+<!-- ════════════════════════════════════════════════
+     PAGE: DASHBOARD
+════════════════════════════════════════════════ -->
+<div id="pg-dashboard">
+
+  <!-- Welcome bar -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:1.05rem;font-weight:800;color:var(--navy)" id="welcome-msg">Good morning, Administrator 👋</div>
+      <div style="font-size:.74rem;color:var(--sub);margin-top:2px" id="today-date"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-teal btn-sm" onclick="nav('users',null)">+ Add User</button>
+      <button class="btn btn-outline btn-sm" onclick="nav('reports',null)">📊 Reports</button>
+      <button class="btn btn-outline btn-sm" onclick="nav('announcements',null)">📢 Announce</button>
+    </div>
+  </div>
+
+  <!-- KPI Row 1 -->
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-icon ic-navy">👨‍🎓</div><div><div class="kpi-val" id="kpi-pupils">—</div><div class="kpi-label">Total Pupils</div><div class="kpi-note" id="kpi-pupils-note"></div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-teal">👩‍🏫</div><div><div class="kpi-val" id="kpi-teach">—</div><div class="kpi-label">Teaching Staff</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-purple">🧑‍🔧</div><div><div class="kpi-val" id="kpi-nteach">—</div><div class="kpi-label">Non-Teaching</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-amber">👨‍👩‍👧</div><div><div class="kpi-val" id="kpi-parents">—</div><div class="kpi-label">Registered Parents</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-green">💵</div><div><div class="kpi-val" id="kpi-fees">UGX —</div><div class="kpi-label">Fees Collected</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-red">📌</div><div><div class="kpi-val" id="kpi-bal">UGX —</div><div class="kpi-label">Outstanding</div></div></div>
+  </div>
+
+  <!-- Pupil breakdown by class — bar chart -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-title">Pupils by Class</span>
+        <button class="btn btn-outline btn-sm" onclick="nav('reports',null)">Full Report</button>
+      </div>
+      <div class="card-body" id="pupils-by-class">
+        <canvas id="chart-pupils" height="180" style="display:block;width:100%;height:180px"></canvas>
+        <div id="pupils-chart-legend" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- Term progress pie chart -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title">Term Progress</span></div>
+      <div class="card-body" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="position:relative;flex-shrink:0">
+          <canvas id="chart-term-pie-1" width="140" height="140"></canvas>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none">
+            <div style="font-size:1.3rem;font-weight:900;color:var(--navy)" id="term-pct-label-1">—%</div>
+            <div style="font-size:.62rem;color:var(--sub);font-weight:600">Complete</div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:120px">
+          <div style="font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:10px" id="term-title-label-1">Current Term</div>
+          <div style="display:flex;flex-direction:column;gap:7px" id="term-stats-1">
+            <div style="display:flex;justify-content:space-between;font-size:.74rem"><span style="color:var(--sub)">Start</span><span id="term-start-1" style="font-weight:600">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:.74rem"><span style="color:var(--sub)">End</span><span id="term-end-1" style="font-weight:600">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:.74rem"><span style="color:var(--sub)">Days remaining</span><span id="term-days-1" style="font-weight:600;color:var(--teal)">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Today's attendance + donut -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title">Today's Attendance</span></div>
+      <div class="card-body" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="position:relative;flex-shrink:0">
+          <canvas id="chart-att-donut" width="120" height="120"></canvas>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none">
+            <div style="font-size:1.1rem;font-weight:900;color:var(--green)" id="att-pct">—%</div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+            <div style="text-align:center;background:var(--bg);border-radius:8px;padding:10px">
+              <div style="font-size:1.3rem;font-weight:800;color:var(--green)" id="att-present">—</div>
+              <div style="font-size:.64rem;color:var(--sub);font-weight:600">Present</div>
+            </div>
+            <div style="text-align:center;background:var(--bg);border-radius:8px;padding:10px">
+              <div style="font-size:1.3rem;font-weight:800;color:var(--red)" id="att-absent">—</div>
+              <div style="font-size:.64rem;color:var(--sub);font-weight:600">Absent</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;font-size:.72rem;color:var(--sub)">
+            <span id="att-late-lbl">Late: —</span>
+            <span id="att-excused-lbl">Excused: —</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fee collection bar chart -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title">Fee Collection This Term</span></div>
+      <div class="card-body">
+        <canvas id="chart-fees" height="130"></canvas>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-top:10px">
+          <div style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:#18A999;border-radius:2px;display:inline-block"></span>Collected</div>
+          <div style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;background:#e4e9f0;border-radius:2px;display:inline-block"></span>Outstanding</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Academic performance line -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title">Academic Performance</span></div>
+      <div class="card-body">
+        <canvas id="chart-performance" height="130"></canvas>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-top:10px;color:var(--sub)">
+          <span>Term average (%): <strong id="perf-avg" style="color:var(--navy)">—</strong></span>
+          <span>Trend: <strong id="perf-trend" style="color:var(--green)">—</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Term progress pie chart -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title">Term Progress</span></div>
+      <div class="card-body" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="position:relative;flex-shrink:0">
+          <canvas id="chart-term-pie-2" width="140" height="140"></canvas>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none">
+            <div style="font-size:1.3rem;font-weight:900;color:var(--navy)" id="term-pct-label-2">—%</div>
+            <div style="font-size:.62rem;color:var(--sub);font-weight:600">Complete</div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:120px">
+          <div style="font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:10px" id="term-title-label-2">Current Term</div>
+          <div style="display:flex;flex-direction:column;gap:7px" id="term-stats-2">
+            <div style="display:flex;justify-content:space-between;font-size:.74rem"><span style="color:var(--sub)">Start</span><span id="term-start-2" style="font-weight:600">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:.74rem"><span style="color:var(--sub)">End</span><span id="term-end-2" style="font-weight:600">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:.74rem"><span style="color:var(--sub)">Days remaining</span><span id="term-days-2" style="font-weight:600;color:var(--teal)">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Recent activity -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title">Recent Activity</span><button class="btn btn-ghost btn-sm" onclick="nav('audit',null)">View All</button></div>
+      <div class="card-body" style="padding:0" id="recent-activity">
+        <div class="empty"><div class="empty-icon" style="font-size:1.5rem">📋</div><div class="empty-desc">Activity log will appear here.</div></div>
+      </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="card">
+      <div class="card-hd"><span class="card-title">Quick Actions</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:7px">
+        <button class="quick-action-btn" onclick="openM('mUser')">Create Staff Account</button>
+        <button class="quick-action-btn" onclick="nav('staff',null)">Add Staff Record</button>
+        <button class="quick-action-btn" onclick="nav('classes',null)">Manage Classes &amp; Streams</button>
+        <button class="quick-action-btn" onclick="openM('mAnnounce')">Post Announcement</button>
+        <button class="quick-action-btn" onclick="nav('academic',null)">Academic Settings</button>
+        <button class="quick-action-btn" onclick="nav('audit',null)">View Audit Logs</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active announcements -->
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Active Announcements</span><button class="btn btn-primary btn-sm" onclick="openM('mAnnounce')">+ New</button></div>
+    <div class="card-body" style="padding:0" id="dash-ann">
+      <div class="empty"><div class="empty-icon" style="font-size:1.5rem">📢</div><div class="empty-desc">No announcements yet.</div></div>
+    </div>
+  </div>
+</div><!-- /dashboard -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: PARENT & COMMUNITY COMMUNICATION
+════════════════════════════════════════════════ -->
+<div id="pg-communications" class="hidden">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-icon ic-navy">📨</div><div><div class="kpi-val" id="comm-messages">—</div><div class="kpi-label">Messages sent</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-teal">👨‍👩‍👧‍👦</div><div><div class="kpi-val" id="comm-parents">—</div><div class="kpi-label">Parents connected</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-amber">📅</div><div><div class="kpi-val" id="comm-events">—</div><div class="kpi-label">Community events</div></div></div>
+    <div class="kpi"><div class="kpi-icon ic-green">✅</div><div><div class="kpi-val" id="comm-response">—</div><div class="kpi-label">Response rate</div></div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📨</span>Parent Messaging Centre</span><button class="btn btn-primary btn-sm" onclick="openM('mAnnounce')">+ Send Notice</button></div>
+      <div class="card-body" style="padding:0" id="comm-feed">
+        <div class="empty"><div class="empty-icon">💬</div><div class="empty-desc">No recent parent communications.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🤝</span>Community Engagement</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+        <div class="empty"><div class="empty-icon">🤝</div><div class="empty-desc">No community events recorded yet.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📞</span>Communication Channels</span></div>
+    <div class="card-body">
+      <div class="perm-grid">
+        <div class="perm-item"><input type="checkbox" data-channel="SMS notices"/> SMS notices</div>
+        <div class="perm-item"><input type="checkbox" data-channel="Email updates"/> Email updates</div>
+        <div class="perm-item"><input type="checkbox" data-channel="WhatsApp parent groups"/> WhatsApp parent groups</div>
+        <div class="perm-item"><input type="checkbox" data-channel="PTA announcements"/> PTA announcements</div>
+        <div class="perm-item"><input type="checkbox" data-channel="School website notices"/> School website notices</div>
+        <div class="perm-item"><input type="checkbox" data-channel="Parent meetings"/> Parent meetings</div>
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveCommunicationChannels()">Save Channels</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: USER ACCOUNTS
+════════════════════════════════════════════════ -->
+<div id="pg-users" class="hidden">
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">👥</span>User Accounts</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="user-srch" oninput="filterUsers()" placeholder="Search users…" style="padding:7px 10px 7px 28px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none;width:200px"/>
+        </div>
+        <select id="user-role-f" onchange="filterUsers()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none">
+          <option value="">All Roles</option>
+          <option>admin</option><option>registrar</option><option>dos</option>
+          <option>teacher</option><option>accountant</option><option>property</option><option>parent</option>
+        </select>
+        <select id="user-status-f" onchange="filterUsers()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none">
+          <option value="">All Status</option><option>Active</option><option>Suspended</option><option>Inactive</option>
+        </select>
+        <button class="btn btn-primary" onclick="openM('mUser')">+ Create Account</button>
+      </div>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>#</th><th>Full Name</th><th>Username</th><th>Role</th><th>Phone / Email</th><th>Status</th><th>Last Login</th><th>Actions</th></tr></thead>
+        <tbody id="user-tb"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: ROLES & PERMISSIONS
+════════════════════════════════════════════════ -->
+<div id="pg-roles" class="hidden">
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">🔐</span>Roles & Permissions</span><button class="btn btn-primary" onclick="openM('mRole')">+ Create Role</button></div>
+    <div class="card-body" id="roles-body"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: STAFF RECORDS
+════════════════════════════════════════════════ -->
+<div id="pg-staff" class="hidden">
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">👔</span>Staff Records</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="staff-cat-f" onchange="filterStaff()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none">
+          <option value="">All Categories</option>
+          <option>Teaching</option><option>Non-Teaching</option><option>Driver/Transport</option><option>Support/Maintenance</option>
+        </select>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="staff-srch" oninput="filterStaff()" placeholder="Search staff…" style="padding:7px 10px 7px 28px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none;width:190px"/>
+        </div>
+        <button class="btn btn-primary" onclick="openM('mStaff')">+ Add Staff</button>
+      </div>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Staff ID</th><th>Full Name</th><th>Gender</th><th>Category</th><th>Job Title</th><th>Department</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="staff-tb"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: SCHOOL PROFILE
+════════════════════════════════════════════════ -->
+<div id="pg-profile" class="hidden">
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">🏫</span>School Profile</span><button class="btn btn-teal" onclick="saveProfile()">💾 Save Changes</button></div>
+    <div class="card-body">
+      <!-- Logo & preview -->
+      <div style="display:flex;align-items:flex-start;gap:20px;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px;flex-wrap:wrap">
+        <div style="text-align:center">
+          <img src="../star logo.png" id="prof-logo-img" style="width:90px;height:90px;object-fit:contain;border-radius:12px;border:2px solid var(--border)"/>
+          <div style="margin-top:8px">
+            <label class="btn btn-outline btn-sm" style="cursor:pointer">📷 Change Logo <input type="file" accept="image/*" style="display:none" onchange="previewLogo(this)"/></label>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:1.1rem;font-weight:800;color:var(--navy)" id="prof-name-disp">Five Star Model School</div>
+          <div style="font-size:.78rem;color:var(--sub);font-style:italic" id="prof-motto-disp">"Nature for Excellence"</div>
+          <div style="font-size:.74rem;color:var(--sub);margin-top:4px">📍 Kasese District, Uganda</div>
+          <span class="badge b-teal" style="margin-top:8px">Day &amp; Boarding School</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>School Name *</label><input id="pf-name" type="text" placeholder="Official school name"/></div>
+        <div class="fg"><label>Short Name / Abbreviation</label><input id="pf-abbr" type="text" placeholder="e.g. BFS"/></div>
+        <div class="fg"><label>School Motto</label><input id="pf-motto" type="text" placeholder="e.g. Nature for Excellence"/></div>
+        <div class="fg"><label>School Type</label><select id="pf-type"><option>Day School</option><option>Day &amp; Boarding</option><option>Boarding Only</option></select></div>
+        <div class="fg"><label>UMB Centre Number</label><input id="pf-umb" type="text" placeholder="Centre number"/></div>
+        <div class="fg"><label>Physical Address</label><input id="pf-addr" type="text" placeholder="Street/Road, area"/></div>
+        <div class="fg"><label>District</label><input id="pf-district" type="text" placeholder="e.g. Kasese"/></div>
+        <div class="fg"><label>Country</label><input id="pf-country" type="text" placeholder="e.g. Uganda"/></div>
+        <div class="fg"><label>Phone Number</label><input id="pf-phone" type="tel" placeholder="+256..."/></div>
+        <div class="fg"><label>Email Address</label><input id="pf-email" type="email" placeholder="school@email.com"/></div>
+        <div class="fg"><label>Website</label><input id="pf-web" type="text" placeholder="www.example.ug"/></div>
+        <div class="fg"><label>Year Founded</label><input id="pf-founded" type="number" placeholder="Year"/></div>
+      </div>
+      <div class="form-section">Receipt & Admission Number Format</div>
+      <div class="form-row">
+        <div class="fg"><label>Admission Number Format</label><input id="pf-adm-fmt" type="text" placeholder="e.g. BFS-{YEAR}-{SEQ5}"/><span class="hint">Use {YEAR} for year and {SEQ5} for 5-digit sequence</span></div>
+        <div class="fg"><label>Receipt Number Format</label><input id="pf-rcp-fmt" type="text" placeholder="e.g. BFS-RCP-{YEAR}-{SEQ5}"/></div>
+      </div>
+      <div class="form-section">Report Card Settings</div>
+      <div class="form-row">
+        <div class="fg"><label>Head Teacher Name (for signatures)</label><input id="pf-ht" type="text" placeholder="Head teacher full name"/></div>
+        <div class="fg"><label>Head Teacher Title</label><input id="pf-ht-title" type="text" placeholder="e.g. B.Ed, M.Ed"/></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: CLASSES & STREAMS
+════════════════════════════════════════════════ -->
+<div id="pg-classes" class="hidden">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🏫</span>Classes</span><button class="btn btn-primary btn-sm" onclick="openM('mClass')">+ Add Class</button></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl"><thead><tr><th>Class Name</th><th>Level</th><th>Streams</th><th>Pupils</th><th></th></tr></thead>
+        <tbody id="class-tb"></tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🔀</span>Streams</span><button class="btn btn-primary btn-sm" onclick="openM('mStream')">+ Add Stream</button></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl"><thead><tr><th>Class</th><th>Stream Name</th><th>Full Name</th><th></th></tr></thead>
+        <tbody id="stream-tb"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: ACADEMIC SETTINGS
+════════════════════════════════════════════════ -->
+<div id="pg-academic" class="hidden">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(this,'tab-years')">Academic Years</div>
+    <div class="tab" onclick="switchTab(this,'tab-terms')">Terms</div>
+    <div class="tab" onclick="switchTab(this,'tab-calendar')">School Calendar</div>
+  </div>
+
+  <div id="tab-years" class="tab-pane active">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📅</span>Academic Years</span><button class="btn btn-primary" onclick="openM('mYear')">+ Add Year</button></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl"><thead><tr><th>Year</th><th>Start</th><th>End</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="year-tb"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="tab-terms" class="tab-pane">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📆</span>Terms</span><button class="btn btn-primary" onclick="openM('mTerm')">+ Add Term</button></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl"><thead><tr><th>Term</th><th>Academic Year</th><th>Start</th><th>End</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="term-tb"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="tab-calendar" class="tab-pane">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📅</span>School Calendar</span><button class="btn btn-primary" onclick="openM('mCalEvt')">+ Add Event</button></div>
+      <div class="card-body" id="cal-body">
+        <div class="empty"><div class="empty-icon">📅</div><div class="empty-desc">No calendar events added yet.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: SUBJECTS & GRADING
+════════════════════════════════════════════════ -->
+<div id="pg-subjects" class="hidden">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">📖</span>Subjects</span><button class="btn btn-primary btn-sm" onclick="openM('mSubject')">+ Add</button></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl"><thead><tr><th>Code</th><th>Subject Name</th><th>Level</th><th>Status</th><th></th></tr></thead>
+        <tbody id="subj-tb"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🎓</span>Uganda Primary Grading Scale</span></div>
+      <div class="card-flush tbl-wrap">
+        <table class="tbl"><thead><tr><th>Grade</th><th>Min</th><th>Max</th><th>Remarks</th><th>Points</th></tr></thead>
+        <tbody id="grade-tb"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: ANNOUNCEMENTS
+════════════════════════════════════════════════ -->
+<div id="pg-announcements" class="hidden">
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📢</span>Announcements</span><button class="btn btn-primary" onclick="openM('mAnnounce')">+ New Announcement</button></div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Title</th><th>Audience</th><th>Date Posted</th><th>Expires</th><th>Posted By</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="ann-tb"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: REPORTS
+════════════════════════════════════════════════ -->
+<div id="pg-reports" class="hidden">
+  <div class="kpi-grid">
+    <div class="kpi" style="cursor:pointer" onclick="selectReportType('Attendance')"><div class="kpi-icon ic-navy">📋</div><div><div class="kpi-val">Attendance</div><div class="kpi-label">Select report type</div></div></div>
+    <div class="kpi" style="cursor:pointer" onclick="selectReportType('Academic Performance')"><div class="kpi-icon ic-green">📈</div><div><div class="kpi-val">Performance</div><div class="kpi-label">Select report type</div></div></div>
+    <div class="kpi" style="cursor:pointer" onclick="selectReportType('Admissions')"><div class="kpi-icon ic-amber">📝</div><div><div class="kpi-val">Admissions</div><div class="kpi-label">Select report type</div></div></div>
+    <div class="kpi" style="cursor:pointer" onclick="selectReportType('Fee Collection')"><div class="kpi-icon ic-teal">💰</div><div><div class="kpi-val">Finances</div><div class="kpi-label">Select report type</div></div></div>
+    <div class="kpi" style="cursor:pointer" onclick="selectReportType('Staff')"><div class="kpi-icon ic-purple">👥</div><div><div class="kpi-val">Staff</div><div class="kpi-label">Select report type</div></div></div>
+    <div class="kpi" style="cursor:pointer" onclick="selectReportType('Property')"><div class="kpi-icon ic-pink">🏗️</div><div><div class="kpi-val">Property</div><div class="kpi-label">Select report type</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title"><span class="card-title-icon">📊</span>Custom Report Builder</span></div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="fg"><label>Report Type</label><select id="rpt-type"><option>Attendance</option><option>Academic Performance</option><option>Fee Collection</option><option>Admissions</option><option>Staff</option><option>Property</option></select></div>
+        <div class="fg"><label>Academic Year</label><select id="rpt-yr"><option>— Select —</option></select></div>
+        <div class="fg"><label>Term</label><select id="rpt-term"><option value="">All Terms</option></select></div>
+        <div class="fg"><label>Class</label><select id="rpt-cls"><option>All Classes</option></select></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-primary" onclick="generateReport()">📊 Generate</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+      </div>
+      <div id="report-output" class="card" style="display:none;margin-top:16px;padding:16px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: AUDIT LOGS
+════════════════════════════════════════════════ -->
+<div id="pg-audit" class="hidden">
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title"><span class="card-title-icon">📜</span>Audit Logs</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="date" id="audit-date" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none"/>
+        <select id="audit-action" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none">
+          <option value="">All Actions</option><option>Login</option><option>Create</option><option>Update</option><option>Delete</option><option>Approve</option>
+        </select>
+        <select id="audit-user" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.74rem;outline:none">
+          <option value="">All Users</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-flush tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Date / Time</th><th>User</th><th>Role</th><th>Action</th><th>Record Type</th><th>Details</th><th>IP</th></tr></thead>
+        <tbody id="audit-tb"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: SECURITY & BACKUP
+════════════════════════════════════════════════ -->
+<div id="pg-security" class="hidden">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">💾</span>Backup Management</span></div>
+      <div class="card-body">
+        <p style="font-size:.76rem;color:var(--sub);margin-bottom:14px">Create and manage system backups to protect school data from loss.</p>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn btn-primary" onclick="createBackup()">💾 Create Backup Now</button>
+          <button class="btn btn-outline" id="backup-schedule-btn" onclick="toggleAutoBackup()">⏰ Schedule Auto Backup</button>
+          <button class="btn btn-outline" onclick="downloadLatestBackup()">⬇️ Download Latest Backup</button>
+          <label class="btn btn-outline" style="text-align:center">♻️ Restore Backup<input type="file" accept="application/json,.json" style="display:none" onchange="restoreBackup(this)"/></label>
+        </div>
+        <div class="divider"></div>
+        <div style="font-size:.74rem;color:var(--sub)">Last backup: <strong id="last-backup-label" style="color:var(--text)">Not created</strong></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-title"><span class="card-title-icon">🔑</span>Security Settings</span></div>
+      <div class="card-body">
+        <div class="fg"><label>Password Policy</label>
+          <select id="sec-password-policy"><option>Minimum 8 characters</option><option>Min 10 chars + number</option><option>Min 12 chars + uppercase + special</option></select>
+        </div>
+        <div class="fg"><label>Session Timeout (minutes)</label><input id="sec-timeout" type="number" placeholder="e.g. 60" min="15" max="480"/></div>
+        <div class="fg"><label>Max Failed Login Attempts</label><input id="sec-failed-attempts" type="number" placeholder="e.g. 5" min="3" max="10"/></div>
+        <div class="fg"><label>Two-Factor Authentication</label>
+          <select id="sec-2fa"><option>Disabled</option><option>Optional</option><option>Required for Admin</option><option>Required for All</option></select>
+        </div>
+        <button class="btn btn-teal" onclick="saveSecuritySettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /page-content -->
+</div><!-- /main-area -->
+</div><!-- /layout -->
+
+<!-- ══════════════ MODALS ══════════════ -->
+
+<!-- Create User Account -->
+<div class="overlay" id="mUser">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">👤 Create User Account</span><button class="modal-close" onclick="closeM('mUser')">×</button></div>
+    <div class="modal-bd">
+      <div class="alert alert-navy" style="margin-bottom:14px">ℹ️ Staff personal records should be created in Staff Records first. This creates the login account.</div>
+      <div class="form-row">
+        <div class="fg"><label>Full Name *</label><input type="text" id="u-name" placeholder="Full name"/></div>
+        <div class="fg"><label>Username *</label><input type="text" id="u-username" placeholder="Login username"/></div>
+        <div class="fg"><label>Email</label><input type="email" id="u-email" placeholder="email@school.ug"/></div>
+        <div class="fg"><label>Phone</label><input type="tel" id="u-phone" placeholder="+256..."/></div>
+        <div class="fg"><label>Role *</label>
+          <select id="u-role">
+            <option value="">— Select role —</option>
+            <option value="admin">Administrator</option>
+            <option value="registrar">Registrar</option>
+            <option value="dos">Director of Studies</option>
+            <option value="teacher">Teacher</option>
+            <option value="accountant">Accountant</option>
+            <option value="property">Property Manager</option>
+          </select>
+        </div>
+        <div class="fg"><label>Account Status</label>
+          <select id="u-status"><option>Active</option><option>Inactive</option></select>
+        </div>
+      </div>
+      <div class="fg"><label>Temporary Password *</label><input type="password" id="u-pw" placeholder="Min. 8 characters"/><span class="hint">User must change this on first login.</span></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mUser')">Cancel</button><button class="btn btn-primary" onclick="createUser()">Create Account</button></div>
+  </div>
+</div>
+
+<!-- Add Staff -->
+<div class="overlay" id="mStaff">
+  <div class="modal modal-lg">
+    <div class="modal-hd"><span class="modal-title">👔 Add Staff Record</span><button class="modal-close" onclick="closeM('mStaff')">×</button></div>
+    <div class="modal-bd">
+      <div class="form-section">Personal Information</div>
+      <div class="form-row">
+        <div class="fg"><label>First Name *</label><input type="text" id="sf-fn" placeholder="First name"/></div>
+        <div class="fg"><label>Last Name *</label><input type="text" id="sf-ln" placeholder="Last name"/></div>
+        <div class="fg"><label>Gender *</label><select id="sf-gender"><option value="">— Select —</option><option>Male</option><option>Female</option></select></div>
+        <div class="fg"><label>National ID</label><input type="text" id="sf-nid" placeholder="National ID number"/></div>
+        <div class="fg"><label>Phone</label><input type="tel" id="sf-phone" placeholder="+256..."/></div>
+        <div class="fg"><label>Email</label><input type="email" id="sf-email" placeholder="Optional"/></div>
+      </div>
+      <div class="form-section">Employment Information</div>
+      <div class="form-row">
+        <div class="fg"><label>Staff Category *</label>
+          <select id="sf-cat">
+            <option value="">— Select —</option>
+            <option>Teaching</option><option>Non-Teaching</option><option>Driver/Transport</option><option>Support/Maintenance</option>
+          </select>
+        </div>
+        <div class="fg"><label>Job Title</label><input type="text" id="sf-title" placeholder="e.g. Headteacher, Class Teacher"/></div>
+        <div class="fg"><label>Department</label><input type="text" id="sf-dept" placeholder="e.g. Academics, Administration"/></div>
+        <div class="fg"><label>Date Employed</label><input type="date" id="sf-date"/></div>
+        <div class="fg"><label>Salary (UGX)</label><input type="number" id="sf-salary" placeholder="Monthly salary"/></div>
+        <div class="fg"><label>Employment Status</label>
+          <select id="sf-status"><option>Active</option><option>On Leave</option><option>Contract</option><option>Terminated</option></select>
+        </div>
+      </div>
+      <div class="form-section">Documents</div>
+      <div class="form-row">
+        <div class="fg"><label>Appointment Letter</label><input type="file"/></div>
+        <div class="fg"><label>Academic Qualifications</label><input type="file" multiple/></div>
+        <div class="fg"><label>Staff Photo</label><input type="file" accept="image/*"/></div>
+        <div class="fg"><label>Driving Permit (if applicable)</label><input type="file"/></div>
+      </div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mStaff')">Cancel</button><button class="btn btn-primary" onclick="addStaff()">Save Record</button></div>
+  </div>
+</div>
+
+<!-- Create Role -->
+<div class="overlay" id="mRole">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">🔐 Create Role</span><button class="modal-close" onclick="closeM('mRole')">×</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Role Name *</label><input type="text" id="rl-name" placeholder="e.g. Librarian, Bursar"/></div>
+      <div class="fg"><label>Description</label><input type="text" id="rl-desc" placeholder="Brief role description"/></div>
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--teal);margin-bottom:8px">Permissions</div>
+      <div class="perm-grid" id="perm-grid"></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mRole')">Cancel</button><button class="btn btn-primary" onclick="saveRole()">Save Role</button></div>
+  </div>
+</div>
+
+<!-- Add Class -->
+<div class="overlay" id="mClass">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-hd"><span class="modal-title">🏫 Add Class</span><button class="modal-close" onclick="closeM('mClass')">×</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Class Name *</label><input type="text" id="cl-name" placeholder="e.g. Primary 1, Baby Class"/></div>
+      <div class="fg"><label>Level</label>
+        <select id="cl-level"><option>Nursery (ECD)</option><option>Primary</option></select>
+      </div>
+      <div class="fg"><label>Sort Order</label><input type="number" id="cl-order" placeholder="e.g. 1 for first class" min="1"/></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mClass')">Cancel</button><button class="btn btn-primary" onclick="addClass()">Add Class</button></div>
+  </div>
+</div>
+
+<!-- Add Stream -->
+<div class="overlay" id="mStream">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-hd"><span class="modal-title">🔀 Add Stream</span><button class="modal-close" onclick="closeM('mStream')">×</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Class *</label><select id="st-cls" style="width:100%"></select></div>
+      <div class="fg"><label>Stream Name *</label><input type="text" id="st-name" placeholder="e.g. East, West, North, A, B"/></div>
+      <div class="fg hint">Full stream name will be: <strong id="st-preview">—</strong></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mStream')">Cancel</button><button class="btn btn-primary" onclick="addStream()">Add Stream</button></div>
+  </div>
+</div>
+
+<!-- Add Academic Year -->
+<div class="overlay" id="mYear">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hd"><span class="modal-title">📅 Add Academic Year</span><button class="modal-close" onclick="closeM('mYear')">×</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Year Name *</label><input type="text" id="yr-name" placeholder="e.g. 2025, 2025/2026"/></div>
+      <div class="form-row">
+        <div class="fg"><label>Start Date</label><input type="date" id="yr-start"/></div>
+        <div class="fg"><label>End Date</label><input type="date" id="yr-end"/></div>
+      </div>
+      <div class="fg"><label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="yr-cur" style="width:auto"/> Set as Current Academic Year</label></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mYear')">Cancel</button><button class="btn btn-primary" onclick="addYear()">Save</button></div>
+  </div>
+</div>
+
+<!-- Add Term -->
+<div class="overlay" id="mTerm">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hd"><span class="modal-title">📆 Add Term</span><button class="modal-close" onclick="closeM('mTerm')">×</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Academic Year *</label><select id="tm-yr" style="width:100%"></select></div>
+      <div class="fg"><label>Term Name *</label><input type="text" id="tm-name" placeholder="e.g. Term 1, Term 2, Term 3"/></div>
+      <div class="form-row">
+        <div class="fg"><label>Start Date</label><input type="date" id="tm-start"/></div>
+        <div class="fg"><label>End Date</label><input type="date" id="tm-end"/></div>
+      </div>
+      <div class="fg"><label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="tm-cur" style="width:auto"/> Set as Current Term</label></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mTerm')">Cancel</button><button class="btn btn-primary" onclick="addTerm()">Save</button></div>
+  </div>
+</div>
+
+<!-- Calendar Event -->
+<div class="overlay" id="mCalEvt">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hd"><span class="modal-title">📅 Add Calendar Event</span><button class="modal-close" onclick="closeM('mCalEvt')">×</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Event Name *</label><input type="text" id="ev-name"/></div>
+      <div class="form-row">
+        <div class="fg"><label>Date *</label><input type="date" id="ev-date"/></div>
+        <div class="fg"><label>End Date</label><input type="date" id="ev-edate"/></div>
+        <div class="fg"><label>Type</label>
+          <select id="ev-type"><option>School Holiday</option><option>Opening Day</option><option>Closing Day</option><option>Exam</option><option>Meeting</option><option>Activity</option><option>Deadline</option><option>Other</option></select>
+        </div>
+        <div class="fg"><label>Affects</label>
+          <select id="ev-scope"><option>All</option><option>Pupils Only</option><option>Staff Only</option></select>
+        </div>
+      </div>
+      <div class="fg"><label>Description</label><textarea id="ev-desc" rows="2"></textarea></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mCalEvt')">Cancel</button><button class="btn btn-primary" onclick="addCalEvt()">Add Event</button></div>
+  </div>
+</div>
+
+<!-- Add Subject -->
+<div class="overlay" id="mSubject">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-hd"><span class="modal-title">📖 Add Subject</span><button class="modal-close" onclick="closeM('mSubject')">×</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Subject Code *</label><input type="text" id="sub-code" placeholder="e.g. MTH, ENG"/></div>
+      <div class="fg"><label>Subject Name *</label><input type="text" id="sub-name" placeholder="e.g. Mathematics"/></div>
+      <div class="fg"><label>Level</label>
+        <select id="sub-level"><option>All Levels</option><option>Nursery Only</option><option>Primary Only</option></select>
+      </div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mSubject')">Cancel</button><button class="btn btn-primary" onclick="addSubject()">Add</button></div>
+  </div>
+</div>
+
+<!-- Announcement -->
+<div class="overlay" id="mAnnounce">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">📢 New Announcement</span><button class="modal-close" onclick="closeM('mAnnounce')">×</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Title *</label><input type="text" id="an-title" placeholder="Announcement title"/></div>
+      <div class="form-row">
+        <div class="fg"><label>Audience</label>
+          <select id="an-aud">
+            <option value="all">Everyone (Staff + Parents)</option>
+            <option value="staff">Staff Only</option>
+            <option value="parents">Parents Only</option>
+            <option value="teachers">Teachers Only</option>
+          </select>
+        </div>
+        <div class="fg"><label>Priority</label>
+          <select id="an-priority"><option>Normal</option><option>Important</option><option>Urgent</option></select>
+        </div>
+        <div class="fg"><label>Expires On</label><input type="date" id="an-exp"/></div>
+        <div class="fg"><label>Academic Year</label><select id="an-yr"><option>Current Year</option></select></div>
+      </div>
+      <div class="fg"><label>Message *</label><textarea id="an-body" rows="5" placeholder="Type your announcement here…"></textarea></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('mAnnounce')">Cancel</button><button class="btn btn-primary" onclick="addAnnouncement()">Publish</button></div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const S = {
+  users: [], staff: [],
+  classes: [],
+  streams: [], years: [], terms: [], calEvents: [], announcements: [],
+  stats: {
+    attendance: null,
+    feeCollection: [],
+    performance: [],
+    classDistribution: []
+  },
+  profile: {},
+  security: {},
+  communicationChannels: [],
+  backup: {auto: false, lastCreated: null},
+  subjects: [],
+  grading: [
+    {g:'D1',mn:90,mx:100,r:'Distinction',p:1},
+    {g:'D2',mn:80,mx:89,r:'Distinction',p:2},
+    {g:'C3',mn:70,mx:79,r:'Credit',p:3},
+    {g:'C4',mn:65,mx:69,r:'Credit',p:4},
+    {g:'C5',mn:60,mx:64,r:'Credit',p:5},
+    {g:'C6',mn:55,mx:59,r:'Credit',p:6},
+    {g:'P7',mn:50,mx:54,r:'Pass',p:7},
+    {g:'P8',mn:45,mx:49,r:'Pass',p:8},
+    {g:'F9',mn:0,mx:44,r:'Fail',p:9},
+  ],
+  roles: [
+    {name:'admin',desc:'Full system access',perms:['all']},
+    {name:'registrar',desc:'Pupil records and admissions',perms:['admissions','pupils','parents','class_lists']},
+    {name:'dos',desc:'Academic oversight',perms:['subjects','exams','results_approval','report_cards','timetable']},
+    {name:'teacher',desc:'Classroom management',perms:['attendance','marks_entry','lesson_plans','class_register']},
+    {name:'accountant',desc:'Financial management',perms:['fee_structure','payments','expenses','financial_reports']},
+    {name:'property',desc:'Assets and inventory',perms:['assets','inventory','maintenance','procurement']},
+    {name:'parent',desc:'View child records',perms:['view_child','view_fees','view_attendance','view_reports']},
+  ],
+  audit: [],
+  PERMS: ['admissions','pupils','parents','class_lists','attendance','marks_entry','lesson_plans',
+    'fee_structure','payments','expenses','financial_reports','subjects','exams','results_approval',
+    'report_cards','timetable','assets','inventory','maintenance','procurement','audit_logs','user_management']
+};
+
+const ADMIN_DATA_KEY = 'sms_admin_data';
+const ADMIN_BACKUP_KEY = 'sms_admin_latest_backup';
+let editingRoleName = null;
+try {
+  const storedState = JSON.parse(localStorage.getItem(ADMIN_DATA_KEY) || 'null');
+  if (storedState && typeof storedState === 'object') {
+    ['users','staff','classes','streams','years','terms','calEvents','announcements','subjects','roles','audit']
+      .forEach(key => { if (Array.isArray(storedState[key])) S[key] = storedState[key]; });
+    if (storedState.stats && typeof storedState.stats === 'object') {
+      ['feeCollection','performance','classDistribution'].forEach(key => {
+        if (Array.isArray(storedState.stats[key])) S.stats[key] = storedState.stats[key];
+      });
+      if (storedState.stats.attendance && typeof storedState.stats.attendance === 'object') S.stats.attendance = storedState.stats.attendance;
+    }
+    ['profile','security'].forEach(key => {
+      if (storedState[key] && typeof storedState[key] === 'object') S[key] = storedState[key];
+    });
+    if (Array.isArray(storedState.communicationChannels)) S.communicationChannels = storedState.communicationChannels;
+    if (storedState.backup && typeof storedState.backup === 'object') S.backup = {...S.backup, ...storedState.backup};
+  }
+} catch (error) {
+  toast('Saved admin data could not be loaded: ' + error.message, 'error');
+}
+
+// ═══════════════════════════════════════════════════════
+// SESSION
+// ═══════════════════════════════════════════════════════
+const sess = JSON.parse(sessionStorage.getItem('sms_user') || '{}');
+if (!sess.loggedIn) location.href = '../index.html';
+function signOut() { sessionStorage.clear(); location.href = '../index.html'; }
+
+// Set user display
+const uname = sess.fullName || sess.username || 'Administrator';
+document.getElementById('sb-av-init').textContent = uname.charAt(0).toUpperCase();
+document.getElementById('sb-uname').textContent   = uname;
+document.getElementById('tb-av').textContent       = uname.charAt(0).toUpperCase();
+document.getElementById('tb-uname').textContent    = uname;
+
+// Greeting
+function setGreeting() {
+  const h = new Date().getHours();
+  const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('welcome-msg').textContent = `${g}, ${uname} 👋`;
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+}
+setGreeting();
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+const PAGES = {
+  dashboard:'Dashboard', users:'User Accounts', roles:'Roles & Permissions',
+  staff:'Staff Records', profile:'School Profile', classes:'Classes & Streams',
+  academic:'Academic Settings', subjects:'Subjects & Grading',
+  announcements:'Announcements', communications:'Parent & Community Communication',
+  reports:'Reports', audit:'Audit Logs', security:'Security & Backup'
+};
+
+function nav(id, navEl) {
+  document.querySelectorAll('[id^="pg-"]').forEach(e => e.classList.add('hidden'));
+  const pg = document.getElementById('pg-'+id);
+  if (pg) pg.classList.remove('hidden');
+  document.querySelectorAll('.sb-item').forEach(e => e.classList.remove('active'));
+  if (navEl) navEl.classList.add('active');
+  else document.querySelectorAll('.sb-item').forEach(e => {
+    if (e.getAttribute('onclick')?.includes("'"+id+"'")) e.classList.add('active');
+  });
+  document.getElementById('pg-title').textContent = PAGES[id]||id;
+  document.getElementById('pg-crumb').textContent = 'Admin › '+(PAGES[id]||id);
+  renderPage(id);
+}
+
+function renderPage(id) {
+  if (id==='dashboard')       renderDash();
+  if (id==='users')           renderUsers();
+  if (id==='staff')           renderStaff();
+  if (id==='classes')         renderClasses();
+  if (id==='academic')        renderAcademic();
+  if (id==='subjects')        renderSubjects();
+  if (id==='announcements')   renderAnnouncements();
+  if (id==='communications')  renderCommunications();
+  if (id==='audit')           renderAudit();
+  if (id==='roles')           renderRoles();
+  if (id==='reports')         renderReports();
+  if (id==='security')        renderSecuritySettings();
+  if (id==='profile')         renderProfile();
+}
+
+function renderCommunications() {
+  const parents = S.users.filter(u => u.role === 'parent').length;
+  const notices = S.announcements.filter(a => a.aud === 'parents' || a.aud === 'all').length;
+  const feed = document.getElementById('comm-feed');
+  const messageList = S.announcements.length ? S.announcements.slice().reverse().slice(0, 5).map(a => `
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)">
+      <div style="font-size:1.2rem">📣</div>
+      <div style="flex:1">
+        <div style="font-size:.8rem;font-weight:700">${a.title}</div>
+        <div class="text-muted">${a.aud === 'parents' ? 'Parents only' : a.aud === 'all' ? 'Parents & staff' : a.aud} · ${a.date || 'Today'}</div>
+      </div>
+      <span class="badge b-${a.priority === 'Urgent' ? 'red' : a.priority === 'Important' ? 'amber' : 'teal'}">${a.priority || 'Normal'}</span>
+    </div>
+  `).join('') : '<div class="empty"><div class="empty-icon">💬</div><div class="empty-desc">No recent parent communications.</div></div>';
+
+  if (feed) feed.innerHTML = messageList;
+  document.getElementById('comm-messages').textContent = notices || '—';
+  document.getElementById('comm-parents').textContent = parents || '—';
+  document.getElementById('comm-events').textContent = '—';
+  document.getElementById('comm-response').textContent = '—';
+  document.querySelectorAll('[data-channel]').forEach(input => {
+    input.checked = S.communicationChannels.includes(input.dataset.channel);
+  });
+}
+
+function saveCommunicationChannels() {
+  S.communicationChannels = [...document.querySelectorAll('[data-channel]:checked')].map(input => input.dataset.channel);
+  addAudit('Update','Communication Channels','Saved '+S.communicationChannels.length+' channel preferences');
+  toast('Communication channels saved','success');
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[char]);
+}
+
+function selectReportType(type) {
+  document.getElementById('rpt-type').value = type;
+  generateReport();
+}
+
+function renderReports() {
+  const yearSelect = document.getElementById('rpt-yr');
+  const termSelect = document.getElementById('rpt-term');
+  const classSelect = document.getElementById('rpt-cls');
+  if (yearSelect) yearSelect.innerHTML = '<option value="">All Years</option>' + S.years.map(year => `<option>${escapeHtml(year.name)}</option>`).join('');
+  if (termSelect) termSelect.innerHTML = '<option value="">All Terms</option>' + S.terms.map(term => `<option>${escapeHtml(term.name)}</option>`).join('');
+  if (classSelect) classSelect.innerHTML = '<option value="">All Classes</option>' + S.classes.map(cls => `<option>${escapeHtml(cls.name)}</option>`).join('');
+}
+
+function generateReport() {
+  const type = document.getElementById('rpt-type').value;
+  const year = document.getElementById('rpt-yr').value;
+  const term = document.getElementById('rpt-term').value;
+  const className = document.getElementById('rpt-cls').value;
+  const output = document.getElementById('report-output');
+  const lines = [];
+  let hasRecords = false;
+
+  if (type === 'Attendance' && S.stats.attendance) {
+    const {present, absent, late, excused} = S.stats.attendance;
+    lines.push(`Present: ${present}`, `Absent: ${absent}`, `Late: ${late}`, `Excused: ${excused}`);
+    hasRecords = true;
+  } else if (type === 'Academic Performance' && S.stats.performance.length) {
+    lines.push(...S.stats.performance.map(item => `${item.label}: ${item.score}%`));
+    hasRecords = true;
+  } else if (type === 'Fee Collection' && S.stats.feeCollection.length) {
+    lines.push(...S.stats.feeCollection.map(item => `${item.label}: Collected ${formatUgx(item.collected)}; outstanding ${formatUgx(item.outstanding)}`));
+    hasRecords = true;
+  } else if (type === 'Staff' && S.staff.length) {
+    lines.push(`Staff records: ${S.staff.length}`, ...S.staff.map(person => `${person.fn} ${person.ln} — ${person.cat}`));
+    hasRecords = true;
+  }
+
+  const filters = [year, term, className].filter(Boolean).join(' · ');
+  output.style.display = 'block';
+  output.innerHTML = `<strong>${escapeHtml(type)} Report${filters ? ` — ${escapeHtml(filters)}` : ''}</strong>` +
+    (hasRecords
+      ? `<ul style="margin:10px 0 0 20px">${lines.map(line => `<li>${escapeHtml(line)}</li>`).join('')}</ul>`
+      : '<p style="margin-top:8px;color:var(--sub)">No school records are available for this report yet.</p>');
+  if (hasRecords) addAudit('Generate','Report',type+' report generated');
+}
+
+function renderProfile() {
+  Object.entries(S.profile).forEach(([id, value]) => {
+    if (id === 'logoData') return;
+    const field = document.getElementById(id);
+    if (field) field.value = value;
+  });
+  if (S.profile.logoData) document.getElementById('prof-logo-img').src = S.profile.logoData;
+  if (S.profile['pf-name']) document.getElementById('prof-name-disp').textContent = S.profile['pf-name'];
+  if (S.profile['pf-motto']) document.getElementById('prof-motto-disp').textContent = '"' + S.profile['pf-motto'] + '"';
+}
+
+function renderSecuritySettings() {
+  Object.entries(S.security).forEach(([id, value]) => {
+    const field = document.getElementById(id);
+    if (field) field.value = value;
+  });
+  const label = document.getElementById('last-backup-label');
+  if (label) label.textContent = S.backup.lastCreated || 'Not created';
+  const schedule = document.getElementById('backup-schedule-btn');
+  if (schedule) schedule.textContent = S.backup.auto ? '⏰ Auto Backup Enabled' : '⏰ Schedule Auto Backup';
+}
+
+function saveSecuritySettings() {
+  const timeout = Number(v('sec-timeout'));
+  const attempts = Number(v('sec-failed-attempts'));
+  if (v('sec-timeout') && (!Number.isInteger(timeout) || timeout < 15 || timeout > 480)) {
+    toast('Session timeout must be between 15 and 480 minutes.','error'); return;
+  }
+  if (v('sec-failed-attempts') && (!Number.isInteger(attempts) || attempts < 3 || attempts > 10)) {
+    toast('Failed login attempts must be between 3 and 10.','error'); return;
+  }
+  ['sec-password-policy','sec-timeout','sec-failed-attempts','sec-2fa'].forEach(id => {
+    S.security[id] = v(id);
+  });
+  addAudit('Update','Security Settings','Security policy settings saved');
+  toast('Security settings saved on this device.','success');
+}
+
+function backupPayload() {
+  return JSON.stringify({
+    format: 'five-star-school-admin-backup',
+    version: 1,
+    createdAt: new Date().toISOString(),
+    data: S
+  }, null, 2);
+}
+
+function downloadTextFile(filename, text, mimeType) {
+  const url = URL.createObjectURL(new Blob([text], {type:mimeType}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function createBackup() {
+  S.backup.lastCreated = new Date().toLocaleString();
+  const content = backupPayload();
+  try {
+    localStorage.setItem(ADMIN_BACKUP_KEY, content);
+    persistAdminState();
+  } catch (error) {
+    toast('Backup could not be saved: ' + error.message,'error'); return;
+  }
+  renderSecuritySettings();
+  downloadTextFile(`school-admin-backup-${today()}.json`, content, 'application/json');
+  addAudit('Create','Backup','Backup downloaded and saved on this device');
+  toast('Backup downloaded and saved on this device.','success');
+}
+
+function toggleAutoBackup() {
+  S.backup.auto = !S.backup.auto;
+  renderSecuritySettings();
+  persistAdminState();
+  toast(S.backup.auto ? 'Automatic local backup enabled while this portal is used.' : 'Automatic local backup disabled.');
+}
+
+function downloadLatestBackup() {
+  const content = localStorage.getItem(ADMIN_BACKUP_KEY);
+  if (!content) { toast('Create a backup before downloading one.','error'); return; }
+  downloadTextFile('school-admin-latest-backup.json', content, 'application/json');
+  toast('Latest backup downloaded.','success');
+}
+
+function restoreBackup(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const backup = JSON.parse(reader.result);
+      if (backup.format !== 'five-star-school-admin-backup' || !backup.data || !Array.isArray(backup.data.users) || !Array.isArray(backup.data.staff)) {
+        throw new Error('This is not a valid school admin backup file.');
+      }
+      if (!confirm('Restore this backup? Current admin portal records will be replaced.')) return;
+      const restored = backup.data;
+      ['users','staff','classes','streams','years','terms','calEvents','announcements','subjects','roles','audit']
+        .forEach(key => { if (Array.isArray(restored[key])) S[key] = restored[key]; });
+      if (restored.stats && typeof restored.stats === 'object') S.stats = {...S.stats, ...restored.stats};
+      ['profile','security'].forEach(key => { if (restored[key] && typeof restored[key] === 'object') S[key] = restored[key]; });
+      if (Array.isArray(restored.communicationChannels)) S.communicationChannels = restored.communicationChannels;
+      if (restored.backup && typeof restored.backup === 'object') S.backup = {...S.backup, ...restored.backup};
+      persistAdminState();
+      renderDash();
+      ['users','roles','staff','profile','classes','academic','subjects','announcements','communications','audit','reports','security']
+        .forEach(renderPage);
+      toast('Backup restored.','success');
+    } catch (error) {
+      toast('Backup restore failed: ' + error.message,'error');
+    } finally {
+      input.value = '';
+    }
+  };
+  reader.onerror = () => toast('Could not read the selected backup file.','error');
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════
+function formatUgx(v) {
+  return 'UGX ' + Number(v || 0).toLocaleString('en-UG');
+}
+
+function drawNoRecords(canvas) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#667085';
+  ctx.font = '12px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('No records yet', canvas.width / 2, canvas.height / 2);
+}
+
+function renderDash() {
+  const teach = S.staff.filter(s=>s.cat==='Teaching').length;
+  const nteach = S.staff.filter(s=>s.cat!=='Teaching').length;
+  const parents = S.users.filter(u=>u.role==='parent').length;
+  const totalPupils = S.stats.classDistribution.reduce((sum, item) => sum + item.value, 0);
+  const attendance = S.stats.attendance;
+  const feeData = S.stats.feeCollection;
+  const totalCollected = feeData.reduce((sum, item) => sum + item.collected, 0);
+  const totalOutstanding = feeData.reduce((sum, item) => sum + item.outstanding, 0);
+  const el = id => document.getElementById(id);
+
+  el('kpi-pupils').textContent  = S.stats.classDistribution.length ? totalPupils : '—';
+  el('kpi-teach').textContent   = S.staff.length ? teach : '—';
+  el('kpi-nteach').textContent  = S.staff.length ? nteach : '—';
+  el('kpi-parents').textContent = S.users.length ? parents : '—';
+  el('kpi-fees').textContent    = feeData.length ? formatUgx(totalCollected) : 'UGX —';
+  el('kpi-bal').textContent     = feeData.length ? formatUgx(totalOutstanding) : 'UGX —';
+  const attendanceTotal = attendance ? attendance.present + attendance.absent : 0;
+  el('att-present').textContent = attendance ? attendance.present : '—';
+  el('att-absent').textContent  = attendance ? attendance.absent : '—';
+  el('att-pct').textContent     = attendanceTotal ? `${Math.round((attendance.present / attendanceTotal) * 100)}%` : '—%';
+  el('att-late-lbl').textContent = `Late: ${attendance ? attendance.late : '—'}`;
+  el('att-excused-lbl').textContent = `Excused: ${attendance ? attendance.excused : '—'}`;
+  el('ann-badge').textContent   = S.announcements.length;
+  el('notif-dot').style.display = S.announcements.length ? 'block' : 'none';
+
+  const classColors = ['#173B63','#18A999','#F4B740','#1a9e5c','#7c52ff','#f46e6e','#2bb3c0','#5d7bb6','#ff9f43','#b7c7d8'];
+  const pupilsChart = document.getElementById('chart-pupils');
+  if (pupilsChart) {
+    const chartWidth = Math.max(pupilsChart.clientWidth, 300);
+    pupilsChart.width = chartWidth;
+    pupilsChart.height = 180;
+    const ctx = pupilsChart.getContext('2d');
+    const w = pupilsChart.width;
+    const h = pupilsChart.height;
+    ctx.clearRect(0, 0, w, h);
+    const legend = document.getElementById('pupils-chart-legend');
+    if (!S.stats.classDistribution.length) {
+      drawNoRecords(pupilsChart);
+      if (legend) legend.innerHTML = '';
+    } else {
+      const maxVal = Math.max(...S.stats.classDistribution.map(i => i.value), 1);
+      const pad = 28;
+      const chartH = h - 36;
+      const slotW = (w - pad * 2) / S.stats.classDistribution.length;
+      const barW = slotW * 0.78;
+
+      S.stats.classDistribution.forEach((item, idx) => {
+        const x = pad + idx * slotW + (slotW - barW) / 2;
+        const barH = (item.value / maxVal) * (chartH - 10);
+        const y = h - 20 - barH;
+        ctx.fillStyle = classColors[idx % classColors.length];
+        ctx.fillRect(x, y, barW, barH);
+        ctx.fillStyle = '#667085';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText(item.label, x + barW / 2, h - 6);
+        ctx.fillText(item.value, x + barW / 2, y - 4);
+      });
+    }
+
+    if (legend && S.stats.classDistribution.length) {
+      legend.innerHTML = S.stats.classDistribution.slice(0, 6).map((item, idx) => `
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 7px;border-radius:999px;background:#f5f7fa;border:1px solid var(--border);font-size:.68rem;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${classColors[idx % classColors.length]};display:inline-block"></span>${item.label}
+        </span>`).join('');
+    }
+  }
+
+  const performanceCanvas = document.getElementById('chart-performance');
+  if (performanceCanvas) {
+    const ctx = performanceCanvas.getContext('2d');
+    const data = S.stats.performance;
+    const w = performanceCanvas.width;
+    const h = performanceCanvas.height;
+    if (!data.length) {
+      drawNoRecords(performanceCanvas);
+      el('perf-avg').textContent = '—';
+      el('perf-trend').textContent = '—';
+    } else {
+      const pad = 18;
+      const maxVal = 100;
+      ctx.clearRect(0, 0, w, h);
+      ctx.beginPath();
+      ctx.moveTo(pad, h - pad);
+      ctx.lineTo(w - pad, h - pad);
+      ctx.strokeStyle = '#dfe7ee';
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(pad, pad);
+      ctx.lineTo(pad, h - pad);
+      ctx.strokeStyle = '#dfe7ee';
+      ctx.stroke();
+      const points = data.map((item, index) => {
+        const x = pad + (index * (w - pad * 2)) / (data.length - 1);
+        const y = h - pad - (item.score / maxVal) * (h - pad * 2);
+        return { x, y, label: item.label, score: item.score };
+      });
+      ctx.beginPath();
+      points.forEach((p, idx) => {
+        idx ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+      });
+      ctx.strokeStyle = '#173B63';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      points.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#18A999';
+        ctx.fill();
+        ctx.fillStyle = '#667085';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.label, p.x, h - 4);
+      });
+      const avg = Math.round(data.reduce((sum, item) => sum + item.score, 0) / data.length);
+      el('perf-avg').textContent = avg + '%';
+      const trend = data[data.length - 1].score - data[0].score;
+      el('perf-trend').textContent = `${trend >= 0 ? '+' : ''}${trend}%`;
+    }
+  }
+
+  const drawTermProgress = (canvasId, pctId, titleId, startId, endId, daysId, term) => {
+    const termCanvas = document.getElementById(canvasId);
+    if (!termCanvas) return;
+    const ctx = termCanvas.getContext('2d');
+    const pct = document.getElementById(pctId);
+    const title = document.getElementById(titleId);
+    const start = document.getElementById(startId);
+    const end = document.getElementById(endId);
+    const days = document.getElementById(daysId);
+    const startDate = term?.start ? new Date(`${term.start}T00:00:00`) : null;
+    const endDate = term?.end ? new Date(`${term.end}T00:00:00`) : null;
+    const hasDates = startDate && endDate && !Number.isNaN(startDate.getTime()) && !Number.isNaN(endDate.getTime()) && endDate > startDate;
+    if (!term || !hasDates) {
+      drawNoRecords(termCanvas);
+      if (pct) pct.textContent = '—%';
+      if (title) title.textContent = term ? term.name : 'Current Term';
+      if (start) start.textContent = term?.start || '—';
+      if (end) end.textContent = term?.end || '—';
+      if (days) days.textContent = '—';
+      return;
+    }
+
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    const duration = endDate - startDate;
+    const progress = Math.max(0, Math.min(100, Math.round(((todayDate - startDate) / duration) * 100)));
+    const daysRemaining = Math.max(0, Math.ceil((endDate - todayDate) / 86400000));
+    const cx = termCanvas.width / 2;
+    const cy = termCanvas.height / 2;
+    const r = 48;
+    ctx.clearRect(0, 0, termCanvas.width, termCanvas.height);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = '#e4e9f0';
+    ctx.lineWidth = 12;
+    ctx.stroke();
+
+    if (progress > 0) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, -Math.PI / 2, ((Math.PI * 2) * (progress / 100)) - Math.PI / 2);
+      ctx.strokeStyle = '#18A999';
+      ctx.lineWidth = 12;
+      ctx.stroke();
+    }
+
+    if (pct) pct.textContent = `${progress}%`;
+    if (title) title.textContent = term.name;
+    if (start) start.textContent = term.start;
+    if (end) end.textContent = term.end;
+    if (days) days.textContent = `${daysRemaining} days`;
+  };
+
+  const currentTerm = S.terms.find(t => t.current);
+  drawTermProgress('chart-term-pie-1', 'term-pct-label-1', 'term-title-label-1', 'term-start-1', 'term-end-1', 'term-days-1', currentTerm);
+  drawTermProgress('chart-term-pie-2', 'term-pct-label-2', 'term-title-label-2', 'term-start-2', 'term-end-2', 'term-days-2', currentTerm);
+
+  const attCanvas = document.getElementById('chart-att-donut');
+  if (attCanvas) {
+    const ctx = attCanvas.getContext('2d');
+    const total = attendance ? attendance.present + attendance.absent : 0;
+    const pct = total ? (attendance.present / total) * 100 : 0;
+    const cx = attCanvas.width / 2;
+    const cy = attCanvas.height / 2;
+    const radius = 42;
+    ctx.clearRect(0, 0, attCanvas.width, attCanvas.height);
+    if (!total) {
+      drawNoRecords(attCanvas);
+    } else {
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = '#e4e9f0';
+    ctx.lineWidth = 10;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, -Math.PI / 2, ((Math.PI * 2) * (pct / 100)) - Math.PI / 2);
+    ctx.strokeStyle = '#1a9e5c';
+    ctx.lineWidth = 10;
+    ctx.stroke();
+    }
+  }
+
+  const feesCanvas = document.getElementById('chart-fees');
+  if (feesCanvas) {
+    const ctx = feesCanvas.getContext('2d');
+    const w = feesCanvas.width;
+    const h = feesCanvas.height;
+    ctx.clearRect(0, 0, w, h);
+    if (!feeData.length) drawNoRecords(feesCanvas);
+    else {
+      const maxVal = Math.max(...feeData.flatMap(item => [item.collected, item.outstanding]), 1);
+      const pad = 24;
+      const barWidth = (w - pad * 2) / (feeData.length * 2);
+      feeData.forEach((item, idx) => {
+        const x = pad + idx * (w - pad * 2) / feeData.length + 6;
+        const collectedH = (item.collected / maxVal) * (h - 30);
+        const outstandingH = (item.outstanding / maxVal) * (h - 30);
+        ctx.fillStyle = '#18A999';
+        ctx.fillRect(x, h - 18 - collectedH, barWidth, collectedH);
+        ctx.fillStyle = '#e4e9f0';
+        ctx.fillRect(x + barWidth + 4, h - 18 - outstandingH, barWidth, outstandingH);
+      });
+    }
+  }
+
+  const pbc = el('pupils-by-class');
+  if (pbc && pbc.querySelector('canvas') === null) {
+    pbc.innerHTML = '<canvas id="chart-pupils" height="180"></canvas><div id="pupils-chart-legend" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px"></div>';
+  }
+
+  const curTerm = S.terms.find(t=>t.current);
+  const curYear = S.years.find(y=>y.current);
+  if (curYear || curTerm) {
+    document.getElementById('tb-term').textContent = (curYear?.name||'') + (curTerm?' · '+curTerm.name:'');
+  }
+
+  const ra = el('recent-activity');
+  if (!S.audit.length) {
+    ra.innerHTML = '<div class="empty"><div class="empty-icon" style="font-size:1.5rem">📋</div><div class="empty-desc">No activity records yet.</div></div>';
+  } else ra.innerHTML = S.audit.slice().reverse().slice(0,6).map(l=>
+    `<div class="activity-item" style="padding:9px 16px">
+      <div class="activity-dot" style="background:var(--teal)"></div>
+      <div style="flex:1"><div style="font-size:.76rem;font-weight:600">${l.action} — ${l.rec}</div>
+      <div class="text-muted">${l.user} · ${l.dt}</div></div>
+    </div>`).join('');
+
+  const da = el('dash-ann');
+  if (!S.announcements.length) { da.innerHTML='<div class="empty"><div class="empty-icon">📢</div><div class="empty-desc">No announcements yet.</div></div>'; return; }
+  da.innerHTML = S.announcements.slice().reverse().slice(0,4).map(a=>
+    `<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)">
+      <div style="font-size:1.2rem">📢</div>
+      <div style="flex:1"><div style="font-size:.8rem;font-weight:600">${a.title}</div>
+      <div class="text-muted">${a.aud} · ${a.date}</div></div>
+      <span class="badge b-${a.priority==='Urgent'?'red':a.priority==='Important'?'amber':'teal'}">${a.priority}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// USERS
+// ═══════════════════════════════════════════════════════
+function renderUsers() {
+  const q   = (document.getElementById('user-srch')?.value||'').toLowerCase();
+  const rf  = document.getElementById('user-role-f')?.value||'';
+  const sf  = document.getElementById('user-status-f')?.value||'';
+  let list  = S.users;
+  if (q)  list = list.filter(u=>(u.name+u.username+u.email).toLowerCase().includes(q));
+  if (rf) list = list.filter(u=>u.role===rf);
+  if (sf) list = list.filter(u=>u.status===sf);
+  const tb = document.getElementById('user-tb');
+  if (!list.length) {
+    tb.innerHTML=`<tr><td colspan="8"><div class="empty"><div class="empty-icon">👥</div><div class="empty-title">No user accounts yet</div><div class="empty-desc">Click "+ Create Account" to add staff accounts.</div></div></td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map((u,i) => `<tr>
+    <td>${i+1}</td>
+    <td><div style="display:flex;align-items:center;gap:7px"><div style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700">${u.name.charAt(0)}</div><strong>${u.name}</strong></div></td>
+    <td><span class="mono">${u.username}</span></td>
+    <td><span class="badge b-navy">${u.role}</span></td>
+    <td style="color:var(--sub)">${u.email||u.phone||'—'}</td>
+    <td><span class="user-status-dot dot-${u.status==='Active'?'active':u.status==='Suspended'?'suspended':'inactive'}"></span><span class="badge ${u.status==='Active'?'b-green':u.status==='Suspended'?'b-amber':'b-gray'}">${u.status}</span></td>
+    <td class="text-muted">Never</td>
+    <td>
+      <button class="btn btn-outline btn-xs" onclick="toggleUserStatus(${i})">${u.status==='Active'?'Suspend':'Activate'}</button>
+      <button class="btn btn-danger btn-xs btn-icon" onclick="deleteUser(${i})">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+
+function filterUsers() { renderUsers(); }
+
+function createUser() {
+  const name=v('u-name'),username=v('u-username'),role=v('u-role'),pw=v('u-pw');
+  if (!name||!username||!role) { toast('Name, username and role are required.','error'); return; }
+  if (!pw||pw.length<8) { toast('Password must be at least 8 characters.','error'); return; }
+  if (S.users.find(u=>u.username===username)) { toast('Username already exists.','error'); return; }
+  S.users.push({name,username,email:v('u-email'),phone:v('u-phone'),role,status:v('u-status')||'Active'});
+  addAudit('Create','User Account','Created: '+username);
+  closeM('mUser'); renderUsers(); renderDash();
+  toast('Account for "'+name+'" created','success');
+  ['u-name','u-username','u-email','u-phone','u-pw'].forEach(id=>setv(id,''));
+}
+
+function toggleUserStatus(i) {
+  S.users[i].status = S.users[i].status==='Active' ? 'Suspended' : 'Active';
+  addAudit('Update','User Account','Status changed: '+S.users[i].username);
+  renderUsers();
+  toast('Account status updated');
+}
+
+function deleteUser(i) {
+  if (!confirm('Delete this account?')) return;
+  const u = S.users[i];
+  S.users.splice(i,1);
+  addAudit('Delete','User Account','Deleted: '+u.username);
+  renderUsers(); renderDash();
+  toast('Account deleted','error');
+}
+
+// ═══════════════════════════════════════════════════════
+// STAFF
+// ═══════════════════════════════════════════════════════
+function renderStaff() {
+  const cat = document.getElementById('staff-cat-f')?.value||'';
+  const q   = (document.getElementById('staff-srch')?.value||'').toLowerCase();
+  let list  = S.staff;
+  if (cat) list = list.filter(s=>s.cat===cat);
+  if (q)   list = list.filter(s=>(s.fn+' '+s.ln+' '+s.id).toLowerCase().includes(q));
+  const tb = document.getElementById('staff-tb');
+  if (!list.length) {
+    tb.innerHTML=`<tr><td colspan="9"><div class="empty"><div class="empty-icon">👔</div><div class="empty-title">No staff records</div><div class="empty-desc">Click "+ Add Staff" to register staff members.</div></div></td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map((s,i) => `<tr>
+    <td><span class="mono">${s.id}</span></td>
+    <td><div style="display:flex;align-items:center;gap:7px"><div style="width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700">${s.fn.charAt(0)}</div><strong>${s.fn} ${s.ln}</strong></div></td>
+    <td>${s.gender}</td>
+    <td><span class="badge b-navy">${s.cat}</span></td>
+    <td>${s.title||'—'}</td>
+    <td>${s.dept||'—'}</td>
+    <td>${s.phone||'—'}</td>
+    <td><span class="badge ${s.status==='Active'?'b-green':s.status==='On Leave'?'b-amber':'b-gray'}">${s.status}</span></td>
+    <td><button class="btn btn-danger btn-xs btn-icon" onclick="delStaff('${s.id}')">🗑</button></td>
+  </tr>`).join('');
+}
+
+function filterStaff() { renderStaff(); }
+
+function addStaff() {
+  const fn=v('sf-fn'),ln=v('sf-ln'),cat=v('sf-cat'),gender=v('sf-gender');
+  if (!fn||!ln||!cat||!gender) { toast('First name, last name, gender and category are required.','error'); return; }
+  const id = 'STF-'+String(Date.now()).slice(-5);
+  S.staff.push({id,fn,ln,gender,phone:v('sf-phone'),email:v('sf-email'),nid:v('sf-nid'),cat,title:v('sf-title'),dept:v('sf-dept'),date:v('sf-date'),salary:parseFloat(v('sf-salary'))||0,status:v('sf-status')||'Active'});
+  addAudit('Create','Staff Record',fn+' '+ln+' added');
+  closeM('mStaff'); renderStaff(); renderDash();
+  toast('Staff record for "'+fn+' '+ln+'" saved','success');
+}
+
+function delStaff(id) {
+  if (!confirm('Delete staff record?')) return;
+  S.staff = S.staff.filter(s=>s.id!==id);
+  addAudit('Delete','Staff Record','Deleted staff: '+id);
+  renderStaff();
+  toast('Staff record removed','error');
+}
+
+// ═══════════════════════════════════════════════════════
+// CLASSES & STREAMS
+// ═══════════════════════════════════════════════════════
+function renderClasses() {
+  // Classes table
+  const ctb = document.getElementById('class-tb');
+  ctb.innerHTML = S.classes.length ? S.classes.map(c => {
+    const streams = S.streams.filter(s=>s.cid===c.id);
+    return `<tr>
+      <td><strong>${c.name}</strong></td>
+      <td><span class="badge b-navy">${c.level}</span></td>
+      <td>${streams.length ? streams.map(s=>`<span class="class-badge">${s.fullName}</span>`).join('') : '<span class="text-muted">—</span>'}</td>
+      <td class="text-muted">—</td>
+      <td><button class="btn btn-danger btn-xs btn-icon" onclick="delClass(${c.id})">🗑</button></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="5"><div class="empty"><div class="empty-icon">🏫</div><div class="empty-desc">No classes added yet.</div></div></td></tr>';
+
+  // Streams table
+  const stb = document.getElementById('stream-tb');
+  if (!S.streams.length) {
+    stb.innerHTML=`<tr><td colspan="4"><div class="empty"><div class="empty-icon">🔀</div><div class="empty-desc">No streams added yet.</div></div></td></tr>`;
+  } else {
+    stb.innerHTML = S.streams.map((s,i) => {
+      const cls = S.classes.find(c=>c.id===s.cid);
+      return `<tr>
+        <td>${cls?.name||'—'}</td>
+        <td><strong>${s.name}</strong></td>
+        <td>${s.fullName}</td>
+        <td><button class="btn btn-danger btn-xs btn-icon" onclick="delStream(${i})">🗑</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Populate stream class selector
+  const sel = document.getElementById('st-cls');
+  if (sel) sel.innerHTML = S.classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+
+function addClass() {
+  const name=v('cl-name'), level=v('cl-level'), order=parseInt(v('cl-order'))||S.classes.length+1;
+  if (!name) { toast('Class name required','error'); return; }
+  if (S.classes.find(c=>c.name===name)) { toast('Class already exists','error'); return; }
+  S.classes.push({id:Date.now(),name,level,order});
+  addAudit('Create','Class',name+' added');
+  closeM('mClass'); renderClasses();
+  toast('Class "'+name+'" added','success');
+  setv('cl-name','');
+}
+
+function delClass(id) {
+  if (!confirm('Delete class?')) return;
+  S.classes = S.classes.filter(c=>c.id!==id);
+  S.streams = S.streams.filter(s=>s.cid!==id);
+  renderClasses();
+  toast('Class removed','error');
+}
+
+function addStream() {
+  const cid=parseInt(v('st-cls')), name=v('st-name');
+  if (!name) { toast('Stream name required','error'); return; }
+  const cls = S.classes.find(c=>c.id===cid);
+  if (!cls) { toast('Select a class','error'); return; }
+  const fullName = cls.name+' '+name;
+  S.streams.push({id:Date.now(),cid,name,fullName});
+  addAudit('Create','Stream',fullName+' added');
+  closeM('mStream'); renderClasses();
+  toast('Stream "'+fullName+'" added','success');
+  setv('st-name','');
+}
+
+function delStream(i) {
+  if (!confirm('Delete stream?')) return;
+  S.streams.splice(i,1);
+  renderClasses();
+  toast('Stream removed','error');
+}
+
+// Live preview for stream name
+document.addEventListener('input', e => {
+  if (e.target.id==='st-name') {
+    const cls = S.classes.find(c=>c.id===parseInt(v('st-cls')));
+    const prev = document.getElementById('st-preview');
+    if (prev) prev.textContent = cls ? cls.name+' '+e.target.value : e.target.value;
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+// ACADEMIC SETTINGS
+// ═══════════════════════════════════════════════════════
+function renderAcademic() {
+  const ytb = document.getElementById('year-tb');
+  ytb.innerHTML = S.years.length ? S.years.map(y=>`<tr>
+    <td><strong>${y.name}</strong></td>
+    <td>${y.start||'—'}</td><td>${y.end||'—'}</td>
+    <td>${y.current?'<span class="badge b-green">Current</span>':'<span class="badge b-gray">Inactive</span>'}</td>
+    <td>
+      <button class="btn btn-outline btn-xs" onclick="setCurYear('${y.name}')">Set Current</button>
+      <button class="btn btn-danger btn-xs btn-icon" onclick="delYear('${y.name}')">🗑</button>
+    </td>
+  </tr>`).join('') :
+  '<tr><td colspan="5"><div class="empty"><div class="empty-icon">📅</div><div class="empty-desc">No academic years added.</div></div></td></tr>';
+
+  const ttb = document.getElementById('term-tb');
+  ttb.innerHTML = S.terms.length ? S.terms.map(t=>`<tr>
+    <td><strong>${t.name}</strong></td>
+    <td>${t.year}</td><td>${t.start||'—'}</td><td>${t.end||'—'}</td>
+    <td>${t.current?'<span class="badge b-green">Current</span>':'<span class="badge b-gray">Inactive</span>'}</td>
+    <td><button class="btn btn-danger btn-xs btn-icon" onclick="delTerm('${t.name}')">🗑</button></td>
+  </tr>`).join('') :
+  '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📆</div><div class="empty-desc">No terms added.</div></div></td></tr>';
+
+  // Populate year selects
+  const sel = document.getElementById('tm-yr');
+  if (sel) sel.innerHTML = S.years.map(y=>`<option>${y.name}</option>`).join('');
+
+  renderCalBody();
+}
+
+function addYear() {
+  const name=v('yr-name'),start=v('yr-start'),end=v('yr-end'),cur=document.getElementById('yr-cur')?.checked;
+  if (!name) { toast('Year name required','error'); return; }
+  if (cur) S.years.forEach(y=>y.current=false);
+  S.years.push({name,start,end,current:!!cur});
+  addAudit('Create','Academic Year',name);
+  closeM('mYear'); renderAcademic(); renderDash();
+  toast('Year "'+name+'" added','success');
+}
+
+function addTerm() {
+  const name=v('tm-name'),year=v('tm-yr'),start=v('tm-start'),end=v('tm-end'),cur=document.getElementById('tm-cur')?.checked;
+  if (!name) { toast('Term name required','error'); return; }
+  if (cur) S.terms.forEach(t=>t.current=false);
+  S.terms.push({name,year,start,end,current:!!cur});
+  addAudit('Create','Term',name+' ('+year+')');
+  closeM('mTerm'); renderAcademic(); renderDash();
+  toast('Term "'+name+'" added','success');
+}
+
+function setCurYear(n) { S.years.forEach(y=>y.current=y.name===n); renderAcademic(); renderDash(); toast('"'+n+'" set as current year'); }
+function delYear(n) { if(!confirm('Delete year?'))return; S.years=S.years.filter(y=>y.name!==n); renderAcademic(); }
+function delTerm(n) { if(!confirm('Delete term?'))return; S.terms=S.terms.filter(t=>t.name!==n); renderAcademic(); }
+
+function renderCalBody() {
+  const cb = document.getElementById('cal-body');
+  if (!cb) return;
+  if (!S.calEvents.length) { cb.innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-desc">No calendar events added.</div></div>'; return; }
+  const typeColor = {
+    'School Holiday':'#fde8e7','Opening Day':'#d8f5e8','Closing Day':'#d1f5f2',
+    'Exam':'#f0eafc','Meeting':'#e8eef6','Activity':'#fef3d8','Deadline':'#fde8e7','Other':'#f0f4f9'
+  };
+  cb.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">' +
+  S.calEvents.map((e,i)=>`<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:${typeColor[e.type]||'#f0f4f9'}">
+    <div style="padding:10px 13px;border-bottom:1px solid rgba(0,0,0,.06)">
+      <div style="font-weight:700;font-size:.8rem">${e.name}</div>
+      <div style="font-size:.68rem;color:var(--sub);margin-top:2px">📅 ${e.date}${e.edate&&e.edate!==e.date?' → '+e.edate:''}</div>
+    </div>
+    <div style="padding:7px 13px;display:flex;align-items:center;justify-content:space-between">
+      <span class="badge b-navy">${e.type}</span>
+      <button class="btn btn-danger btn-xs btn-icon" onclick="delCalEvt(${i})">🗑</button>
+    </div>
+  </div>`).join('') + '</div>';
+}
+
+function addCalEvt() {
+  const name=v('ev-name'),date=v('ev-date');
+  if (!name||!date) { toast('Name and date required','error'); return; }
+  S.calEvents.push({name,date,edate:v('ev-edate'),type:v('ev-type'),scope:v('ev-scope'),desc:v('ev-desc')});
+  addAudit('Create','Calendar Event',name);
+  closeM('mCalEvt'); renderCalBody();
+  toast('Event added','success');
+}
+
+function delCalEvt(i) { S.calEvents.splice(i,1); renderCalBody(); }
+
+// ═══════════════════════════════════════════════════════
+// SUBJECTS & GRADING
+// ═══════════════════════════════════════════════════════
+function renderSubjects() {
+  const stb = document.getElementById('subj-tb');
+  stb.innerHTML = S.subjects.length ? S.subjects.map((s,i)=>`<tr>
+    <td><span class="mono">${s.code}</span></td>
+    <td><strong>${s.name}</strong></td>
+    <td><span class="badge b-navy">${s.level}</span></td>
+    <td><span class="badge b-green">Active</span></td>
+    <td><button class="btn btn-danger btn-xs btn-icon" onclick="delSubject(${i})">🗑</button></td>
+  </tr>`).join('') : '<tr><td colspan="5"><div class="empty"><div class="empty-icon">📚</div><div class="empty-desc">No subjects added yet.</div></div></td></tr>';
+
+  document.getElementById('grade-tb').innerHTML = S.grading.map(g=>`<tr>
+    <td><strong>${g.g}</strong></td><td>${g.mn}</td><td>${g.mx}</td>
+    <td><span class="badge b-teal">${g.r}</span></td><td>${g.p}</td>
+  </tr>`).join('');
+}
+
+function addSubject() {
+  const code=v('sub-code').toUpperCase(),name=v('sub-name');
+  if (!code||!name) { toast('Code and name required','error'); return; }
+  if (S.subjects.find(s=>s.code===code)) { toast('Subject code already exists','error'); return; }
+  S.subjects.push({code,name,level:v('sub-level')});
+  addAudit('Create','Subject',name);
+  closeM('mSubject'); renderSubjects();
+  toast('Subject "'+name+'" added','success');
+}
+
+function delSubject(i) { if(!confirm('Delete subject?'))return; S.subjects.splice(i,1); renderSubjects(); }
+
+// ═══════════════════════════════════════════════════════
+// ROLES
+// ═══════════════════════════════════════════════════════
+function renderRoles() {
+  // Populate perm checkboxes
+  const pg = document.getElementById('perm-grid');
+  if (pg) pg.innerHTML = S.PERMS.map(p=>`
+    <label class="perm-item">
+      <input type="checkbox" data-permission="${p}" style="width:auto;flex-shrink:0"/>
+      <span style="font-size:.7rem">${p.replace(/_/g,' ')}</span>
+    </label>`).join('');
+
+  document.getElementById('roles-body').innerHTML = S.roles.map(r=>`
+    <div class="role-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div>
+          <div style="font-weight:700;font-size:.86rem;text-transform:capitalize;margin-bottom:2px">${r.name}</div>
+          <div style="font-size:.73rem;color:var(--sub);margin-bottom:8px">${r.desc}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px">${r.perms.map(p=>`<span class="badge b-teal">${p.replace(/_/g,' ')}</span>`).join('')}</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="editRole('${r.name}')">✏ Edit</button>
+      </div>
+    </div>`).join('');
+}
+
+function editRole(name) {
+  const role = S.roles.find(item => item.name === name);
+  if (!role) { toast('Role not found.','error'); return; }
+  editingRoleName = name;
+  setv('rl-name', role.name);
+  setv('rl-desc', role.desc);
+  renderRoles();
+  document.querySelectorAll('[data-permission]').forEach(input => {
+    input.checked = role.perms.includes(input.dataset.permission);
+  });
+  document.getElementById('mRole').classList.add('open');
+}
+
+function saveRole() {
+  const name = v('rl-name').trim();
+  const desc = v('rl-desc').trim();
+  const perms = [...document.querySelectorAll('[data-permission]:checked')].map(input => input.dataset.permission);
+  if (!name) { toast('Role name is required.','error'); return; }
+  if (S.roles.some(role => role.name.toLowerCase() === name.toLowerCase() && role.name !== editingRoleName)) {
+    toast('A role with that name already exists.','error'); return;
+  }
+  if (editingRoleName) {
+    const role = S.roles.find(item => item.name === editingRoleName);
+    if (!role) { toast('Role not found.','error'); return; }
+    role.name = name;
+    role.desc = desc;
+    role.perms = perms;
+    addAudit('Update','Role',name+' updated');
+  } else {
+    S.roles.push({name,desc,perms});
+    addAudit('Create','Role',name+' created');
+  }
+  editingRoleName = null;
+  closeM('mRole');
+  renderRoles();
+  toast('Role saved.','success');
+}
+
+// ═══════════════════════════════════════════════════════
+// ANNOUNCEMENTS
+// ═══════════════════════════════════════════════════════
+function renderAnnouncements() {
+  document.getElementById('ann-badge').textContent = S.announcements.length;
+  document.getElementById('notif-dot').style.display = S.announcements.length ? 'block' : 'none';
+  const tb = document.getElementById('ann-tb');
+  if (!S.announcements.length) {
+    tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon">📢</div><div class="empty-desc">No announcements yet.</div></div></td></tr>`;
+    return;
+  }
+  tb.innerHTML = S.announcements.map((a,i)=>`<tr>
+    <td><strong>${a.title}</strong></td>
+    <td><span class="badge b-navy">${a.aud}</span></td>
+    <td>${a.date}</td>
+    <td>${a.exp||'—'}</td>
+    <td>${uname}</td>
+    <td><span class="badge ${a.priority==='Urgent'?'b-red':a.priority==='Important'?'b-amber':'b-teal'}">${a.priority}</span></td>
+    <td><button class="btn btn-danger btn-xs btn-icon" onclick="delAnn(${i})">🗑</button></td>
+  </tr>`).join('');
+}
+
+function addAnnouncement() {
+  const title=v('an-title'),body=v('an-body'),aud=v('an-aud'),priority=v('an-priority'),exp=v('an-exp');
+  if (!title||!body) { toast('Title and message are required','error'); return; }
+  S.announcements.push({title,body,aud,priority,exp,date:today()});
+  addAudit('Create','Announcement',title);
+  closeM('mAnnounce'); renderAnnouncements(); renderDash();
+  toast('Announcement published','success');
+  setv('an-title',''); setv('an-body','');
+}
+
+function delAnn(i) {
+  if (!confirm('Delete announcement?')) return;
+  S.announcements.splice(i,1);
+  renderAnnouncements(); renderDash();
+  toast('Announcement deleted');
+}
+
+// ═══════════════════════════════════════════════════════
+// AUDIT
+// ═══════════════════════════════════════════════════════
+function renderAudit() {
+  const tb = document.getElementById('audit-tb');
+  const dateFilter = v('audit-date');
+  const actionFilter = v('audit-action');
+  const userFilter = v('audit-user');
+  const userSelect = document.getElementById('audit-user');
+  const selectedUser = userSelect.value;
+  const users = [...new Set(S.audit.map(item => item.user))];
+  userSelect.innerHTML = '<option value="">All Users</option>' + users.map(user => `<option>${escapeHtml(user)}</option>`).join('');
+  userSelect.value = users.includes(selectedUser) ? selectedUser : '';
+  const filtered = S.audit.filter(item =>
+    (!dateFilter || item.dt.startsWith(dateFilter)) &&
+    (!actionFilter || item.action === actionFilter) &&
+    (!userFilter || item.user === userFilter)
+  );
+  tb.innerHTML = filtered.length ? filtered.slice().reverse().map(l=>`<tr>
+    <td style="color:var(--sub);font-size:.7rem;white-space:nowrap">${l.dt}</td>
+    <td><div style="display:flex;align-items:center;gap:6px">
+      <div style="width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700">${l.user.charAt(0)}</div>
+      ${l.user}
+    </div></td>
+    <td><span class="badge b-navy">${l.role||'—'}</span></td>
+    <td><span class="badge b-teal">${l.action}</span></td>
+    <td>${l.rec}</td>
+    <td style="color:var(--sub)">${l.detail}</td>
+    <td class="text-muted">—</td>
+  </tr>`).join('') : `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-desc">${S.audit.length ? 'No records match these filters.' : 'No activity records yet.'}</div></div></td></tr>`;
+}
+
+function filterAudit() { renderAudit(); }
+
+// ═══════════════════════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════════════════════
+function saveProfile() {
+  const name = v('pf-name').trim();
+  if (!name) { toast('School name is required.','error'); return; }
+  ['pf-name','pf-abbr','pf-motto','pf-type','pf-umb','pf-addr','pf-district','pf-country','pf-phone','pf-email','pf-web','pf-founded','pf-adm-fmt','pf-rcp-fmt','pf-ht','pf-ht-title'].forEach(id => {
+    S.profile[id] = v(id);
+  });
+  document.getElementById('prof-name-disp').textContent = name;
+  document.getElementById('prof-motto-disp').textContent = S.profile['pf-motto'] ? '"'+S.profile['pf-motto']+'"' : '';
+  addAudit('Update','School Profile','Profile settings updated');
+  toast('School profile saved on this device.','success');
+}
+
+function previewLogo(input) {
+  if (input.files?.[0]) {
+    const r = new FileReader();
+    r.onload = e => {
+      S.profile.logoData = e.target.result;
+      document.getElementById('prof-logo-img').src = e.target.result;
+      persistAdminState();
+      toast('School logo saved on this device.','success');
+    };
+    r.onerror = () => toast('Could not read the selected image.','error');
+    r.readAsDataURL(input.files[0]);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════
+function switchTab(el, paneId) {
+  el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[id^="tab-"]').forEach(p=>{ p.classList.remove('active'); p.style.display='none'; });
+  const pane = document.getElementById(paneId);
+  if (pane) { pane.classList.add('active'); pane.style.display='block'; }
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL HELPERS
+// ═══════════════════════════════════════════════════════
+function openM(id)  {
+  if (id === 'mRole') {
+    editingRoleName = null;
+    setv('rl-name','');
+    setv('rl-desc','');
+    document.querySelectorAll('[data-permission]').forEach(input => input.checked = false);
+  }
+  document.getElementById(id).classList.add('open');
+}
+function closeM(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+
+// ═══════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════
+function toast(msg, type='') {
+  const c = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast'+(type?' t-'+type:'');
+  const icons = {error:'❌',warn:'⚠️',success:'✅','':'ℹ️'};
+  el.innerHTML = `<span>${icons[type]||icons['']}</span><span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(()=>el.remove(), 4500);
+}
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+function v(id)    { return document.getElementById(id)?.value||''; }
+function setv(id,val) { const el=document.getElementById(id); if(el) el.value=val; }
+function today()  { return new Date().toISOString().split('T')[0]; }
+function ts()     { return new Date().toISOString().replace('T',' ').slice(0,16); }
+function addAudit(action,rec,detail) { S.audit.push({dt:ts(),user:uname,role:sess.role||'admin',action,rec,detail}); }
+function persistAdminState() {
+  try {
+    localStorage.setItem(ADMIN_DATA_KEY, JSON.stringify(S));
+    if (S.backup.auto) localStorage.setItem(ADMIN_BACKUP_KEY, backupPayload());
+  } catch (error) {
+    toast('Could not save admin data on this device: ' + error.message,'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+document.querySelectorAll('.tab-pane').forEach(p=>{ p.style.display=p.classList.contains('active')?'block':'none'; });
+['audit-date','audit-action','audit-user'].forEach(id => {
+  const control = document.getElementById(id);
+  if (control) control.addEventListener('change', filterAudit);
+});
+document.addEventListener('click', () => persistAdminState());
+renderSecuritySettings();
+renderDash();
+</script>
+<script src="../assets/sidebar.js"></script>
+</body>
+</html>

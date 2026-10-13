@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Parent Portal – Five Star Model School</title>
 <link rel="stylesheet" href="../assets/sms.css"/>
+<script src="../assets/storage.js"></script>
 <style>
 /* ══════════════════════════════════════════
    PARENT PORTAL – TOP NAV + BOTTOM NAV LAYOUT
@@ -577,7 +578,12 @@ body { overflow-x:hidden; }
   <div class="ptnav-user">
     <div class="ptnav-av" id="ptnav-av">P</div>
     <div class="ptnav-name" id="ptnav-name">Parent</div>
-    <button class="ptnav-signout" onclick="signOut()" title="Sign Out" aria-label="Sign out">⏻</button>
+    <button class="ptnav-signout" onclick="signOut()" title="Log Out" aria-label="Log out" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);cursor:pointer;transition:.18s">
+      <svg viewBox="0 0 14 14" width="16" height="16" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition:.18s">
+        <path d="M5 2l5 5-5 5"/>
+        <line x1="10" y1="7" x2="2" y2="7"/>
+      </svg>
+    </button>
   </div>
 </header>
 
@@ -917,129 +923,14 @@ document.getElementById('ptnav-name').textContent = parentName;
 document.getElementById('home-parent-name').textContent = parentName;
 
 /* ── DEMO DATA ── */
-// Demo children linked to this parent
-const CHILDREN = [
-  {
-    id: 'c1',
-    name: 'Amelia Byaruhanga',
-    admNo: 'BF-2026-001',
-    class: 'Baby Class',
-    stream: '',
-    gender: 'Female',
-    avatar: '👧',
-    dob: '2022-03-14',
-    status: 'Active'
-  },
-  {
-    id: 'c2',
-    name: 'Emmanuel Byaruhanga',
-    admNo: 'BF-2024-035',
-    class: 'P3',
-    stream: 'P3 East',
-    gender: 'Male',
-    avatar: '👦',
-    dob: '2017-07-20',
-    status: 'Active'
-  },
-  {
-    id: 'c3',
-    name: 'Christine Byaruhanga',
-    admNo: 'BF-2022-018',
-    class: 'P6',
-    stream: 'P6 West',
-    gender: 'Female',
-    avatar: '👩‍🎓',
-    dob: '2012-11-05',
-    status: 'Active'
-  }
-];
-
-// Demo fees data per child
-const FEES_DATA = {
-  c1: {
-    term: 'Term 2', year: '2025',
-    charges: [
-      { category: 'Tuition Fee',       term: 'Term 2', amount: 280000 },
-      { category: 'Development Levy',  term: 'Term 2', amount:  40000 },
-      { category: 'Lunch Contribution',term: 'Term 2', amount:  60000 }
-    ],
-    payments: [
-      { date: '2025-05-02', amount: 200000, method: 'Mobile Money', receipt: 'RCP-2025-0141' }
-    ],
-    discount: 0
-  },
-  c2: {
-    term: 'Term 2', year: '2025',
-    charges: [
-      { category: 'Tuition Fee',       term: 'Term 2', amount: 350000 },
-      { category: 'Development Levy',  term: 'Term 2', amount:  50000 },
-      { category: 'Lunch Contribution',term: 'Term 2', amount:  60000 },
-      { category: 'Examination Fee',   term: 'Term 2', amount:  20000 }
-    ],
-    payments: [
-      { date: '2025-04-28', amount: 300000, method: 'Bank Deposit', receipt: 'RCP-2025-0138' },
-      { date: '2025-05-10', amount: 100000, method: 'Mobile Money', receipt: 'RCP-2025-0155' }
-    ],
-    discount: 10000
-  },
-  c3: {
-    term: 'Term 2', year: '2025',
-    charges: [
-      { category: 'Tuition Fee',       term: 'Term 2', amount: 420000 },
-      { category: 'Development Levy',  term: 'Term 2', amount:  50000 },
-      { category: 'Lunch Contribution',term: 'Term 2', amount:  60000 },
-      { category: 'Examination Fee',   term: 'Term 2', amount:  25000 },
-      { category: 'Library Fee',       term: 'Term 2', amount:  15000 }
-    ],
-    payments: [
-      { date: '2025-04-25', amount: 570000, method: 'Bank Deposit', receipt: 'RCP-2025-0130' }
-    ],
-    discount: 20000
-  }
-};
-
-// Demo attendance per child (current month sample)
-const ATT_DATA = {
-  c1: { 2025: { 5: { 1:'P',2:'P',5:'A',6:'P',7:'L',8:'P',9:'P',12:'P',13:'P',14:'P',15:'P',16:'P',19:'P',20:'P',21:'A',22:'P',23:'E' } } },
-  c2: { 2025: { 5: { 1:'P',2:'P',5:'P',6:'P',7:'P',8:'P',9:'P',12:'L',13:'P',14:'P',15:'P',16:'P',19:'P',20:'A',21:'P',22:'P',23:'P' } } },
-  c3: { 2025: { 5: { 1:'P',2:'P',5:'P',6:'P',7:'P',8:'P',9:'P',12:'P',13:'P',14:'P',15:'P',16:'P',19:'P',20:'P',21:'P',22:'P',23:'P' } } }
-};
-
-// Demo announcements
-let ANNOUNCEMENTS = [
-  { id:'a1', title:'End of Term 2 Examinations Schedule', type:'Academic', date:'2025-05-20', body:'End-of-term examinations will commence on 9th June 2025. Kindly ensure all pupils are present and prepared. Detailed subject timetables will be distributed in class.', read:false },
-  { id:'a2', title:'Term 2 Fee Payment Deadline', type:'Fees', date:'2025-05-15', body:'All outstanding Term 2 fees must be cleared by 30th May 2025. Pupils with unsettled balances may not sit examinations. Please contact the Accounts Office for payment arrangements.', read:false },
-  { id:'a3', title:'Parents\' Visiting Day – Term 2', type:'General', date:'2025-05-10', body:'The school will host a Parents\' Visiting Day on Saturday, 24th May 2025, from 9:00 AM to 4:00 PM. Parents and guardians are warmly invited to visit their children and meet class teachers.', read:true },
-  { id:'a4', title:'⚠️ Urgent: School Closure – Public Holiday', type:'Urgent', date:'2025-05-08', body:'The school will be closed on Monday, 26th May 2025, in observance of Africa Liberation Day. Normal classes resume on Tuesday, 27th May 2025.', read:true },
-  { id:'a5', title:'Library Books Return Reminder', type:'General', date:'2025-05-06', body:'All library books borrowed during Term 1 must be returned to the school library by end of Term 2. Lost or damaged books will attract a replacement fee.', read:true }
-];
-
-// Demo calendar events
-const CAL_EVENTS = [
-  { date:'2025-05-24', title:'Parents\' Visiting Day', type:'Visiting Day', desc:'Term 2 open day. Parents welcome 9 AM – 4 PM.' },
-  { date:'2025-05-30', title:'Fee Payment Deadline', type:'Fees', desc:'Last day to settle outstanding Term 2 fees.' },
-  { date:'2025-06-09', title:'End of Term 2 Examinations Begin', type:'Exam', desc:'Examinations run from 9th June to 20th June 2025.' },
-  { date:'2025-06-27', title:'Term 2 Closing Day', type:'Closing', desc:'School closes for Term 2 holidays.' },
-  { date:'2025-07-28', title:'Term 3 Opening Day', type:'Opening', desc:'Term 3 begins. All pupils report by 8:00 AM.' },
-  { date:'2025-04-18', title:'Good Friday', type:'Holiday', desc:'Public holiday – school closed.' },
-  { date:'2025-04-21', title:'Easter Monday', type:'Holiday', desc:'Public holiday – school closed.' }
-];
-
-// Demo pending link requests
-let PENDING_LINKS = [];
-
-// Demo my requests
-let MY_REQUESTS = [
-  {
-    id:'req-001',
-    date:'2025-05-12',
-    type:'Inquiry',
-    subject:'P3 East Midterm Results',
-    urgency:'Low',
-    status:'Resolved',
-    response:'Emmanuel\'s midterm results have been uploaded to the portal. Please check the Fees section for the updated report.'
-  }
-];
+const savedParentState = SMSStore.load('sms_parent_records', {}) || {};
+const CHILDREN = Array.isArray(savedParentState.children) ? savedParentState.children : [];
+const FEES_DATA = savedParentState.fees && typeof savedParentState.fees === 'object' ? savedParentState.fees : {};
+const ATT_DATA = savedParentState.attendance && typeof savedParentState.attendance === 'object' ? savedParentState.attendance : {};
+let ANNOUNCEMENTS = Array.isArray(savedParentState.announcements) ? savedParentState.announcements : [];
+const CAL_EVENTS = Array.isArray(savedParentState.calendarEvents) ? savedParentState.calendarEvents : [];
+let PENDING_LINKS = Array.isArray(savedParentState.pendingLinks) ? savedParentState.pendingLinks : [];
+let MY_REQUESTS = Array.isArray(savedParentState.requests) ? savedParentState.requests : [];
 
 /* ── STATE ── */
 let selectedChild = CHILDREN.length > 0 ? CHILDREN[0].id : null;

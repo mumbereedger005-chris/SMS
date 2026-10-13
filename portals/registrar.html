@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Registrar Portal – Five Star Model School</title>
 <link rel="stylesheet" href="../assets/sms.css"/>
+<script src="../assets/storage.js"></script>
 <style>
 /* ── Local helpers ── */
 .search-wrap{position:relative}
@@ -85,35 +86,70 @@
 <div class="layout">
 
 <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
-<aside class="sidebar">
-  <div class="sb-brand">
-    <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
-    <div>
-      <div class="sb-school-name">Five Star School</div>
-      <div class="sb-portal-name">Registrar Portal</div>
+<aside class="sidebar" id="sidebar">
+  <div class="sb-topbar">
+    <button class="sb-ham" id="sb-ham" title="Open / close menu">
+      <span class="sb-bar"></span>
+      <span class="sb-bar"></span>
+      <span class="sb-bar"></span>
+    </button>
+    <div class="sb-brand">
+      <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
+      <div>
+        <div class="sb-school-name">Five Star School</div>
+        <div class="sb-portal-tag">Registrar Portal</div>
+      </div>
     </div>
   </div>
   <nav class="sb-body">
-    <div class="sb-group"><div class="sb-group-label">Overview</div></div>
-    <div class="sb-link active" onclick="nav('dashboard',this)"><span class="sb-icon">🏠</span><span>Dashboard</span></div>
-    <div class="sb-group"><div class="sb-group-label">Admissions</div></div>
-    <div class="sb-link" onclick="nav('admission',this)"><span class="sb-icon">➕</span><span>New Admission</span></div>
-    <div class="sb-link" onclick="nav('pupils',this)"><span class="sb-icon">🎓</span><span>Pupil Records</span><span class="sb-badge" id="badge-pupils">0</span></div>
-    <div class="sb-group"><div class="sb-group-label">Relationships</div></div>
-    <div class="sb-link" onclick="nav('parents',this)"><span class="sb-icon">👨‍👩‍👧</span><span>Parent Linking</span><span class="sb-badge" id="badge-parents">0</span></div>
-    <div class="sb-group"><div class="sb-group-label">Classes</div></div>
-    <div class="sb-link" onclick="nav('classlists',this)"><span class="sb-icon">📋</span><span>Class Lists</span></div>
-    <div class="sb-link" onclick="nav('promotion',this)"><span class="sb-icon">🔼</span><span>Promotion &amp; Transfer</span></div>
-    <div class="sb-group"><div class="sb-group-label">Records</div></div>
-    <div class="sb-link" onclick="nav('idcards',this)"><span class="sb-icon">🪪</span><span>ID Cards</span></div>
-    <div class="sb-link" onclick="nav('documents',this)"><span class="sb-icon">📁</span><span>Documents</span></div>
+    <div class="sb-sec"><div class="sb-sec-label">Overview</div></div>
+    <div class="sb-item active" data-tip="Dashboard" data-close="1" onclick="nav('dashboard',this)">
+      <span class="sb-item-name">Dashboard</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Admissions</div></div>
+    <div class="sb-item" data-tip="New Admission" onclick="nav('admission',this)">
+      <span class="sb-item-name">New Admission</span>
+    </div>
+    <div class="sb-item" data-tip="Pupil Records" onclick="nav('pupils',this)">
+      <span class="sb-item-name">Pupil Records</span>
+      <span class="sb-count" id="badge-pupils">0</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Relationships</div></div>
+    <div class="sb-item" data-tip="Parent Linking" onclick="nav('parents',this)">
+      <span class="sb-item-name">Parent Linking</span>
+      <span class="sb-count" id="badge-parents">0</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Classes</div></div>
+    <div class="sb-item" data-tip="Class Lists" onclick="nav('classlists',this)">
+      <span class="sb-item-name">Class Lists</span>
+    </div>
+    <div class="sb-item" data-tip="Promotion &amp; Transfer" onclick="nav('promotion',this)">
+      <span class="sb-item-name">Promotion &amp; Transfer</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Records</div></div>
+    <div class="sb-item" data-tip="ID Cards" onclick="nav('idcards',this)">
+      <span class="sb-item-name">ID Cards</span>
+    </div>
+    <div class="sb-item" data-tip="Documents" onclick="nav('documents',this)">
+      <span class="sb-item-name">Documents</span>
+    </div>
   </nav>
   <div class="sb-foot">
-    <div class="sb-user">
+    <div class="sb-user-row">
       <div class="sb-av" id="sb-av-init">R</div>
-      <div><div class="sb-uname" id="sb-uname">Registrar</div><div class="sb-urole">Registrar</div></div>
-      <button class="sb-signout" onclick="signOut()" title="Sign Out">⏻</button>
+      <div class="sb-user-info">
+        <div class="sb-uname" id="sb-uname">Registrar</div>
+        <div class="sb-urole">Records Office</div>
+      </div>
     </div>
+    <button class="sb-logout" onclick="signOut()" title="Log Out" style="margin-top:6px">
+      <span class="sb-logout-icon">
+        <span class="sb-logout-arrow">
+          <svg class="sb-arrow-svg" viewBox="0 0 14 14"><path d="M5 2l5 5-5 5"/><line x1="10" y1="7" x2="2" y2="7"/></svg>
+        </span>
+      </span>
+      <span class="sb-logout-label">Log Out</span>
+    </button>
   </div>
 </aside>
 
@@ -1500,5 +1536,7 @@ function deleteDoc(idx) {
 /* ── Boot ── */
 renderDashboard();
 </script>
+<div class="sb-backdrop" id="sb-backdrop"></div>
+<script src="../assets/sidebar.js"></script>
 </body>
 </html>

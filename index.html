@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Five Star Model School – Login</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+:root{
+  --navy:#173B63;--navy2:#1e4d82;--navy3:#0f2845;
+  --teal:#18A999;--teal2:#13877b;--teal3:#d1f5f2;
+  --bg:#F5F7FA;--white:#FFFFFF;--text:#24313D;--sub:#667085;
+  --amber:#F4B740;--red:#D9534F;--green:#1a9e5c;
+  --border:#e4e9f0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;min-height:100vh;background:var(--bg);display:flex;flex-direction:column}
+
+/* ── NAV ── */
+.top-nav{height:58px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:36px;height:36px;border-radius:50%;border:2px solid var(--teal);overflow:hidden;background:rgba(255,255,255,.1)}
+.nav-logo img{width:100%;height:100%;object-fit:cover}
+.nav-name{font-size:.88rem;font-weight:800;color:#fff;letter-spacing:.2px}
+.nav-sub{font-size:.62rem;color:var(--teal);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.nav-right{font-size:.72rem;color:rgba(255,255,255,.5)}
+
+/* ── HERO SECTION ── */
+.hero{
+  flex:1;display:flex;align-items:stretch;
+  min-height:calc(100vh - 58px);
+}
+.hero-left{
+  flex:1;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:48px;
+  min-height:500px;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background-image:url('school.jpg');
+  background-size:cover;background-position:center;
+}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(23,59,99,.88),rgba(24,169,153,.55))}
+.hero-content{position:relative;z-index:1;color:#fff}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  padding:5px 13px;border-radius:20px;
+  font-size:.68rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  margin-bottom:18px;color:var(--teal3);
+}
+.hero-title{font-size:2.4rem;font-weight:900;line-height:1.15;margin-bottom:12px}
+.hero-title span{color:var(--teal3)}
+.hero-desc{font-size:.85rem;color:rgba(255,255,255,.72);line-height:1.7;margin-bottom:28px;max-width:440px}
+.hero-portals{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.portal-pill{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  padding:4px 12px;border-radius:14px;font-size:.68rem;font-weight:600;color:rgba(255,255,255,.8);
+}
+.hero-stats{display:flex;gap:28px;margin-top:24px}
+.hs{text-align:center}
+.hs-val{font-size:1.4rem;font-weight:800;color:var(--teal3)}
+.hs-lbl{font-size:.62rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.4px}
+
+/* ── LOGIN PANEL ── */
+.hero-right{
+  width:440px;flex-shrink:0;
+  background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 36px;
+  box-shadow:-4px 0 24px rgba(0,0,0,.08);
+}
+.login-box{width:100%;max-width:360px}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo-img{
+  width:72px;height:72px;border-radius:50%;
+  border:3px solid var(--teal);overflow:hidden;
+  margin:0 auto 10px;background:var(--bg);
+}
+.login-logo-img img{width:100%;height:100%;object-fit:cover}
+.login-school{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:2px}
+.login-motto{font-size:.72rem;color:var(--sub);font-style:italic}
+.login-heading{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:4px;margin-top:20px}
+.login-sub{font-size:.76rem;color:var(--sub);margin-bottom:22px}
+
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.fg label{font-size:.72rem;font-weight:600;color:var(--text)}
+.fg input,.fg select{
+  padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:.8rem;font-family:inherit;outline:none;transition:.18s;
+  background:var(--white);color:var(--text);
+}
+.fg input:focus,.fg select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(24,169,153,.1)}
+.fg-pass{position:relative}
+.fg-pass input{padding-right:38px}
+.pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:.85rem;color:var(--sub)}
+
+.login-btn{
+  width:100%;padding:11px;
+  background:var(--navy);color:#fff;border:none;border-radius:8px;
+  font-size:.84rem;font-weight:700;cursor:pointer;transition:.18s;
+  font-family:inherit;margin-top:4px;
+}
+.login-btn:hover{background:var(--navy2)}
+.login-btn:active{background:var(--navy3)}
+
+.login-divider{display:flex;align-items:center;gap:10px;color:var(--sub);font-size:.72rem;margin:16px 0}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.parent-reg-btn{
+  width:100%;padding:10px;
+  background:transparent;color:var(--teal);border:1.5px solid var(--teal);
+  border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;transition:.18s;
+  font-family:inherit;
+}
+.parent-reg-btn:hover{background:var(--teal3)}
+
+.login-forgot{text-align:center;font-size:.72rem;color:var(--sub);margin-top:12px}
+.login-forgot a{color:var(--teal);font-weight:600;cursor:pointer;text-decoration:none}
+.login-forgot a:hover{text-decoration:underline}
+
+.login-error{
+  background:#fde8e7;border:1px solid #f5b8b7;border-radius:7px;
+  padding:9px 12px;font-size:.74rem;color:#8b1a18;margin-bottom:12px;
+  display:none;
+}
+.login-error.show{display:block}
+
+/* ── REGISTER SCREEN ── */
+.reg-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(15,30,50,.6);z-index:500;
+  align-items:center;justify-content:center;padding:16px;
+  backdrop-filter:blur(4px);
+}
+.reg-overlay.open{display:flex}
+.reg-modal{
+  background:var(--white);border-radius:16px;
+  width:100%;max-width:540px;max-height:90vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 24px 60px rgba(0,0,0,.22);
+  overflow:hidden;
+}
+.reg-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.reg-title{font-size:.9rem;font-weight:700}
+.reg-x{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--sub)}
+.reg-bd{padding:20px;overflow-y:auto;flex:1}
+.reg-ft{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:var(--bg)}
+.alert-info{background:#e8eef6;border:1px solid #c5d4e8;border-radius:7px;padding:9px 12px;font-size:.73rem;color:var(--navy);margin-bottom:12px}
+
+/* ── FOOTER ── */
+.site-footer{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.sf-left{font-size:.7rem;color:rgba(255,255,255,.4)}
+.sf-right{display:flex;gap:16px}
+.sf-link{font-size:.7rem;color:rgba(255,255,255,.4);cursor:pointer}
+.sf-link:hover{color:var(--teal3)}
+
+/* ── TOAST ── */
+.toast-stack{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{background:var(--white);border-radius:10px;padding:11px 15px;box-shadow:0 4px 20px rgba(0,0,0,.13);display:flex;align-items:center;gap:9px;font-size:.76rem;font-weight:500;min-width:250px;border-left:3px solid var(--teal);animation:ti .25s ease;pointer-events:all}
+.toast.t-error{border-left-color:var(--red)}.toast.t-success{border-left-color:var(--green)}.toast.t-warn{border-left-color:var(--amber)}
+@keyframes ti{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+@media(max-width:900px){.hero{flex-direction:column}.hero-left{min-height:340px;padding:32px 24px}.hero-right{width:100%;padding:32px 24px}}
+@media(max-width:600px){.hero-title{font-size:1.8rem}.hero-right{padding:24px 18px}.top-nav{padding:0 18px}}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="nav-brand">
+    <div class="nav-logo"><img src="star logo.png" alt="Logo"/></div>
+    <div>
+      <div class="nav-name">Five Star Model School</div>
+      <div class="nav-sub">Management System</div>
+    </div>
+  </div>
+  <div class="nav-right">Kasese District, Uganda</div>
+</nav>
+
+<!-- HERO + LOGIN -->
+<div class="hero">
+  <!-- LEFT: Hero -->
+  <div class="hero-left">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">⭐ Five Star Model School</div>
+      <h1 class="hero-title">School<br/><span>Management</span><br/>System</h1>
+      <p class="hero-desc">An integrated, role-based platform connecting every department of Five Star Model School — from admissions and academics to finance and property.</p>
+      <div class="hero-portals">
+        <span class="portal-pill">🛡️ Admin</span>
+        <span class="portal-pill">📋 Registrar</span>
+        <span class="portal-pill">📚 DOS</span>
+        <span class="portal-pill">👩‍🏫 Teachers</span>
+        <span class="portal-pill">💰 Accounts</span>
+        <span class="portal-pill">👨‍👩‍👧 Parents</span>
+        <span class="portal-pill">🏗️ Property</span>
+      </div>
+      <div class="hero-stats">
+        <div class="hs"><div class="hs-val">7</div><div class="hs-lbl">Portals</div></div>
+        <div class="hs"><div class="hs-val">10</div><div class="hs-lbl">Classes</div></div>
+        <div class="hs"><div class="hs-val">Day+</div><div class="hs-lbl">Boarding</div></div>
+        <div class="hs"><div class="hs-val">★★★★★</div><div class="hs-lbl">Standard</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Login -->
+  <div class="hero-right">
+    <div class="login-box" id="loginBox">
+      <div class="login-logo">
+        <div class="login-logo-img"><img src="star logo.png" alt="Logo"/></div>
+        <div class="login-school">Five Star Model School</div>
+        <div class="login-motto">"Nature for Excellence" · Kasese District</div>
+      </div>
+
+      <h2 class="login-heading">Sign In to Your Portal</h2>
+      <p class="login-sub">Enter your credentials provided by the school administration.</p>
+
+      <div class="login-error" id="loginError">Invalid username or password. Please try again.</div>
+
+      <form onsubmit="handleLogin(event)">
+        <div class="fg">
+          <label>Username or Email</label>
+          <input type="text" id="l-id" placeholder="Your username or email" required autocomplete="username"/>
+        </div>
+        <div class="fg">
+          <label>Password</label>
+          <div class="fg-pass">
+            <input type="password" id="l-pw" placeholder="Your password" required autocomplete="current-password"/>
+            <button type="button" class="pass-toggle" onclick="togglePw('l-pw',this)">👁️</button>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Sign in as</label>
+          <select id="l-role">
+            <option value="">— Select your role —</option>
+            <option value="admin">Administrator</option>
+            <option value="registrar">Registrar</option>
+            <option value="dos">Director of Studies (DOS)</option>
+            <option value="teacher">Teacher</option>
+            <option value="accountant">Accountant</option>
+            <option value="parent">Parent / Guardian</option>
+            <option value="property">Property Manager</option>
+          </select>
+        </div>
+        <button type="submit" class="login-btn">🔐 Sign In</button>
+      </form>
+
+      <div class="login-divider">or</div>
+      <button class="parent-reg-btn" onclick="openReg()">👨‍👩‍👧 Request Parent Account</button>
+      <div class="login-forgot"><a onclick="toast('Contact your school administrator to reset your password.','warn')">Forgot your password?</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT REGISTER MODAL -->
+<div class="reg-overlay" id="regOverlay">
+  <div class="reg-modal">
+    <div class="reg-hd">
+      <span class="reg-title">👨‍👩‍👧 Request Parent / Guardian Account</span>
+      <button class="reg-x" onclick="closeReg()">×</button>
+    </div>
+    <div class="reg-bd">
+      <div class="alert-info">ℹ️ Your account request will be reviewed by the school registrar before access is granted. Please provide accurate information.</div>
+      <div class="form-row">
+        <div class="fg"><label>Full Name *</label><input type="text" id="r-name" placeholder="Your full name"/></div>
+        <div class="fg"><label>Phone Number *</label><input type="tel" id="r-phone" placeholder="+256..."/></div>
+        <div class="fg"><label>Email Address</label><input type="email" id="r-email" placeholder="Optional"/></div>
+        <div class="fg"><label>National ID</label><input type="text" id="r-nid" placeholder="For identity verification"/></div>
+        <div class="fg"><label>Home Address</label><input type="text" id="r-addr" placeholder="Your address"/></div>
+        <div class="fg"><label>Relationship to Pupil</label><select id="r-rel"><option>Father</option><option>Mother</option><option>Guardian</option><option>Other</option></select></div>
+      </div>
+      <div class="fg"><label>Pupil Admission Number(s) *</label><input type="text" id="r-admno" placeholder="e.g. BFS-2026-00001 (separate multiple with commas)"/></div>
+      <div class="fg"><label>Create Password *</label><input type="password" id="r-pw" placeholder="Minimum 8 characters"/></div>
+      <div class="fg"><label>Confirm Password *</label><input type="password" id="r-pw2" placeholder="Repeat password"/></div>
+    </div>
+    <div class="reg-ft">
+      <button class="btn btn-outline" onclick="closeReg()">Cancel</button>
+      <button class="btn btn-teal" onclick="submitReg()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <span class="sf-left">© Five Star Model School · Kasese District, Uganda · School Management System</span>
+  <div class="sf-right">
+    <span class="sf-link">Privacy Policy</span>
+    <span class="sf-link">Help & Support</span>
+  </div>
+</footer>
+
+<div class="toast-stack" id="toasts"></div>
+
+<script>
+// ── Role → portal map ──────────────────────────────────────────
+const PORTALS = {
+  admin      : 'portals/admin.html',
+  registrar  : 'portals/registrar.html',
+  dos        : 'portals/dos.html',
+  teacher    : 'portals/teacher.html',
+  accountant : 'portals/accounts.html',
+  parent     : 'portals/parent.html',
+  property   : 'portals/property.html'
+};
+
+// ── Demo credentials (school will replace with real auth) ─────
+// Any username + any password works in demo mode if role is selected
+function handleLogin(e) {
+  e.preventDefault();
+  const id   = document.getElementById('l-id').value.trim();
+  const pw   = document.getElementById('l-pw').value;
+  const role = document.getElementById('l-role').value;
+  const err  = document.getElementById('loginError');
+  err.classList.remove('show');
+
+  if (!id || !pw) { showErr('Please enter your username and password.'); return; }
+  if (!role)      { showErr('Please select your role.'); return; }
+  if (pw.length < 4) { showErr('Password too short.'); return; }
+
+  // Store session info for portal pages
+  sessionStorage.setItem('sms_user', JSON.stringify({ username:id, role, fullName:id, loggedIn:true }));
+  toast('Signing you in…','success');
+  setTimeout(() => { window.location.href = PORTALS[role]; }, 700);
+}
+
+function showErr(msg) {
+  const err = document.getElementById('loginError');
+  err.textContent = msg;
+  err.classList.add('show');
+}
+
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  if (inp.type === 'password') { inp.type='text'; btn.textContent='🙈'; }
+  else { inp.type='password'; btn.textContent='👁️'; }
+}
+
+function openReg()  { document.getElementById('regOverlay').classList.add('open'); }
+function closeReg() { document.getElementById('regOverlay').classList.remove('open'); }
+document.getElementById('regOverlay').addEventListener('click', e => { if(e.target.id==='regOverlay') closeReg(); });
+
+function submitReg() {
+  const name  = document.getElementById('r-name').value.trim();
+  const phone = document.getElementById('r-phone').value.trim();
+  const pw    = document.getElementById('r-pw').value;
+  const pw2   = document.getElementById('r-pw2').value;
+  const admno = document.getElementById('r-admno').value.trim();
+  if (!name || !phone || !admno) { toast('Name, phone and admission number are required.','error'); return; }
+  if (pw.length < 8) { toast('Password must be at least 8 characters.','error'); return; }
+  if (pw !== pw2)    { toast('Passwords do not match.','error'); return; }
+  closeReg();
+  toast('Account request submitted! The registrar will verify and activate your account.','success');
+}
+
+function toast(msg, type='') {
+  const c = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' t-'+type : '');
+  const icons = { error:'❌', warn:'⚠️', success:'✅', '':'ℹ️' };
+  el.innerHTML = `<span>${icons[type]||icons['']}</span><span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 4500);
+}
+
+// ── Check if already logged in ────────────────────────────────
+const sess = sessionStorage.getItem('sms_user');
+if (sess) {
+  const u = JSON.parse(sess);
+  if (u.loggedIn && PORTALS[u.role]) {
+    document.getElementById('l-role').value = u.role;
+    // don't auto-redirect — let user choose to re-login
+  }
+}
+</script>
+</body>
+</html>

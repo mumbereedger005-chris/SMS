@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>DOS Portal – Five Star Model School</title>
 <link rel="stylesheet" href="../assets/sms.css"/>
+<script src="../assets/storage.js"></script>
 <style>
 /* ── Local helpers ── */
 .search-wrap{position:relative}
@@ -125,38 +126,78 @@
 <div class="layout">
 
 <!-- ═══ SIDEBAR ═══ -->
-<aside class="sidebar">
-  <div class="sb-brand">
-    <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
-    <div>
-      <div class="sb-school-name">Five Star School</div>
-      <div class="sb-portal-name">DOS Portal</div>
+<aside class="sidebar" id="sidebar">
+  <div class="sb-topbar">
+    <button class="sb-ham" id="sb-ham" title="Open / close menu">
+      <span class="sb-bar"></span>
+      <span class="sb-bar"></span>
+      <span class="sb-bar"></span>
+    </button>
+    <div class="sb-brand">
+      <div class="sb-logo"><img src="../star logo.png" alt="Logo"/></div>
+      <div>
+        <div class="sb-school-name">Five Star School</div>
+        <div class="sb-portal-tag">DOS Portal</div>
+      </div>
     </div>
   </div>
   <nav class="sb-body">
-    <div class="sb-group"><div class="sb-group-label">Overview</div></div>
-    <div class="sb-link active" onclick="nav('dashboard',this)"><span class="sb-icon">🏠</span><span>Dashboard</span></div>
-    <div class="sb-group"><div class="sb-group-label">Curriculum</div></div>
-    <div class="sb-link" onclick="nav('subjects',this)"><span class="sb-icon">📖</span><span>Subjects</span></div>
-    <div class="sb-link" onclick="nav('allocation',this)"><span class="sb-icon">👩‍🏫</span><span>Teacher Allocation</span></div>
-    <div class="sb-link" onclick="nav('timetable',this)"><span class="sb-icon">🗓️</span><span>Timetable</span></div>
-    <div class="sb-group"><div class="sb-group-label">Examinations</div></div>
-    <div class="sb-link" onclick="nav('exams',this)"><span class="sb-icon">📝</span><span>Exam Management</span><span class="sb-badge" id="exam-badge">0</span></div>
-    <div class="sb-link" onclick="nav('approval',this)"><span class="sb-icon">✅</span><span>Results Approval</span><span class="sb-badge" id="approval-badge">0</span></div>
-    <div class="sb-link" onclick="nav('reportcards',this)"><span class="sb-icon">📄</span><span>Report Cards</span></div>
-    <div class="sb-group"><div class="sb-group-label">Analysis</div></div>
-    <div class="sb-link" onclick="nav('performance',this)"><span class="sb-icon">📊</span><span>Performance</span></div>
-    <div class="sb-link" onclick="nav('calendar',this)"><span class="sb-icon">📅</span><span>Academic Calendar</span></div>
-    <div class="sb-link" onclick="nav('syllabus',this)"><span class="sb-icon">📋</span><span>Syllabus Coverage</span></div>
+    <div class="sb-sec"><div class="sb-sec-label">Overview</div></div>
+    <div class="sb-item active" data-tip="Dashboard" data-close="1" onclick="nav('dashboard',this)">
+      <span class="sb-item-name">Dashboard</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Curriculum</div></div>
+    <div class="sb-item" data-tip="Subjects" onclick="nav('subjects',this)">
+      <span class="sb-item-name">Subjects</span>
+    </div>
+    <div class="sb-item" data-tip="Teacher Allocation" onclick="nav('allocation',this)">
+      <span class="sb-item-name">Teacher Allocation</span>
+    </div>
+    <div class="sb-item" data-tip="Timetable" onclick="nav('timetable',this)">
+      <span class="sb-item-name">Timetable</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Examinations</div></div>
+    <div class="sb-item" data-tip="Exam Management" onclick="nav('exams',this)">
+      <span class="sb-item-name">Exam Management</span>
+      <span class="sb-count" id="exam-badge">0</span>
+    </div>
+    <div class="sb-item" data-tip="Results Approval" onclick="nav('approval',this)">
+      <span class="sb-item-name">Results Approval</span>
+      <span class="sb-count" id="approval-badge">0</span>
+    </div>
+    <div class="sb-item" data-tip="Report Cards" onclick="nav('reportcards',this)">
+      <span class="sb-item-name">Report Cards</span>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-label">Analysis</div></div>
+    <div class="sb-item" data-tip="Performance" onclick="nav('performance',this)">
+      <span class="sb-item-name">Performance</span>
+    </div>
+    <div class="sb-item" data-tip="Academic Calendar" onclick="nav('calendar',this)">
+      <span class="sb-item-name">Academic Calendar</span>
+    </div>
+    <div class="sb-item" data-tip="Syllabus Coverage" onclick="nav('syllabus',this)">
+      <span class="sb-item-name">Syllabus Coverage</span>
+    </div>
   </nav>
   <div class="sb-foot">
-    <div class="sb-user">
+    <div class="sb-user-row">
       <div class="sb-av" id="sb-av-init">D</div>
-      <div><div class="sb-uname" id="sb-uname">DOS User</div><div class="sb-urole">Director of Studies</div></div>
-      <button class="sb-signout" onclick="signOut()" title="Sign Out">⏻</button>
+      <div class="sb-user-info">
+        <div class="sb-uname" id="sb-uname">DOS User</div>
+        <div class="sb-urole">Director of Studies</div>
+      </div>
     </div>
+    <button class="sb-logout" onclick="signOut()" title="Log Out">
+      <span class="sb-logout-icon">
+        <span class="sb-logout-arrow">
+          <svg class="sb-arrow-svg" viewBox="0 0 14 14"><path d="M5 2l5 5-5 5"/><line x1="10" y1="7" x2="2" y2="7"/></svg>
+        </span>
+      </span>
+      <span class="sb-logout-label">Log Out</span>
+    </button>
   </div>
 </aside>
+<div class="sb-backdrop" id="sb-backdrop"></div>
 
 <!-- ═══ MAIN ═══ -->
 <div class="main-area">
@@ -894,13 +935,12 @@ function getGradeRemark(g) {
   return r[g] || '—';
 }
 
+const savedDOSState = SMSStore.load('sms_dos_records', {}) || {};
+
 /* ═══════════════════════════════
    SUBJECTS
 ═══════════════════════════════ */
-let subjects = [
-  {name:'English Language', code:'ENG', levels:['P1','P2','P3','P4','P5','P6','P7'], notes:''},
-  {name:'Mathematics',      code:'MTH', levels:['P1','P2','P3','P4','P5','P6','P7'], notes:''}
-];
+let subjects = Array.isArray(savedDOSState.subjects) ? savedDOSState.subjects : [];
 const ALL_CLASSES = ['Baby','Middle','Upper','P1','P2','P3','P4','P5','P6','P7'];
 const CLASS_MAP   = {'Baby':'Baby Class','Middle':'Middle Class','Upper':'Upper Class'};
 
@@ -920,21 +960,25 @@ function saveSubject() {
   toast('Subject added');
 }
 function saveMatrix() {
-  toast('Subject allocation saved');
+  document.querySelectorAll('#subj-matrix-body tr').forEach((row, index) => {
+    if (subjects[index]) subjects[index].levels = [...row.querySelectorAll('input[type="checkbox"]:checked')].map(input => input.dataset.class);
+  });
+  renderSubjectMatrix();
+  toast('Subject allocation saved.','success');
 }
 function renderSubjectMatrix() {
   const tbody = document.getElementById('subj-matrix-body');
   tbody.innerHTML = subjects.map(s=>`
     <tr>
       <td>${s.name}${s.code?` <span class="badge b-gray">${s.code}</span>`:''}</td>
-      ${ALL_CLASSES.map(c=>`<td class="chk-cell"><input type="checkbox" ${s.levels.includes(c)?'checked':''}></td>`).join('')}
+      ${ALL_CLASSES.map(c=>`<td class="chk-cell"><input type="checkbox" data-class="${c}" ${s.levels.includes(c)?'checked':''}></td>`).join('')}
     </tr>`).join('');
 }
 
 /* ═══════════════════════════════
    TEACHER ALLOCATION
 ═══════════════════════════════ */
-let allocations = [];
+let allocations = Array.isArray(savedDOSState.allocations) ? savedDOSState.allocations : [];
 function saveAllocation() {
   const teacher = document.getElementById('alloc-teacher').value.trim();
   const cls     = document.getElementById('alloc-class').value;
@@ -983,7 +1027,7 @@ function filterAllocations() {
 /* ═══════════════════════════════
    TIMETABLE
 ═══════════════════════════════ */
-let ttSlots = [];
+let ttSlots = Array.isArray(savedDOSState.ttSlots) ? savedDOSState.ttSlots : [];
 const DAYS    = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 const PERIODS = ['Period 1','Period 2','Period 3','Period 4','Period 5','Period 6','Period 7','Period 8'];
 
@@ -1043,7 +1087,7 @@ function printTimetable() { window.print(); }
 /* ═══════════════════════════════
    EXAM MANAGEMENT
 ═══════════════════════════════ */
-let exams = [];
+let exams = Array.isArray(savedDOSState.exams) ? savedDOSState.exams : [];
 function saveExam() {
   const name    = document.getElementById('ex-name').value.trim();
   const type    = document.getElementById('ex-type').value;
@@ -1096,8 +1140,8 @@ function filterExams() {
 /* ═══════════════════════════════
    RESULTS APPROVAL
 ═══════════════════════════════ */
-let submissions = [];
-let approvalActivities = [];
+let submissions = Array.isArray(savedDOSState.submissions) ? savedDOSState.submissions : [];
+let approvalActivities = Array.isArray(savedDOSState.approvalActivities) ? savedDOSState.approvalActivities : [];
 function renderApproval(filter='all') {
   const tbody = document.getElementById('approval-tbody');
   let list = submissions;
@@ -1289,7 +1333,7 @@ function searchPupil(val) {
 /* ═══════════════════════════════
    ACADEMIC CALENDAR
 ═══════════════════════════════ */
-let events = [];
+let events = Array.isArray(savedDOSState.events) ? savedDOSState.events : [];
 const EV_COLORS = {
   Exam:'ev-exam', Holiday:'ev-holiday', Meeting:'ev-meeting',
   'Visiting Day':'ev-visiting', Opening:'ev-opening', Closing:'ev-closing', Other:'ev-other'
@@ -1334,7 +1378,7 @@ function formatDate(d) {
 /* ═══════════════════════════════
    SYLLABUS COVERAGE
 ═══════════════════════════════ */
-let syllabus = [];
+let syllabus = Array.isArray(savedDOSState.syllabus) ? savedDOSState.syllabus : [];
 function renderSyllabus(filter_cls='', filter_subj='', filter_teacher='') {
   const tbody = document.getElementById('syllabus-tbody');
   let list = syllabus;
@@ -1406,6 +1450,10 @@ function updateBadges() { renderDashboard(); }
 /* ── Init ── */
 renderDashboard();
 renderSubjectMatrix();
+document.addEventListener('click', () => SMSStore.save('sms_dos_records', {
+  subjects, allocations, ttSlots, exams, submissions, approvalActivities, events, syllabus
+}));
 </script>
+<script src="../assets/sidebar.js"></script>
 </body>
 </html>
